@@ -143,6 +143,23 @@ plus a `declined_fields` list. "Skipped it" and "never asked" are different.
 
 ---
 
+## Git workflow
+
+- **No direct pushes to `master`.** Every change goes on a `slice/<name>`
+  branch. `master` only moves when the user manually merges an approved PR —
+  never an auto-merge, never a push straight to `master`, by anyone,
+  including Claude.
+- **Commit regularly.** Small, logical, conventional commits as work
+  progresses on a branch — this is a standing instruction for this repo, so
+  commit without waiting to be asked each time. Never push or merge without
+  being asked — those stay explicit, human-triggered actions.
+- **No AI attribution in commits or PRs.** Do not add `Co-Authored-By:
+  Claude`, `Claude-Session:`, or a "Generated with Claude Code" footer to
+  commit messages or PR descriptions in this repo. Commits use the
+  repository's configured git identity only.
+
+---
+
 ## Things that are deliberately absent
 
 Do not add these back:
@@ -209,10 +226,13 @@ are not.
 
 ## AI-DLC
 
-When the user invokes AI-DLC, read and follow
-`.aidlc/aidlc-rules/aws-aidlc-rules/core-workflow.md` to start the workflow.
+Run `/aidlc` to start or resume a workflow — the harness installed under
+`.claude/` and `aidlc/` registers the command; there is no file to read
+manually. `/aidlc --doctor` checks the setup, `/aidlc --status` shows
+progress.
 
-AI-DLC artifacts are generated into `aidlc-docs/` and are committed. The
-`.aidlc/` directory itself is gitignored. Take the property-based testing
-extension when it is offered during requirements analysis — it enforces the
-engine testing described above.
+Artifacts land under `aidlc/spaces/default/intents/<record>/` and are
+committed — only per-user cursors and machine-local runtime files are
+gitignored (see `.gitignore`). At the `practices-discovery` stage's testing
+posture step, affirm hypothesis-based property testing for the engine — it
+enforces the engine testing described above.
