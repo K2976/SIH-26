@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.accounts.views import GoalView, LoginView, ProfileView, SignupView
 from apps.api.views import AppConfigView
+from apps.reference.views import ExerciseDeltaView, ManifestView
 
 urlpatterns = [
     path("auth/signup/", SignupView.as_view(), name="signup"),
@@ -12,6 +13,8 @@ urlpatterns = [
     path("profile/", ProfileView.as_view(), name="profile"),
     path("goal/", GoalView.as_view(), name="goal"),
     path("app-config/", AppConfigView.as_view(), name="app-config"),
+    path("reference/manifest/", ManifestView.as_view(), name="reference-manifest"),
+    path("reference/exercises/", ExerciseDeltaView.as_view(), name="reference-exercises"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
 ]
