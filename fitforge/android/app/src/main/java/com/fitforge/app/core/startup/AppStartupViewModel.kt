@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.fitforge.app.BuildConfig
 import com.fitforge.app.core.datastore.UserPreferencesDataStore
 import com.fitforge.app.data.remote.generated.apis.AppConfigApi
+import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,17 +21,19 @@ private const val TAG = "AppStartupViewModel"
 sealed interface StartupState {
     data object Loading : StartupState
     data class UpdateRequired(val minSupportedVersion: String) : StartupState
-    data class Ready(val isLoggedIn: Boolean) : StartupState
+    data class Ready(val isLoggedIn: Boolean, val needsOnboarding: Boolean) : StartupState
 }
 
 /**
  * Decides, once at process start, whether the app is blocked by the
- * version gate and whether a stored session already exists. Pure
- * plumbing — the only "decision" here is a string version compare.
+ * version gate, whether a stored session already exists, and whether
+ * onboarding has been completed. Pure plumbing — the only "decisions"
+ * here are a string version compare and a null check.
  */
 @HiltViewModel
 class AppStartupViewModel @Inject constructor(
     private val appConfigApi: AppConfigApi,
+    private val profileApi: ProfileApi,
     private val preferences: UserPreferencesDataStore,
 ) : ViewModel() {
 
@@ -44,7 +47,9 @@ class AppStartupViewModel @Inject constructor(
                 _state.value = StartupState.UpdateRequired(minSupportedVersion)
                 return@launch
             }
-            _state.value = StartupState.Ready(isLoggedIn = preferences.accessToken.first() != null)
+            val hasToken = preferences.accessToken.first() != null
+            val needsOnboarding = if (hasToken) checkOnboardingNeeded() else true
+            _state.value = StartupState.Ready(isLoggedIn = hasToken, needsOnboarding = needsOnboarding)
         }
     }
 
@@ -56,5 +61,20 @@ class AppStartupViewModel @Inject constructor(
         // Backend unreachable — don't block startup on a check that can't complete.
         Log.w(TAG, "app-config check failed", e)
         null
+    }
+
+    /**
+     * Checks whether onboarding has been completed by fetching the profile
+     * and looking at onboarding_completed_at.
+     */
+    private suspend fun checkOnboardingNeeded(): Boolean = try {
+        val response = profileApi.profileRetrieve()
+        val profile = response.body()
+        profile?.onboardingCompletedAt == null
+    } catch (e: IOException) {
+        Log.w(TAG, "profile check failed", e)
+        // Can't reach backend — assume onboarding needed; the onboarding
+        // screen will show its own errors if the network stays down.
+        true
     }
 }

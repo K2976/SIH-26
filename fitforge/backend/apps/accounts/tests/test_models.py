@@ -51,6 +51,32 @@ class TestFieldState:
         assert profile.field_state("resting_hr") == UserProfile.DECLINED
         assert profile.field_state("sex_at_birth") == UserProfile.NOT_ASKED
 
+    def test_current_weight_kg_three_states(self, user):
+        profile = UserProfile.objects.create(user=user)
+        assert profile.field_state("current_weight_kg") == UserProfile.NOT_ASKED
+
+        profile.current_weight_kg = Decimal("72.5")
+        profile.save()
+        assert profile.field_state("current_weight_kg") == UserProfile.KNOWN
+
+        profile.current_weight_kg = None
+        profile.declined_fields = ["current_weight_kg"]
+        profile.save()
+        assert profile.field_state("current_weight_kg") == UserProfile.DECLINED
+
+    def test_activity_level_three_states(self, user):
+        profile = UserProfile.objects.create(user=user)
+        assert profile.field_state("activity_level") == UserProfile.NOT_ASKED
+
+        profile.activity_level = "moderately_active"
+        profile.save()
+        assert profile.field_state("activity_level") == UserProfile.KNOWN
+
+        profile.activity_level = None
+        profile.declined_fields = ["activity_level"]
+        profile.save()
+        assert profile.field_state("activity_level") == UserProfile.DECLINED
+
 
 class TestGoalVersioning:
     def test_create_goal_opens_first_row(self, user):

@@ -16,9 +16,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fitforge.app.core.startup.AppStartupViewModel
 import com.fitforge.app.core.startup.StartupState
 import com.fitforge.app.feature.onboarding.LoginScreen
+import com.fitforge.app.feature.onboarding.OnboardingScreen
+import com.fitforge.app.feature.onboarding.SignupScreen
 import com.fitforge.app.feature.onboarding.UpdateRequiredScreen
 
-/** Root of the composable tree: version gate, then login, then the bottom-tab shell. */
+/** Root of the composable tree: version gate, then login, then onboarding (if needed), then the bottom-tab shell. */
 @Composable
 fun FitForgeApp(viewModel: AppStartupViewModel = hiltViewModel()) {
     val startupState by viewModel.state.collectAsStateWithLifecycle()
@@ -35,10 +37,30 @@ fun FitForgeApp(viewModel: AppStartupViewModel = hiltViewModel()) {
             }
             is StartupState.Ready -> {
                 var isLoggedIn by remember { mutableStateOf(current.isLoggedIn) }
-                if (isLoggedIn) {
-                    FitForgeNavHost()
-                } else {
-                    LoginScreen(onLoginSuccess = { isLoggedIn = true })
+                var showSignup by remember { mutableStateOf(false) }
+                var needsOnboarding by remember { mutableStateOf(current.needsOnboarding) }
+                when {
+                    !isLoggedIn && showSignup -> SignupScreen(
+                        onSignupSuccess = {
+                            isLoggedIn = true
+                            needsOnboarding = true
+                        },
+                        onGoToLogin = { showSignup = false },
+                    )
+                    !isLoggedIn -> LoginScreen(
+                        onLoginSuccess = {
+                            isLoggedIn = true
+                            // On login, we need to check onboarding status.
+                            // AppStartupViewModel already fetched it for existing sessions.
+                            // For fresh logins, assume onboarding needed since the
+                            // OnboardingViewModel loads the profile and handles re-runs.
+                        },
+                        onGoToSignup = { showSignup = true },
+                    )
+                    needsOnboarding -> OnboardingScreen(
+                        onOnboardingComplete = { needsOnboarding = false },
+                    )
+                    else -> FitForgeNavHost()
                 }
             }
         }

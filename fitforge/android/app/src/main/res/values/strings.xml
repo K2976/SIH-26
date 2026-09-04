@@ -21,4 +21,83 @@
     <string name="login_password_label">Password</string>
     <string name="login_button">Log in</string>
     <string name="login_error">Couldn\'t log in. Check your email and password and try again.</string>
+    <string name="login_go_to_signup">Don\'t have an account? Sign up</string>
+
+    <string name="signup_title">Create account</string>
+    <string name="signup_button">Sign up</string>
+    <string name="signup_error">Couldn\'t create your account. Check your details and try again.</string>
+    <string name="signup_go_to_login">Already have an account? Log in</string>
+
+    <!-- Onboarding — shared -->
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_confirm">OK</string>
+    <string name="onboarding_cancel">Cancel</string>
+
+    <!-- Onboarding — Step 1: Basics -->
+    <string name="onboarding_basics_title">The basics</string>
+    <string name="onboarding_basics_subtitle">We need these to calculate your targets.</string>
+    <string name="onboarding_unit_preference">Units</string>
+    <string name="onboarding_unit_metric">Metric</string>
+    <string name="onboarding_unit_imperial">Imperial</string>
+    <string name="onboarding_dob_label">Date of birth</string>
+    <string name="onboarding_dob_hint">YYYY-MM-DD</string>
+    <string name="onboarding_dob_pick">Pick date</string>
+    <string name="onboarding_dob_change">Change date</string>
+    <string name="onboarding_sex_label">Sex at birth</string>
+    <string name="onboarding_sex_male">Male</string>
+    <string name="onboarding_sex_female">Female</string>
+    <string name="onboarding_sex_intersex">Intersex</string>
+    <string name="onboarding_height_cm">Height (cm)</string>
+    <string name="onboarding_height_in">Height (in)</string>
+    <string name="onboarding_weight_kg">Current weight (kg)</string>
+    <string name="onboarding_weight_lb">Current weight (lb)</string>
+    <string name="onboarding_timezone_label">Timezone: %1$s</string>
+
+    <!-- Onboarding — Step 2: Cycle tracking -->
+    <string name="onboarding_cycle_title">Cycle tracking</string>
+    <string name="onboarding_cycle_question">Do you want to track your menstrual cycle?</string>
+    <string name="onboarding_cycle_explainer">This enables cycle-aware energy and training adjustments.</string>
+    <string name="onboarding_cycle_yes">Yes</string>
+    <string name="onboarding_cycle_no">No</string>
+
+    <!-- Onboarding — Step 3: Goal -->
+    <string name="onboarding_goal_title">Your goal</string>
+    <string name="onboarding_energy_direction_label">Energy direction</string>
+    <string name="onboarding_energy_direction_hint">What do you want your weight to do?</string>
+    <string name="onboarding_energy_cut">Cut — lose fat</string>
+    <string name="onboarding_energy_maintain">Maintain — stay where I am</string>
+    <string name="onboarding_energy_gain">Gain — build mass</string>
+    <string name="onboarding_energy_not_tracking">Not tracking food</string>
+    <string name="onboarding_training_focus_label">Training focus</string>
+    <string name="onboarding_training_focus_hint">What matters most in your training?</string>
+    <string name="onboarding_focus_strength">Strength</string>
+    <string name="onboarding_focus_hypertrophy">Hypertrophy</string>
+    <string name="onboarding_focus_endurance">Endurance</string>
+    <string name="onboarding_focus_general">General fitness</string>
+
+    <!-- Onboarding — Step 4: Target rate -->
+    <string name="onboarding_target_rate_title">Target rate</string>
+    <string name="onboarding_target_rate_subtitle">How fast do you want to change weight?</string>
+    <string name="onboarding_rate_kg_per_week">%1$s kg / week</string>
+    <string name="onboarding_rate_lb_per_week">%1$s lb / week</string>
+
+    <!-- Onboarding — Step 5: Fitness inputs -->
+    <string name="onboarding_fitness_title">Fitness details</string>
+    <string name="onboarding_fitness_subtitle">These improve your fitness age estimate. You can skip and add them later.</string>
+    <string name="onboarding_waist_cm">Waist circumference (cm)</string>
+    <string name="onboarding_waist_in">Waist circumference (in)</string>
+    <string name="onboarding_resting_hr">Resting heart rate</string>
+    <string name="onboarding_bpm">bpm</string>
+    <string name="onboarding_activity_level_label">Activity level</string>
+    <string name="onboarding_activity_sedentary">Sedentary</string>
+    <string name="onboarding_activity_lightly_active">Lightly active</string>
+    <string name="onboarding_activity_moderately_active">Moderately active</string>
+    <string name="onboarding_activity_very_active">Very active</string>
+    <string name="onboarding_activity_extra_active">Extra active</string>
+
+    <!-- Onboarding — Step 6: Completion -->
+    <string name="onboarding_completion_title">You\'re all set</string>
+    <string name="onboarding_completion_body">Your targets are live immediately. They\'ll become more accurate as you log meals, workouts, and weight.</string>
+    <string name="onboarding_get_started">Get started</string>
 </resources>
