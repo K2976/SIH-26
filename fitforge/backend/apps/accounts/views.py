@@ -60,7 +60,12 @@ class GoalView(generics.GenericAPIView):
     def get(self, request):
         goal = current_goal(request.user)
         if goal is None:
-            return Response(None)
+            # Not `Response(None)`: DRF's JSONRenderer special-cases a None
+            # payload to an empty body (not the JSON literal `null`), which a
+            # strongly-typed client expecting a Goal object can't decode
+            # either way. 404 is unambiguous and needs no body at all —
+            # Retrofit skips the response-body decoder for non-2xx responses.
+            return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(self.get_serializer(goal).data)
 
     def post(self, request):
