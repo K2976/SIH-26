@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-class FitForgeApplication : Application(), Configuration.Provider {
+class FitForgeApplication : Application() {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -26,12 +26,14 @@ class FitForgeApplication : Application(), Configuration.Provider {
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
-
     override fun onCreate() {
         super.onCreate()
         initCrashReporting()
+
+        // Manual init, not Configuration.Provider: the manifest's default
+        // androidx.startup initializer is disabled (see AndroidManifest.xml)
+        // because it runs before Hilt injects workerFactory above.
+        WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(workerFactory).build())
 
         // Seed offline before anything else — search/logging must work in
         // airplane mode on a fresh install, before any network call.

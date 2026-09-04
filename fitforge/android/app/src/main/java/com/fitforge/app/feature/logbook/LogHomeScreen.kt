@@ -100,7 +100,9 @@ private fun ActiveSessionCard(
                 )
                 if (metrics.estimatedKcal != null) {
                     Text(stringResource(R.string.log_burn_label, metrics.estimatedKcal))
-                } else {
+                } else if (!metrics.bodyweightKnown) {
+                    // Only a real warning when bodyweight is truly missing — no
+                    // sets logged yet is a normal, expected start-of-session state.
                     Text(stringResource(R.string.log_burn_unavailable), style = MaterialTheme.typography.bodySmall)
                 }
             }

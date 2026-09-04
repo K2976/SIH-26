@@ -25,7 +25,13 @@ import javax.inject.Inject
 
 private const val TICK_MILLIS = 60_000L
 
-data class LiveMetrics(val elapsedMinutes: Int, val volumeKg: Double, val estimatedKcal: Double?)
+data class LiveMetrics(
+    val elapsedMinutes: Int,
+    val volumeKg: Double,
+    val estimatedKcal: Double?,
+    /** Distinguishes "no bodyweight on file" from "no sets logged yet" — both leave estimatedKcal null. */
+    val bodyweightKnown: Boolean,
+)
 
 /**
  * Bodyweight comes from the local DataStore cache (populated whenever the
@@ -72,6 +78,7 @@ class LogHomeViewModel @Inject constructor(
                 elapsedMinutes = elapsedMinutes,
                 volumeKg = sessionVolumeKg(metricInputs),
                 estimatedKcal = estimatedSessionKcal(metricInputs, bodyweight, elapsedMinutes.toDouble()),
+                bodyweightKnown = bodyweight != null,
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
