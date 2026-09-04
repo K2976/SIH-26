@@ -33,14 +33,16 @@ android {
 
     buildTypes {
         debug {
-            // 10.0.2.2 is the Android emulator's alias for the host
-            // machine's localhost, where the local Django server runs.
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8000/api/v1/\"")
+            // localhost + `adb reverse tcp:8000 tcp:8000` works for both the
+            // emulator and a USB-connected physical device; 10.0.2.2 only
+            // works for the emulator. No /api/v1/ suffix here — the
+            // generated API interfaces already carry it in each @GET/@POST path.
+            buildConfigField("String", "BASE_URL", "\"http://localhost:8000/\"")
         }
         release {
             isMinifyEnabled = false
             // ponytail: placeholder until a real deployment exists.
-            buildConfigField("String", "BASE_URL", "\"https://api.fitforge.app/api/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.fitforge.app/\"")
         }
     }
 
