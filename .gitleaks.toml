@@ -1,0 +1,8 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Pre-existing, unrelated legacy directory; its own gitleaks baseline file gets scanned as content otherwise"
+paths = [
+  '''^aidlc-workflows/''',
+]

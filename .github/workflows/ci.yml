@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fitforge/backend
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: fitforge
+          POSTGRES_PASSWORD: fitforge
+          POSTGRES_DB: fitforge
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DJANGO_SETTINGS_MODULE: fitforge.settings.dev
+      DJANGO_SECRET_KEY: ci-secret-key
+      DATABASE_URL: postgres://fitforge:fitforge@localhost:5432/fitforge
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements/dev.txt
+      - run: ruff check .
+      - run: ruff format --check .
+      # Exit code 5 = no tests collected, expected at this scaffolding stage
+      # and explicitly an acceptable "clean" result; any other exit fails.
+      - run: pytest || [ "$?" -eq 5 ]
+
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fitforge/android
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-java@v6.0.0
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v6.3.0
+      - run: ./gradlew detekt
+      - run: ./gradlew assembleDebug
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
