@@ -1,3 +1,5 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -5,8 +7,12 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.detekt)
-    alias(libs.plugins.openapi.generator)
 }
+
+// No plugins{} marker artifact exists for this plugin — see the classpath
+// comment in the root build.gradle.kts. Its real id is "org.openapi.generator"
+// (not the org.openapitools.* group/artifact coordinate it's published under).
+apply(plugin = "org.openapi.generator")
 
 android {
     namespace = "com.fitforge.app"
@@ -72,7 +78,7 @@ val openApiGeneratedDir = layout.buildDirectory.dir("generated/openapi").get().a
 // Retrofit client generated from the backend's OpenAPI schema (see
 // CLAUDE.md "API" convention) — never hand-write DTOs that mirror
 // serializers, the schema is the single source of truth.
-openApiGenerate {
+tasks.named<GenerateTask>("openApiGenerate") {
     generatorName.set("kotlin")
     library.set("jvm-retrofit2")
     inputSpec.set("$rootDir/openapi/schema.yaml")
