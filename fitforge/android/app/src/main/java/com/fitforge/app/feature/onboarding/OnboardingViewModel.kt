@@ -3,6 +3,7 @@ package com.fitforge.app.feature.onboarding
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fitforge.app.core.datastore.UserPreferencesDataStore
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import com.fitforge.app.data.remote.generated.models.EnergyDirectionEnum
@@ -75,6 +76,7 @@ data class OnboardingUiState(
 class OnboardingViewModel @Inject constructor(
     private val profileApi: ProfileApi,
     private val goalApi: GoalApi,
+    private val preferences: UserPreferencesDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -91,6 +93,7 @@ class OnboardingViewModel @Inject constructor(
                 val profile = profileResp.body()
                 val goalResp = goalApi.goalRetrieve()
                 val goal = goalResp.body()
+                profile?.currentWeightKg?.toDouble()?.let { preferences.setBodyweightKg(it) }
 
                 if (profile != null) {
                     _uiState.update { state ->
@@ -211,6 +214,10 @@ class OnboardingViewModel @Inject constructor(
                         timezone = state.timezone,
                     ),
                 )
+                // ponytail: currentWeightKg is the raw typed string, not unit-converted
+                // regardless of display preference (pre-existing gap, see BasicsStep) —
+                // this cache inherits that same assumption rather than fixing it here.
+                state.currentWeightKg.toDoubleOrNull()?.let { preferences.setBodyweightKg(it) }
                 _uiState.update { it.copy(isSaving = false, currentStep = OnboardingStep.CYCLE_TRACKING) }
             } catch (e: IOException) {
                 Log.w(TAG, "Failed to save basics", e)
