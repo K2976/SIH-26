@@ -70,6 +70,7 @@ class AppStartupViewModel @Inject constructor(
     private suspend fun checkOnboardingNeeded(): Boolean = try {
         val response = profileApi.profileRetrieve()
         val profile = response.body()
+        profile?.currentWeightKg?.toDouble()?.let { preferences.setBodyweightKg(it) }
         profile?.onboardingCompletedAt == null
     } catch (e: IOException) {
         Log.w(TAG, "profile check failed", e)
