@@ -56,7 +56,10 @@ android {
 
     sourceSets {
         getByName("main") {
-            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin"))
+            // AGP 9's sourceSets API rejects a lazy Provider<Directory> here
+            // ("You cannot add Provider instances to the Android SourceSet
+            // API") — resolve it to a plain File eagerly instead.
+            kotlin.srcDir(layout.buildDirectory.dir("generated/openapi/src/main/kotlin").get().asFile)
         }
     }
 }
