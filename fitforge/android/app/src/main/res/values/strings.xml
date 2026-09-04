@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FitForge</string>
+
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_log">Log</string>
+    <string name="nav_coach">Coach</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="dashboard_placeholder">Dashboard</string>
+    <string name="log_placeholder">Log</string>
+    <string name="coach_placeholder">Coach</string>
+    <string name="profile_placeholder">Profile</string>
+
+    <string name="update_required_title">Update required</string>
+    <string name="update_required_body">A new version of FitForge is required to continue. Please update the app from the Play Store.</string>
+    <string name="update_required_min_version">Minimum supported version: %1$s</string>
+
+    <string name="login_title">Log in</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_button">Log in</string>
+    <string name="login_error">Couldn\'t log in. Check your email and password and try again.</string>
 </resources>

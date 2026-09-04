@@ -1,9 +1,9 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.accounts.models import UserProfile, current_goal
 from apps.accounts.serializers import (
@@ -30,9 +30,20 @@ class SignupView(APIView):
         )
 
 
+@extend_schema_view(post=extend_schema(responses=TokenPairSerializer))
 class LoginView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
     serializer_class = EmailTokenObtainPairSerializer
+
+
+@extend_schema_view(post=extend_schema(responses=TokenPairSerializer))
+class RefreshView(TokenRefreshView):
+    """TokenRefreshView with an accurate response schema.
+
+    simplejwt's own serializer only declares the request field; with
+    ROTATE_REFRESH_TOKENS on, the response body also carries a new
+    `refresh` token, which TokenPairSerializer already models.
+    """
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):

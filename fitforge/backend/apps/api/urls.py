@@ -1,15 +1,14 @@
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework_simplejwt.views import TokenRefreshView
 
-from apps.accounts.views import GoalView, LoginView, ProfileView, SignupView
+from apps.accounts.views import GoalView, LoginView, ProfileView, RefreshView, SignupView
 from apps.api.views import AppConfigView
 from apps.reference.views import ExerciseDeltaView, ManifestView
 
 urlpatterns = [
     path("auth/signup/", SignupView.as_view(), name="signup"),
     path("auth/login/", LoginView.as_view(), name="login"),
-    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
+    path("auth/token/refresh/", RefreshView.as_view(), name="token-refresh"),
     path("profile/", ProfileView.as_view(), name="profile"),
     path("goal/", GoalView.as_view(), name="goal"),
     path("app-config/", AppConfigView.as_view(), name="app-config"),

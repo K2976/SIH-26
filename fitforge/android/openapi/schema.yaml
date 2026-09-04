@@ -1,0 +1,179 @@
+# Snapshot of the backend's OpenAPI schema, checked in so the Retrofit
+# client can be generated at build time without a running backend.
+# Trimmed to the auth + app-config surface this shell slice actually
+# consumes (the full schema's Exercise/UserProfile models trigger a
+# known openapi-generator kotlin-client bug producing invalid Kotlin
+# for their BlankEnum/NullEnum nullable-enum fields). Regenerate in
+# full and re-trim when a feature slice needs profile/goal/reference:
+#   cd backend && python manage.py spectacular --file ../android/openapi/schema.yaml
+openapi: 3.0.3
+info:
+  title: FitForge API
+  version: 1.0.0
+  description: Training, nutrition, and cycle data behind one adaptive engine.
+paths:
+  /api/v1/app-config/:
+    get:
+      operationId: app_config_retrieve
+      tags:
+      - app-config
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppConfig'
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: 'Takes a set of user credentials and returns an access and refresh
+        JSON web
+
+        token pair to prove the authentication of those credentials.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+  /api/v1/auth/signup/:
+    post:
+      operationId: auth_signup_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: 'TokenRefreshView with an accurate response schema.
+
+
+        simplejwt''s own serializer only declares the request field; with
+
+        ROTATE_REFRESH_TOKENS on, the response body also carries a new
+
+        `refresh` token, which TokenPairSerializer already models.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+components:
+  schemas:
+    AppConfig:
+      type: object
+      properties:
+        min_supported_version:
+          type: string
+      required:
+      - min_supported_version
+    EmailTokenObtainPair:
+      type: object
+      description: Login by email instead of username, on top of the default User
+        model.
+      properties:
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          format: email
+      required:
+      - email
+      - password
+    Signup:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    TokenPair:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
