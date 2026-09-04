@@ -1,15 +1,23 @@
 import datetime
+
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.diary.models import (
-    PlannedSession, WorkoutSession, SetLog, MealLog, MealItem,
-    WeightLog, SleepLog, CycleLog
+    CycleLog,
+    MealItem,
+    MealLog,
+    PlannedSession,
+    SetLog,
+    SleepLog,
+    WeightLog,
+    WorkoutSession,
 )
-from apps.reference.models import Exercise
+from apps.diary.utils import resolve_local_day
+from apps.engine.service import recompute_daily_state_for_days
 
 MODEL_MAP = {
     "planned_session": PlannedSession,
@@ -40,6 +48,7 @@ class SyncView(APIView):
             "success_count": 0,
             "errors": []
         }
+        touched_local_dates = set()
 
         now = timezone.now()
         max_future = now + datetime.timedelta(days=1)
@@ -162,6 +171,7 @@ class SyncView(APIView):
                     client_uuid=client_uuid,
                     defaults=defaults
                 )
+                touched_local_dates.add(resolve_local_day(occurred_at, utc_offset))
                 results["success_count"] += 1
             except Exception as e:
                 results["errors"].append({
@@ -169,6 +179,11 @@ class SyncView(APIView):
                     "client_uuid": event.get("client_uuid"),
                     "error": str(e)
                 })
+
+        # DailyState is a cache: keep it in step with whatever just landed,
+        # rather than waiting for the nightly rebuild to catch up.
+        if touched_local_dates:
+            recompute_daily_state_for_days(request.user, touched_local_dates)
 
         # Return 200 even if there are errors (partial success)
         return Response(results, status=200)
