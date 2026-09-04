@@ -6,6 +6,8 @@ import com.fitforge.app.core.network.RefreshApi
 import com.fitforge.app.core.network.TokenAuthenticator
 import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
+import com.fitforge.app.data.remote.generated.apis.GoalApi
+import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -85,4 +87,14 @@ object NetworkModule {
     @Singleton
     fun provideAppConfigApi(retrofit: Retrofit): AppConfigApi =
         retrofit.create(AppConfigApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideProfileApi(retrofit: Retrofit): ProfileApi =
+        retrofit.create(ProfileApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideGoalApi(retrofit: Retrofit): GoalApi =
+        retrofit.create(GoalApi::class.java)
 }

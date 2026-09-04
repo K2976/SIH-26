@@ -16,8 +16,10 @@ class UserProfile(models.Model):
         "date_of_birth",
         "sex_at_birth",
         "height_cm",
+        "current_weight_kg",
         "waist_cm",
         "resting_hr",
+        "activity_level",
         "tracks_cycle",
     )
 
@@ -30,6 +32,13 @@ class UserProfile(models.Model):
         METRIC = "metric", "Metric"
         IMPERIAL = "imperial", "Imperial"
 
+    class ActivityLevel(models.TextChoices):
+        SEDENTARY = "sedentary", "Sedentary"
+        LIGHTLY_ACTIVE = "lightly_active", "Lightly active"
+        MODERATELY_ACTIVE = "moderately_active", "Moderately active"
+        VERY_ACTIVE = "very_active", "Very active"
+        EXTRA_ACTIVE = "extra_active", "Extra active"
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
     )
@@ -40,11 +49,17 @@ class UserProfile(models.Model):
         max_length=16, choices=SexAtBirth.choices, null=True, blank=True
     )
     height_cm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
+    current_weight_kg = models.DecimalField(
+        max_digits=5, decimal_places=1, null=True, blank=True
+    )
     waist_cm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
     resting_hr = models.PositiveSmallIntegerField(null=True, blank=True)
     timezone = models.CharField(max_length=64, default="UTC")
     unit_preference = models.CharField(
         max_length=16, choices=UnitPreference.choices, default=UnitPreference.METRIC
+    )
+    activity_level = models.CharField(  # noqa: DJ001
+        max_length=20, choices=ActivityLevel.choices, null=True, blank=True
     )
     # Never inferred from sex_at_birth — set only by a direct question.
     tracks_cycle = models.BooleanField(null=True, blank=True)

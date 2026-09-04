@@ -128,6 +128,187 @@ class TestProfile:
         resp = client.get("/api/v1/profile/")
         assert resp.status_code == 401
 
+    def test_patch_sets_current_weight(self, auth_client):
+        resp = auth_client.patch(
+            "/api/v1/profile/", {"current_weight_kg": "72.5"}, format="json"
+        )
+        assert resp.status_code == 200
+        assert resp.data["current_weight_kg"] == "72.5"
+        assert resp.data["field_states"]["current_weight_kg"] == UserProfile.KNOWN
+
+    def test_patch_sets_activity_level(self, auth_client):
+        resp = auth_client.patch(
+            "/api/v1/profile/", {"activity_level": "moderately_active"}, format="json"
+        )
+        assert resp.status_code == 200
+        assert resp.data["activity_level"] == "moderately_active"
+        assert resp.data["field_states"]["activity_level"] == UserProfile.KNOWN
+
+    def test_patch_declines_activity_level(self, auth_client):
+        auth_client.patch(
+            "/api/v1/profile/", {"activity_level": "sedentary"}, format="json"
+        )
+        resp = auth_client.patch(
+            "/api/v1/profile/", {"declined_fields": ["activity_level"]}, format="json"
+        )
+        assert resp.status_code == 200
+        assert resp.data["activity_level"] is None
+        assert resp.data["field_states"]["activity_level"] == UserProfile.DECLINED
+
+    def test_new_fields_start_as_not_asked(self, auth_client):
+        resp = auth_client.get("/api/v1/profile/")
+        assert resp.data["field_states"]["current_weight_kg"] == UserProfile.NOT_ASKED
+        assert resp.data["field_states"]["activity_level"] == UserProfile.NOT_ASKED
+
+
+class TestOnboardingFlow:
+    """Simulates the full onboarding sequence the Android client will perform."""
+
+    def test_full_onboarding_creates_profile_and_goal(self, auth_client):
+        # Step 1 — basics
+        resp = auth_client.patch(
+            "/api/v1/profile/",
+            {
+                "date_of_birth": "1995-06-15",
+                "sex_at_birth": "female",
+                "height_cm": "165.0",
+                "current_weight_kg": "60.0",
+                "unit_preference": "metric",
+                "timezone": "Asia/Kolkata",
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+
+        # Step 2 — cycle tracking
+        resp = auth_client.patch(
+            "/api/v1/profile/", {"tracks_cycle": True}, format="json"
+        )
+        assert resp.status_code == 200
+        assert resp.data["tracks_cycle"] is True
+
+        # Step 3 — goal
+        resp = auth_client.post(
+            "/api/v1/goal/",
+            {
+                "energy_direction": "cut",
+                "training_focus": "hypertrophy",
+                "target_rate_kg_per_week": "0.5",
+                "auto_adjust": True,
+            },
+            format="json",
+        )
+        assert resp.status_code == 201
+
+        # Step 5 — fitness inputs
+        resp = auth_client.patch(
+            "/api/v1/profile/",
+            {
+                "waist_cm": "70.0",
+                "resting_hr": 62,
+                "activity_level": "moderately_active",
+            },
+            format="json",
+        )
+        assert resp.status_code == 200
+
+        # Final — mark complete
+        resp = auth_client.patch(
+            "/api/v1/profile/",
+            {"onboarding_completed_at": "2026-09-04T12:00:00Z"},
+            format="json",
+        )
+        assert resp.status_code == 200
+        assert resp.data["onboarding_completed_at"] is not None
+
+        # Verify everything landed
+        profile = auth_client.get("/api/v1/profile/")
+        assert profile.data["field_states"]["height_cm"] == UserProfile.KNOWN
+        assert profile.data["field_states"]["current_weight_kg"] == UserProfile.KNOWN
+        assert profile.data["field_states"]["activity_level"] == UserProfile.KNOWN
+        assert profile.data["field_states"]["tracks_cycle"] == UserProfile.KNOWN
+
+        goal = auth_client.get("/api/v1/goal/")
+        assert goal.data["energy_direction"] == "cut"
+        assert goal.data["training_focus"] == "hypertrophy"
+
+    def test_skipped_fields_are_declined_not_null(self, auth_client):
+        # Step 1 — basics (required)
+        auth_client.patch(
+            "/api/v1/profile/",
+            {
+                "date_of_birth": "1990-01-01",
+                "sex_at_birth": "male",
+                "height_cm": "180.0",
+                "current_weight_kg": "85.0",
+                "unit_preference": "imperial",
+                "timezone": "America/New_York",
+            },
+            format="json",
+        )
+
+        # Step 2 — skip cycle tracking
+        auth_client.patch(
+            "/api/v1/profile/", {"declined_fields": ["tracks_cycle"]}, format="json"
+        )
+
+        # Step 5 — skip fitness inputs
+        auth_client.patch(
+            "/api/v1/profile/",
+            {"declined_fields": ["tracks_cycle", "waist_cm", "resting_hr", "activity_level"]},
+            format="json",
+        )
+
+        profile = auth_client.get("/api/v1/profile/")
+        assert profile.data["field_states"]["tracks_cycle"] == UserProfile.DECLINED
+        assert profile.data["field_states"]["waist_cm"] == UserProfile.DECLINED
+        assert profile.data["field_states"]["resting_hr"] == UserProfile.DECLINED
+        assert profile.data["field_states"]["activity_level"] == UserProfile.DECLINED
+
+    def test_rerunning_onboarding_updates_not_duplicates(self, auth_client):
+        # First run
+        auth_client.patch(
+            "/api/v1/profile/",
+            {"height_cm": "170.0", "current_weight_kg": "70.0"},
+            format="json",
+        )
+        auth_client.post(
+            "/api/v1/goal/",
+            {
+                "energy_direction": "cut",
+                "training_focus": "strength",
+                "target_rate_kg_per_week": "0.3",
+                "auto_adjust": True,
+            },
+            format="json",
+        )
+
+        # Second run — re-onboarding
+        auth_client.patch(
+            "/api/v1/profile/",
+            {"height_cm": "171.0", "current_weight_kg": "69.0"},
+            format="json",
+        )
+        auth_client.post(
+            "/api/v1/goal/",
+            {
+                "energy_direction": "maintain",
+                "training_focus": "general",
+                "target_rate_kg_per_week": "0.0",
+                "auto_adjust": True,
+            },
+            format="json",
+        )
+
+        # Profile was updated, not duplicated (it's a OneToOneField)
+        profile = auth_client.get("/api/v1/profile/")
+        assert profile.data["height_cm"] == "171.0"
+        assert profile.data["current_weight_kg"] == "69.0"
+
+        # Goal was versioned — the current one is the latest
+        goal = auth_client.get("/api/v1/goal/")
+        assert goal.data["energy_direction"] == "maintain"
+
 
 class TestGoal:
     def test_get_goal_is_null_before_any_goal_set(self, auth_client):
