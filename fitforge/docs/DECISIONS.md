@@ -95,3 +95,9 @@ product wants different numbers.
   `maintenance_*` and `trend_confidence`. The `_partial` fields are that
   marker for the rest — additive, nothing in §6's list was renamed or
   dropped.
+- **`DailyState` is write-only in this slice.** It's populated on every
+  sync and by the nightly rebuild, but `/api/v1/state/` always computes
+  live via the same `_compute_daily_metrics` the cache writer calls — so
+  the two can't drift, and correctness never depends on a warm cache. No
+  code reads `DailyState` yet; it exists for later slices (historical
+  trends, anything that shouldn't pay live-query cost per request).
