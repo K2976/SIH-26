@@ -107,6 +107,8 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
+MIN_SUPPORTED_VERSION = os.environ.get("MIN_SUPPORTED_VERSION", "1.0.0")
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "FitForge API",
     "DESCRIPTION": "Training, nutrition, and cycle data behind one adaptive engine.",
