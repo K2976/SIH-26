@@ -8,9 +8,51 @@
     <string name="nav_profile">Profile</string>
 
     <string name="dashboard_placeholder">Dashboard</string>
-    <string name="log_placeholder">Log</string>
     <string name="coach_placeholder">Coach</string>
     <string name="profile_placeholder">Profile</string>
+
+    <!-- Logbook — home -->
+    <string name="log_start_workout">Start workout</string>
+    <string name="log_history_title">History</string>
+    <string name="log_history_empty">No workouts logged yet.</string>
+    <string name="log_session_row">%1$s — %2$d min</string>
+
+    <!-- Logbook — active session -->
+    <string name="log_finish_session">Finish workout</string>
+    <string name="log_add_exercise">Add exercise</string>
+    <string name="log_elapsed_label">Elapsed: %1$s min</string>
+    <string name="log_volume_label">Volume: %1$.1f kg</string>
+    <string name="log_volume_label_lb">Volume: %1$.1f lb</string>
+    <string name="log_burn_label">Est. burn: %1$.0f kcal</string>
+    <string name="log_burn_unavailable">Est. burn unavailable — no bodyweight on file</string>
+    <string name="log_set_row">Set %1$d: %2$d × %3$.1f kg</string>
+    <string name="log_set_row_lb">Set %1$d: %2$d × %3$.1f lb</string>
+    <string name="log_set_row_bodyweight">Set %1$d: %2$d reps</string>
+
+    <!-- Logbook — exercise picker -->
+    <string name="log_picker_title">Pick an exercise</string>
+    <string name="log_picker_search_hint">Search exercises</string>
+    <string name="log_picker_empty">No exercises found.</string>
+
+    <!-- Logbook — add set -->
+    <string name="log_reps_label">Reps</string>
+    <string name="log_weight_label">Weight (kg)</string>
+    <string name="log_weight_label_lb">Weight (lb)</string>
+    <string name="log_warmup_label">Warm-up set</string>
+    <string name="log_log_set">Log set</string>
+    <string name="log_rest_timer_label">Rest: %1$d:%2$02d</string>
+    <string name="log_skip_rest">Skip rest</string>
+    <string name="log_done_exercise">Done with this exercise</string>
+
+    <!-- Logbook — session detail -->
+    <string name="log_session_detail_title">Workout</string>
+
+    <!-- Logbook — exercise history -->
+    <string name="log_exercise_history_title">%1$s</string>
+    <string name="log_pr_label">Personal record: %1$.1f kg</string>
+    <string name="log_pr_label_lb">Personal record: %1$.1f lb</string>
+    <string name="log_pr_none">No personal record yet</string>
+    <string name="log_exercise_history_empty">No sets logged for this exercise yet.</string>
 
     <string name="update_required_title">Update required</string>
     <string name="update_required_body">A new version of FitForge is required to continue. Please update the app from the Play Store.</string>
