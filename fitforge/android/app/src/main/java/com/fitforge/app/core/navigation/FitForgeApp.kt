@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fitforge.app.core.startup.AppStartupViewModel
 import com.fitforge.app.core.startup.StartupState
 import com.fitforge.app.feature.onboarding.LoginScreen
+import com.fitforge.app.feature.onboarding.SignupScreen
 import com.fitforge.app.feature.onboarding.UpdateRequiredScreen
 
 /** Root of the composable tree: version gate, then login, then the bottom-tab shell. */
@@ -35,10 +36,17 @@ fun FitForgeApp(viewModel: AppStartupViewModel = hiltViewModel()) {
             }
             is StartupState.Ready -> {
                 var isLoggedIn by remember { mutableStateOf(current.isLoggedIn) }
-                if (isLoggedIn) {
-                    FitForgeNavHost()
-                } else {
-                    LoginScreen(onLoginSuccess = { isLoggedIn = true })
+                var showSignup by remember { mutableStateOf(false) }
+                when {
+                    isLoggedIn -> FitForgeNavHost()
+                    showSignup -> SignupScreen(
+                        onSignupSuccess = { isLoggedIn = true },
+                        onGoToLogin = { showSignup = false },
+                    )
+                    else -> LoginScreen(
+                        onLoginSuccess = { isLoggedIn = true },
+                        onGoToSignup = { showSignup = true },
+                    )
                 }
             }
         }

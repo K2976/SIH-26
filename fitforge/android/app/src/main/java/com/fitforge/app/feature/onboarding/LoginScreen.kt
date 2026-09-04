@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,7 @@ import com.fitforge.app.R
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
+    onGoToSignup: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     var email by remember { mutableStateOf("") }
@@ -80,6 +82,10 @@ fun LoginScreen(
             } else {
                 Text(stringResource(R.string.login_button))
             }
+        }
+
+        TextButton(onClick = onGoToSignup, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+            Text(stringResource(R.string.login_go_to_signup))
         }
     }
 }
