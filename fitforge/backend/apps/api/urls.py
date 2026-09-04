@@ -1,10 +1,19 @@
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from apps.accounts.views import GoalView, LoginView, ProfileView, RefreshView, SignupView
+from apps.api.views import AppConfigView
+from apps.reference.views import ExerciseDeltaView, ManifestView
 
 urlpatterns = [
-    path("auth/token/", TokenObtainPairView.as_view(), name="token-obtain-pair"),
-    path("auth/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
+    path("auth/signup/", SignupView.as_view(), name="signup"),
+    path("auth/login/", LoginView.as_view(), name="login"),
+    path("auth/token/refresh/", RefreshView.as_view(), name="token-refresh"),
+    path("profile/", ProfileView.as_view(), name="profile"),
+    path("goal/", GoalView.as_view(), name="goal"),
+    path("app-config/", AppConfigView.as_view(), name="app-config"),
+    path("reference/manifest/", ManifestView.as_view(), name="reference-manifest"),
+    path("reference/exercises/", ExerciseDeltaView.as_view(), name="reference-exercises"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
 ]

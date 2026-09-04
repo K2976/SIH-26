@@ -1,0 +1,384 @@
+# Snapshot of the backend's OpenAPI schema, checked in so the Retrofit
+# client can be generated at build time without a running backend.
+# Trimmed to avoid the known openapi-generator kotlin-client bug with
+# BlankEnum/NullEnum nullable-enum fields — nullable enums are typed as
+# plain strings here. Regenerate in full and re-trim when needed:
+#   cd backend && python manage.py spectacular --file ../android/openapi/schema.yaml
+openapi: 3.0.3
+info:
+  title: FitForge API
+  version: 1.0.0
+  description: Training, nutrition, and cycle data behind one adaptive engine.
+paths:
+  /api/v1/app-config/:
+    get:
+      operationId: app_config_retrieve
+      tags:
+      - app-config
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppConfig'
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: 'Takes a set of user credentials and returns an access and refresh
+        JSON web
+
+        token pair to prove the authentication of those credentials.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+  /api/v1/auth/signup/:
+    post:
+      operationId: auth_signup_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: 'TokenRefreshView with an accurate response schema.
+
+
+        simplejwt''s own serializer only declares the request field; with
+
+        ROTATE_REFRESH_TOKENS on, the response body also carries a new
+
+        `refresh` token, which TokenPairSerializer already models.'
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+          description: ''
+  /api/v1/profile/:
+    get:
+      operationId: profile_retrieve
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: profile_partial_update
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/v1/goal/:
+    get:
+      operationId: goal_retrieve
+      tags:
+      - goal
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+    post:
+      operationId: goal_create
+      tags:
+      - goal
+      security:
+      - jwtAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoalRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Goal'
+          description: ''
+components:
+  schemas:
+    AppConfig:
+      type: object
+      properties:
+        min_supported_version:
+          type: string
+      required:
+      - min_supported_version
+    EmailTokenObtainPair:
+      type: object
+      description: Login by email instead of username, on top of the default User
+        model.
+      properties:
+        password:
+          type: string
+          writeOnly: true
+        email:
+          type: string
+          format: email
+      required:
+      - email
+      - password
+    Signup:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+    TokenPair:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    UserProfile:
+      type: object
+      description: User profile with three-state optional fields.
+      properties:
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        sex_at_birth:
+          type: string
+          nullable: true
+          enum:
+          - male
+          - female
+          - intersex
+        height_cm:
+          type: string
+          nullable: true
+        current_weight_kg:
+          type: string
+          nullable: true
+        waist_cm:
+          type: string
+          nullable: true
+        resting_hr:
+          type: integer
+          nullable: true
+        timezone:
+          type: string
+        unit_preference:
+          type: string
+          enum:
+          - metric
+          - imperial
+        activity_level:
+          type: string
+          nullable: true
+          enum:
+          - sedentary
+          - lightly_active
+          - moderately_active
+          - very_active
+          - extra_active
+        tracks_cycle:
+          type: boolean
+          nullable: true
+        declined_fields:
+          type: array
+          items:
+            type: string
+        onboarding_completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        field_states:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
+    PatchedUserProfile:
+      type: object
+      description: Partial update for UserProfile — all fields optional.
+      properties:
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        sex_at_birth:
+          type: string
+          nullable: true
+        height_cm:
+          type: string
+          nullable: true
+        current_weight_kg:
+          type: string
+          nullable: true
+        waist_cm:
+          type: string
+          nullable: true
+        resting_hr:
+          type: integer
+          nullable: true
+        timezone:
+          type: string
+        unit_preference:
+          type: string
+        activity_level:
+          type: string
+          nullable: true
+        tracks_cycle:
+          type: boolean
+          nullable: true
+        declined_fields:
+          type: array
+          items:
+            type: string
+        onboarding_completed_at:
+          type: string
+          format: date-time
+          nullable: true
+    Goal:
+      type: object
+      properties:
+        energy_direction:
+          type: string
+          enum:
+          - cut
+          - maintain
+          - gain
+          - not_tracking
+        training_focus:
+          type: string
+          enum:
+          - strength
+          - hypertrophy
+          - endurance
+          - general
+        target_rate_kg_per_week:
+          type: string
+        auto_adjust:
+          type: boolean
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          nullable: true
+          readOnly: true
+        clamp_reason:
+          type: string
+          nullable: true
+          readOnly: true
+    GoalRequest:
+      type: object
+      properties:
+        energy_direction:
+          type: string
+          enum:
+          - cut
+          - maintain
+          - gain
+          - not_tracking
+        training_focus:
+          type: string
+          enum:
+          - strength
+          - hypertrophy
+          - endurance
+          - general
+        target_rate_kg_per_week:
+          type: string
+        auto_adjust:
+          type: boolean
+      required:
+      - energy_direction
+      - training_focus
+      - target_rate_kg_per_week
+      - auto_adjust
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
