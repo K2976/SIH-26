@@ -1,6 +1,7 @@
 package com.fitforge.app.core.di
 
 import com.fitforge.app.BuildConfig
+import com.fitforge.app.core.network.AnySerializer
 import com.fitforge.app.core.network.AuthInterceptor
 import com.fitforge.app.core.network.RefreshApi
 import com.fitforge.app.core.network.TokenAuthenticator
@@ -8,11 +9,15 @@ import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
+import com.fitforge.app.data.remote.generated.apis.ReferenceApi
+import com.fitforge.app.data.remote.generated.apis.SyncApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,7 +31,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        serializersModule = SerializersModule { contextual(Any::class, AnySerializer) }
+    }
 
     @Provides
     @Singleton
@@ -97,4 +105,14 @@ object NetworkModule {
     @Singleton
     fun provideGoalApi(retrofit: Retrofit): GoalApi =
         retrofit.create(GoalApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSyncApi(retrofit: Retrofit): SyncApi =
+        retrofit.create(SyncApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideReferenceApi(retrofit: Retrofit): ReferenceApi =
+        retrofit.create(ReferenceApi::class.java)
 }
