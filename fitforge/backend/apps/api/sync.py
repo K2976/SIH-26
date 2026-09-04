@@ -1,5 +1,6 @@
 import datetime
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -21,9 +22,15 @@ MODEL_MAP = {
     "cycle_log": CycleLog,
 }
 
+# Imported here, after MODEL_MAP, to avoid a circular import: serializers.py
+# reads MODEL_MAP from this module at load time.
+from apps.api.serializers import SyncRequestSerializer, SyncResponseSerializer  # noqa: E402
+
+
 class SyncView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=SyncRequestSerializer, responses=SyncResponseSerializer)
     def post(self, request):
         events = request.data.get("events", [])
         if not isinstance(events, list):

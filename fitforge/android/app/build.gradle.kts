@@ -93,6 +93,7 @@ tasks.named<GenerateTask>("openApiGenerate") {
         mapOf(
             "serializationLibrary" to "kotlinx_serialization",
             "useCoroutines" to "true",
+            "dateLibrary" to "kotlinx-datetime"
         )
     )
     generateApiTests.set(false)

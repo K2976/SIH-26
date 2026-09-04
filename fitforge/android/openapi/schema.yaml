@@ -39,6 +39,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EmailTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
         required: true
       security:
       - {}
@@ -57,6 +63,12 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/Signup'
         required: true
@@ -88,6 +100,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
         required: true
       responses:
         '200':
@@ -95,38 +113,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenPair'
-          description: ''
-  /api/v1/profile/:
-    get:
-      operationId: profile_retrieve
-      tags:
-      - profile
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserProfile'
-          description: ''
-    patch:
-      operationId: profile_partial_update
-      tags:
-      - profile
-      security:
-      - jwtAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUserProfile'
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserProfile'
           description: ''
   /api/v1/goal/:
     get:
@@ -146,20 +132,152 @@ paths:
       operationId: goal_create
       tags:
       - goal
-      security:
-      - jwtAuth: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GoalRequest'
+              $ref: '#/components/schemas/Goal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Goal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Goal'
         required: true
+      security:
+      - jwtAuth: []
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Goal'
+          description: ''
+  /api/v1/profile/:
+    get:
+      operationId: profile_retrieve
+      tags:
+      - profile
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    put:
+      operationId: profile_update
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: profile_partial_update
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/v1/reference/exercises/:
+    get:
+      operationId: reference_exercises_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exercise'
+          description: ''
+  /api/v1/reference/manifest/:
+    get:
+      operationId: reference_manifest_retrieve
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+          description: ''
+  /api/v1/sync/:
+    post:
+      operationId: sync_create
+      tags:
+      - sync
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResponse'
           description: ''
 components:
   schemas:
@@ -184,6 +302,207 @@ components:
       required:
       - email
       - password
+    EnergyDirectionEnum:
+      enum:
+      - cut
+      - maintain
+      - gain
+      - not_tracking
+      type: string
+      description: '* `cut` - Cut
+
+        * `maintain` - Maintain
+
+        * `gain` - Gain
+
+        * `not_tracking` - Not tracking'
+    Exercise:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        instructions: {}
+        primary_muscles: {}
+        secondary_muscles: {}
+        equipment:
+          type: string
+          maxLength: 64
+        movement_pattern:
+          $ref: '#/components/schemas/MovementPatternEnum'
+        form_cues: {}
+        met_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+        is_bodyweight:
+          type: boolean
+        pose_config:
+          nullable: true
+        camera_position:
+          type: string
+          nullable: true
+          enum:
+          - front
+          - side
+          - 45_degree
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - instructions
+      - met_value
+      - movement_pattern
+      - name
+      - slug
+    Goal:
+      type: object
+      properties:
+        energy_direction:
+          $ref: '#/components/schemas/EnergyDirectionEnum'
+        training_focus:
+          $ref: '#/components/schemas/TrainingFocusEnum'
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
+        auto_adjust:
+          type: boolean
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        clamp_reason:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - clamp_reason
+      - ended_at
+      - energy_direction
+      - started_at
+      - training_focus
+    Manifest:
+      type: object
+      properties:
+        reference_version:
+          type: integer
+        table_counts:
+          type: object
+          additionalProperties:
+            type: integer
+      required:
+      - reference_version
+      - table_counts
+    MovementPatternEnum:
+      enum:
+      - squat
+      - hinge
+      - lunge
+      - push_horizontal
+      - push_vertical
+      - pull_horizontal
+      - pull_vertical
+      - carry
+      - core
+      - isolation
+      - plyometric
+      - cardio
+      type: string
+      description: '* `squat` - Squat
+
+        * `hinge` - Hinge
+
+        * `lunge` - Lunge
+
+        * `push_horizontal` - Push (horizontal)
+
+        * `push_vertical` - Push (vertical)
+
+        * `pull_horizontal` - Pull (horizontal)
+
+        * `pull_vertical` - Pull (vertical)
+
+        * `carry` - Carry
+
+        * `core` - Core
+
+        * `isolation` - Isolation
+
+        * `plyometric` - Plyometric
+
+        * `cardio` - Cardio'
+    PatchedUserProfile:
+      type: object
+      properties:
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        sex_at_birth:
+          type: string
+          nullable: true
+          enum: &id001
+          - male
+          - female
+          - intersex
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        current_weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        waist_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        resting_hr:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        timezone:
+          type: string
+          maxLength: 64
+        unit_preference:
+          $ref: '#/components/schemas/UnitPreferenceEnum'
+        activity_level:
+          type: string
+          nullable: true
+          enum: &id002
+          - sedentary
+          - lightly_active
+          - moderately_active
+          - very_active
+          - extra_active
+        tracks_cycle:
+          type: boolean
+          nullable: true
+        declined_fields: {}
+        onboarding_completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        field_states:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
     Signup:
       type: object
       properties:
@@ -196,6 +515,105 @@ components:
       required:
       - email
       - password
+    SyncError:
+      type: object
+      properties:
+        index:
+          type: integer
+        client_uuid:
+          type: string
+          nullable: true
+        error:
+          type: string
+      required:
+      - client_uuid
+      - error
+      - index
+    SyncEvent:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        client_uuid:
+          type: string
+          format: uuid
+        occurred_at:
+          type: string
+          format: date-time
+        utc_offset:
+          type: string
+          default: +00:00
+        source:
+          type: string
+          default: manual
+        supersedes:
+          type: string
+          format: uuid
+          nullable: true
+        planned_session:
+          type: string
+          format: uuid
+          nullable: true
+        duration_minutes:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+        session:
+          type: string
+          format: uuid
+          nullable: true
+        exercise:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        set_index:
+          type: integer
+        reps:
+          type: integer
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+          nullable: true
+        rpe:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
+        is_warmup:
+          type: boolean
+          default: false
+        rom_achieved:
+          type: string
+          nullable: true
+        tempo_ms:
+          type: integer
+          nullable: true
+      required:
+      - client_uuid
+      - occurred_at
+      - type
+    SyncRequest:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncEvent'
+      required:
+      - events
+    SyncResponse:
+      type: object
+      properties:
+        success_count:
+          type: integer
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncError'
+      required:
+      - errors
+      - success_count
     TokenPair:
       type: object
       properties:
@@ -217,9 +635,56 @@ components:
       required:
       - access
       - refresh
+    TrainingFocusEnum:
+      enum:
+      - strength
+      - hypertrophy
+      - endurance
+      - general
+      type: string
+      description: '* `strength` - Strength
+
+        * `hypertrophy` - Hypertrophy
+
+        * `endurance` - Endurance
+
+        * `general` - General'
+    TypeEnum:
+      enum:
+      - planned_session
+      - workout_session
+      - set_log
+      - meal_log
+      - meal_item
+      - weight_log
+      - sleep_log
+      - cycle_log
+      type: string
+      description: '* `planned_session` - planned_session
+
+        * `workout_session` - workout_session
+
+        * `set_log` - set_log
+
+        * `meal_log` - meal_log
+
+        * `meal_item` - meal_item
+
+        * `weight_log` - weight_log
+
+        * `sleep_log` - sleep_log
+
+        * `cycle_log` - cycle_log'
+    UnitPreferenceEnum:
+      enum:
+      - metric
+      - imperial
+      type: string
+      description: '* `metric` - Metric
+
+        * `imperial` - Imperial'
     UserProfile:
       type: object
-      description: User profile with three-state optional fields.
       properties:
         date_of_birth:
           type: string
@@ -228,45 +693,40 @@ components:
         sex_at_birth:
           type: string
           nullable: true
-          enum:
-          - male
-          - female
-          - intersex
+          enum: *id001
         height_cm:
           type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
           nullable: true
         current_weight_kg:
           type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
           nullable: true
         waist_cm:
           type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
           nullable: true
         resting_hr:
           type: integer
+          maximum: 32767
+          minimum: 0
           nullable: true
         timezone:
           type: string
+          maxLength: 64
         unit_preference:
-          type: string
-          enum:
-          - metric
-          - imperial
+          $ref: '#/components/schemas/UnitPreferenceEnum'
         activity_level:
           type: string
           nullable: true
-          enum:
-          - sedentary
-          - lightly_active
-          - moderately_active
-          - very_active
-          - extra_active
+          enum: *id002
         tracks_cycle:
           type: boolean
           nullable: true
-        declined_fields:
-          type: array
-          items:
-            type: string
+        declined_fields: {}
         onboarding_completed_at:
           type: string
           format: date-time
@@ -276,107 +736,8 @@ components:
           additionalProperties:
             type: string
           readOnly: true
-    PatchedUserProfile:
-      type: object
-      description: Partial update for UserProfile — all fields optional.
-      properties:
-        date_of_birth:
-          type: string
-          format: date
-          nullable: true
-        sex_at_birth:
-          type: string
-          nullable: true
-        height_cm:
-          type: string
-          nullable: true
-        current_weight_kg:
-          type: string
-          nullable: true
-        waist_cm:
-          type: string
-          nullable: true
-        resting_hr:
-          type: integer
-          nullable: true
-        timezone:
-          type: string
-        unit_preference:
-          type: string
-        activity_level:
-          type: string
-          nullable: true
-        tracks_cycle:
-          type: boolean
-          nullable: true
-        declined_fields:
-          type: array
-          items:
-            type: string
-        onboarding_completed_at:
-          type: string
-          format: date-time
-          nullable: true
-    Goal:
-      type: object
-      properties:
-        energy_direction:
-          type: string
-          enum:
-          - cut
-          - maintain
-          - gain
-          - not_tracking
-        training_focus:
-          type: string
-          enum:
-          - strength
-          - hypertrophy
-          - endurance
-          - general
-        target_rate_kg_per_week:
-          type: string
-        auto_adjust:
-          type: boolean
-        started_at:
-          type: string
-          format: date-time
-          readOnly: true
-        ended_at:
-          type: string
-          format: date-time
-          nullable: true
-          readOnly: true
-        clamp_reason:
-          type: string
-          nullable: true
-          readOnly: true
-    GoalRequest:
-      type: object
-      properties:
-        energy_direction:
-          type: string
-          enum:
-          - cut
-          - maintain
-          - gain
-          - not_tracking
-        training_focus:
-          type: string
-          enum:
-          - strength
-          - hypertrophy
-          - endurance
-          - general
-        target_rate_kg_per_week:
-          type: string
-        auto_adjust:
-          type: boolean
       required:
-      - energy_direction
-      - training_focus
-      - target_rate_kg_per_week
-      - auto_adjust
+      - field_states
   securitySchemes:
     jwtAuth:
       type: http
