@@ -1,0 +1,161 @@
+--------- beginning of crash
+02-25 10:45:57.716   739   739 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 739 (init), pid 739 (init)
+02-25 10:45:57.889   739   739 F libc    : Crash due to signal: crash_dump helper failed to exec, or was killed
+09-03 20:36:01.244  4283  4283 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 4283 (init), pid 4283 (init)
+09-03 20:36:01.262  4283  4283 F libc    : Crash due to signal: crash_dump helper failed to exec, or was killed
+09-04 17:06:24.202 32593 32698 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 32698 (GLThread 317), pid 32593 (appsomniacs.mmc)
+09-04 17:06:24.882 19886 19886 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+09-04 17:06:24.882 19886 19886 F DEBUG   : Build fingerprint: 'Nothing/PongIND/Pong:16/BQ2A.250721.001-BP2A.250605.031.A3/2608181726:user/release-keys'
+09-04 17:06:24.882 19886 19886 F DEBUG   : Revision: '0'
+09-04 17:06:24.882 19886 19886 F DEBUG   : ABI: 'arm64'
+09-04 17:06:24.882 19886 19886 F DEBUG   : Timestamp: 2026-09-04 17:06:24.340774750+0530
+09-04 17:06:24.882 19886 19886 F DEBUG   : Process uptime: 3199s
+09-04 17:06:24.882 19886 19886 F DEBUG   : Cmdline: com.appsomniacs.mmc
+09-04 17:06:24.882 19886 19886 F DEBUG   : pid: 32593, tid: 32698, name: GLThread 317  >>> com.appsomniacs.mmc <<<
+09-04 17:06:24.882 19886 19886 F DEBUG   : uid: 10345
+09-04 17:06:24.882 19886 19886 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+09-04 17:06:24.882 19886 19886 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+09-04 17:06:24.882 19886 19886 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0000000000000000
+09-04 17:06:24.882 19886 19886 F DEBUG   : Cause: null pointer dereference
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x0  0000007b02782000  x1  0000000000000000  x2  000000000017fff4  x3  b400007cad4ffb60
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x4  000000000017fff4  x5  0000007b02901ff4  x6  0000000000000000  x7  0000000000000000
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x8  000000000017fff4  x9  0000000000000000  x10 0000000000000000  x11 0000000000010000
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x12 0bf5703d04036001  x13 0000000000000000  x14 0000007b02782000  x15 b400007e4d421520
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x16 0000007c04d82f98  x17 0000007f03b2bec0  x18 0000000000000001  x19 b400007c7d459c50
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x20 b400007dfd6426f8  x21 000000000000002c  x22 0000000000000000  x23 0000007b127d7c60
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x24 0000000000010000  x25 0000007b02782000  x26 0000000000000000  x27 0000000000000000
+09-04 17:06:24.882 19886 19886 F DEBUG   :     x28 b400007e1d49979c  x29 0000007b127d77d0
+09-04 17:06:24.882 19886 19886 F DEBUG   :     lr  0000007c049f67d8  sp  0000007b127d7760  pc  0000007f03b2bfa8  pst 0000000020001000
+09-04 17:06:24.882 19886 19886 F DEBUG   : 31 total frames
+09-04 17:06:24.882 19886 19886 F DEBUG   : backtrace:
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #00 pc 0000000000069fa8  /apex/com.android.runtime/lib64/bionic/libc.so (__memcpy_aarch64_simd+232) (BuildId: 29adf65dd824ced22e36dcd787c50f05)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #01 pc 00000000001b97d4  /vendor/lib64/egl/libGLESv2_adreno.so (!!!0000!6642a709aefb598e3c7ff817eaf381!0c393b63cf!+1988) (BuildId: c7f6cd3e64a5948c2bef140b1acf5f16)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #02 pc 0000000000214d84  /vendor/lib64/egl/libGLESv2_adreno.so (!!!0000!9d2340256df89912f04e05d7f782e6!0c393b63cf!+5340) (BuildId: c7f6cd3e64a5948c2bef140b1acf5f16)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #03 pc 0000000000213884  /vendor/lib64/egl/libGLESv2_adreno.so (!!!0000!e114df8606e4f838536d985ffc10f8!0c393b63cf!+20) (BuildId: c7f6cd3e64a5948c2bef140b1acf5f16)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #04 pc 000000000019e064  /vendor/lib64/egl/libGLESv2_adreno.so (!!!0000!6b200851123c7898055fe62ff9f71f!0c393b63cf!+2452) (BuildId: c7f6cd3e64a5948c2bef140b1acf5f16)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #05 pc 000000000019c5fc  /vendor/lib64/egl/libGLESv2_adreno.so (!!!0000!77df12deb6a622478efa8fb9929034!0c393b63cf!+564) (BuildId: c7f6cd3e64a5948c2bef140b1acf5f16)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #06 pc 0000000000cea688  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCTextureAtlas::drawNumberOfQuads(unsigned int, unsigned int)+348) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #07 pc 0000000000cea51c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCTextureAtlas::drawQuads()+32) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #08 pc 0000000000cbcf0c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCSpriteBatchNode::draw()+448) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #09 pc 0000000000cbba7c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCSpriteBatchNode::visit()+148) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #10 pc 0000000000c2435c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCNode::visit()+392) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #11 pc 0000000000ade610  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::extension::CCScale9Sprite::visit()+56) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #12 pc 0000000000c2435c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCNode::visit()+392) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #13 pc 0000000000c2435c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCNode::visit()+392) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #14 pc 0000000000c2435c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCNode::visit()+392) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #15 pc 0000000000c2435c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCNode::visit()+392) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #16 pc 0000000000c3b934  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCDirector::drawScene()+132) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #17 pc 0000000000c3d73c  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (cocos2d::CCDisplayLinkDirector::mainLoop()+72) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #18 pc 0000000000caae08  /data/app/~~PdTJ-p4Tmrj9jVT4bLaHmw==/com.appsomniacs.mmc-hHhwLd-zckU25cI9KSxdtg==/split_config.arm64_v8a.apk!libcocos2dcpp.so (offset 0xdc000) (Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeRender+28) (BuildId: 42b48976ee13e66fecb90f401748c8454859f144)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #19 pc 0000000000d582e8  /data/misc/apexdata/com.android.art/dalvik-cache/arm64/boot.oat (art_jni_trampoline+104)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #20 pc 000000000200e914  /memfd:jit-cache (deleted) (offset 0x2000000) (org.cocos2dx.lib.Cocos2dxRenderer.onDrawFrame+36)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #21 pc 000000000072b910  /apex/com.android.art/lib64/libart.so (nterp_helper+2176) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #22 pc 000000000021a02e  /system/framework/framework.jar (offset 0x12a0000) (android.opengl.GLSurfaceView$GLThread.guardedRun+1162)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #23 pc 000000000072b884  /apex/com.android.art/lib64/libart.so (nterp_helper+2036) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #24 pc 000000000021a688  /system/framework/framework.jar (offset 0x12a0000) (android.opengl.GLSurfaceView$GLThread.run+52)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #25 pc 00000000002aaf94  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #26 pc 00000000002a9268  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+148) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #27 pc 00000000004e1a68  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallback(void*)+1384) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #28 pc 00000000004e14ec  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallbackWithUffdGc(void*)+12) (BuildId: cecb684d19b4f44ee3cbd66142c315f4)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #29 pc 0000000000080fb0  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+184) (BuildId: 29adf65dd824ced22e36dcd787c50f05)
+09-04 17:06:24.882 19886 19886 F DEBUG   :       #30 pc 0000000000073770  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+68) (BuildId: 29adf65dd824ced22e36dcd787c50f05)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: FATAL EXCEPTION: main
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: Process: com.fitforge.app, PID: 24026
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: kotlinx.serialization.SerializationException: Serializer for class 'LocalDate' is not found.
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: Please ensure that class is marked as '@Serializable' and that the serialization compiler plugin is applied.
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.internal.Platform_commonKt.serializerNotRegistered(Platform.common.kt:90)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.ContextualSerializer.serializer(ContextualSerializer.kt:51)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.ContextualSerializer.serialize(ContextualSerializer.kt:63)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.json.internal.StreamingJsonEncoder.encodeSerializableValue(StreamingJsonEncoder.kt:259)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.encoding.Encoder.encodeNullableSerializableValue(Encoding.kt:300)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.encoding.AbstractEncoder.encodeNullableSerializableValue(AbstractEncoder.kt:18)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.encoding.AbstractEncoder.encodeNullableSerializableElement(AbstractEncoder.kt:90)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.json.internal.StreamingJsonEncoder.encodeNullableSerializableElement(StreamingJsonEncoder.kt:162)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.data.remote.generated.models.PatchedUserProfile.write$Self$app(PatchedUserProfile.kt:39)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.data.remote.generated.models.PatchedUserProfile$$serializer.serialize(PatchedUserProfile.kt:39)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.data.remote.generated.models.PatchedUserProfile$$serializer.serialize(PatchedUserProfile.kt:39)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.json.internal.StreamingJsonEncoder.encodeSerializableValue(StreamingJsonEncoder.kt:259)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.json.internal.JsonStreamsKt.encodeByWriter(JsonStreams.kt:99)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.serialization.json.Json.encodeToString(Json.kt:125)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.converter.kotlinx.serialization.Serializer$FromString.toRequestBody(Serializer.kt:31)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.converter.kotlinx.serialization.SerializationStrategyConverter.convert(SerializationStrategyConverter.kt:13)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.converter.kotlinx.serialization.SerializationStrategyConverter.convert(SerializationStrategyConverter.kt:8)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.ParameterHandler$Body.apply(ParameterHandler.java:438)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.RequestFactory.create(RequestFactory.java:131)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.OkHttpCall.createRawCall(OkHttpCall.java:211)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.OkHttpCall.enqueue(OkHttpCall.java:133)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.KotlinExtensions.awaitResponse(KotlinExtensions.kt:97)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.HttpServiceMethod$SuspendForResponse.adapt(HttpServiceMethod.java:205)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.HttpServiceMethod.invoke(HttpServiceMethod.java:160)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at retrofit2.Retrofit$1.invoke(Retrofit.java:177)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at java.lang.reflect.Proxy.invoke(Proxy.java:1009)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at $Proxy4.profilePartialUpdate(Unknown Source)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.feature.onboarding.OnboardingViewModel$saveBasics$1.invokeSuspend(OnboardingViewModel.kt:201)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.internal.DispatchedContinuationKt.resumeCancellableWith(DispatchedContinuation.kt:359)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.intrinsics.CancellableKt.startCoroutineCancellable(Cancellable.kt:26)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.CoroutineStart.invoke(CoroutineStart.kt:358)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.AbstractCoroutine.start(AbstractCoroutine.kt:124)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt__Builders_commonKt.launch(Builders.common.kt:52)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt.launch(dex-id-b70df922a1e3db06c93a8bc22ab587554ab8a385:1)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt__Builders_commonKt.launch$default(Builders.common.kt:43)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at kotlinx.coroutines.BuildersKt.launch$default(dex-id-b70df922a1e3db06c93a8bc22ab587554ab8a385:1)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.feature.onboarding.OnboardingViewModel.saveBasics(OnboardingViewModel.kt:198)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.feature.onboarding.OnboardingScreenKt$OnboardingScreen$3$1$3$6$1.invoke(OnboardingScreen.kt:90)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.fitforge.app.feature.onboarding.OnboardingScreenKt$OnboardingScreen$3$1$3$6$1.invoke(OnboardingScreen.kt:90)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.foundation.AbstractClickableNode.performClick(Clickable.kt:1701)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.foundation.ClickableNode.handleUpEvent(Clickable.kt:950)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.foundation.ClickableNode.onPointerEvent-H0pRuoY(Clickable.kt:884)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.Node.dispatchMainEventPass(HitPathTracker.kt:445)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.Node.dispatchMainEventPass(HitPathTracker.kt:431)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.Node.dispatchMainEventPass(HitPathTracker.kt:431)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.Node.dispatchMainEventPass(HitPathTracker.kt:431)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.NodeParent.dispatchMainEventPass(HitPathTracker.kt:285)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.HitPathTracker.dispatchChanges(HitPathTracker.kt:182)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.input.pointer.PointerInputEventProcessor.process-BIzXfog(PointerInputEventProcessor.kt:116)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidComposeView.sendMotionEvent-8iAsVTc(AndroidComposeView.android.kt:2869)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidComposeView.handleMotionEvent-8iAsVTc(AndroidComposeView.android.kt:2809)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at androidx.compose.ui.platform.AndroidComposeView.dispatchTouchEvent(AndroidComposeView.android.kt:2630)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3179)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2856)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3179)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2856)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3179)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2856)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:3179)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:2856)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.android.internal.policy.DecorView.superDispatchTouchEvent(DecorView.java:529)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.android.internal.policy.PhoneWindow.superDispatchTouchEvent(PhoneWindow.java:2037)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.app.Activity.dispatchTouchEvent(Activity.java:4652)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.android.internal.policy.DecorView.dispatchTouchEvent(DecorView.java:478)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.View.dispatchPointerEvent(View.java:17046)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$ViewPostImeInputStage.processPointerEvent(ViewRootImpl.java:8334)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$ViewPostImeInputStage.onProcess(ViewRootImpl.java:8090)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:7457)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:7514)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:7480)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$AsyncInputStage.forward(ViewRootImpl.java:7646)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:7488)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$AsyncInputStage.apply(ViewRootImpl.java:7703)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:7461)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.onDeliverToNext(ViewRootImpl.java:7514)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.forward(ViewRootImpl.java:7480)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.apply(ViewRootImpl.java:7488)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$InputStage.deliver(ViewRootImpl.java:7461)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl.deliverInputEvent(ViewRootImpl.java:10671)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl.doProcessInputEvents(ViewRootImpl.java:10622)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl.enqueueInputEvent(ViewRootImpl.java:10581)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl.processRawInputEvent(ViewRootImpl.java:11048)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.ViewRootImpl$WindowInputEventReceiver.onInputEvent(ViewRootImpl.java:10796)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.view.InputEventReceiver.dispatchInputEvent(InputEventReceiver.java:316)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.os.MessageQueue.nativePollOnce(Native Method)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.os.MessageQueue.nextLegacy(MessageQueue.java:909)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.os.MessageQueue.next(MessageQueue.java:1021)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:213)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:392)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:9248)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:611)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:944)
+09-04 17:17:01.427 24026 24026 E AndroidRuntime: 	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@84d253f, Dispatchers.Main.immediate]

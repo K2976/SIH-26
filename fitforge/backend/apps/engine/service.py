@@ -19,8 +19,10 @@ from apps.accounts.models import Goal
 from apps.diary.models import MealItem, MealLog, PlannedSession, SetLog, WeightLog, WorkoutSession
 from apps.diary.utils import resolve_local_day
 from apps.engine import calculator as calc
+from apps.engine.adaptive import compute_plan_delta
 from apps.engine.constants import ADHERENCE_WINDOW_DAYS, WEIGHT_TREND_WINDOW_DAYS
 from apps.engine.models import DailyState
+from apps.engine.types import UserState
 
 _DIARY_ENTRY_MODELS = (WorkoutSession, MealLog, WeightLog, PlannedSession)
 
@@ -211,6 +213,85 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
     insufficient = calc.insufficient_data_for_adaptation(missing_food, missing_weight)
     sufficiency = calc.energy_data_sufficiency(missing_food, maintenance.kcal is not None)
 
+    # 14-day window for intake and weights
+    missing_food_14d = calc._missing_days(frozenset(calories_by_day), as_of, 14)
+    food_logged_days_14d = 14 - missing_food_14d
+    weight_logged_days_14d = 14 - missing_weight
+    intake_14d_vals = [
+        sum(calories_by_day[as_of - datetime.timedelta(days=i)])
+        for i in range(14)
+        if (as_of - datetime.timedelta(days=i)) in calories_by_day
+    ]
+    avg_daily_intake_14d = sum(intake_14d_vals) / len(intake_14d_vals) if intake_14d_vals else None
+
+    # Planned sessions in week
+    week_planned = [s for s in planned_records if week_start <= s.local_date <= week_end]
+    remaining_sessions = sum(1 for s in week_planned if s.local_date >= as_of and s.status == "pending")
+    skipped_sessions = sum(1 for s in week_planned if s.local_date <= as_of and s.status == "skipped")
+    days_remaining_in_week = max(0, (week_end - as_of).days + 1)
+
+    # Trailing 7-day average volume
+    trailing_volume_sets = [
+        s for s in set_records
+        if as_of - datetime.timedelta(days=7) <= s.local_date < as_of
+    ]
+    if trailing_volume_sets:
+        trailing_vols = [calc._set_volume_kg(s) for s in trailing_volume_sets]
+        valid_vols = [v for v in trailing_vols if v is not None]
+        trailing_7d_volume_avg_kg = sum(valid_vols) / 7.0 if valid_vols else None
+    else:
+        trailing_7d_volume_avg_kg = None
+
+    # Trailing 7-day average calories
+    trailing_kcal_vals = [
+        sum(calories_by_day[as_of - datetime.timedelta(days=i)])
+        for i in range(1, 8)
+        if (as_of - datetime.timedelta(days=i)) in calories_by_day
+    ]
+    trailing_7d_kcal_avg = sum(trailing_kcal_vals) / len(trailing_kcal_vals) if trailing_kcal_vals else None
+
+    plan_delta = None
+    readiness_ceiling_today = None
+    if maintenance.kcal is not None or vol_planned.value is not None:
+        engine_state = UserState(
+            maintenance_kcal=maintenance.kcal,
+            maintenance_source=maintenance.source,
+            maintenance_confidence=maintenance.confidence,
+            target_kcal_today=target,
+            consumed_kcal_today=consumed.value,
+            week_balance_kcal=balance.value,
+            energy_direction=goal.energy_direction if goal else None,
+            target_rate_kg_per_week=float(goal.target_rate_kg_per_week) if goal and goal.target_rate_kg_per_week is not None else None,
+            weight_trend_kg_per_week=trend.kg_per_week,
+            weight_trend_confidence=trend.confidence,
+            latest_weight_kg=bodyweight_today,
+            insufficient_data_for_adaptation=insufficient,
+            missing_food_days_14d=missing_food_14d,
+            missing_weight_days_14d=missing_weight,
+            food_logged_days_14d=food_logged_days_14d,
+            weight_logged_days_14d=weight_logged_days_14d,
+            week_volume_planned_kg=vol_planned.value,
+            week_volume_completed_kg=vol_completed.value,
+            remaining_sessions=remaining_sessions,
+            skipped_sessions=skipped_sessions,
+            days_remaining_in_week=days_remaining_in_week,
+            trailing_7d_volume_avg_kg=trailing_7d_volume_avg_kg,
+            days_since_rest=rest.value,
+            trailing_7d_kcal_avg=trailing_7d_kcal_avg,
+            sex_at_birth=profile.sex_at_birth if profile else None,
+            avg_daily_intake_14d=avg_daily_intake_14d,
+        )
+        delta = compute_plan_delta(engine_state)
+        readiness_ceiling_today = delta.changes.get("readiness_ceiling")
+        plan_delta = {
+            "target_kcal": delta.changes.get("target_kcal"),
+            "volume_today_kg": delta.changes.get("volume_today_kg"),
+            "readiness_ceiling": delta.changes.get("readiness_ceiling"),
+            "dropped_sessions": delta.changes.get("dropped_sessions"),
+            "reason": delta.reason,
+            "clamped_by": delta.clamped_by,
+        }
+
     return {
         "energy": {
             "maintenance_kcal": maintenance.kcal,
@@ -234,9 +315,7 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
             "volume_by_muscle_group_partial": vol_by_muscle.partial,
             "adherence_7d": adherence.value,
             "adherence_7d_partial": adherence.partial,
-            # Budget 3 (§7) isn't built yet — a future slice's job, and
-            # CLAUDE.md is explicit that cycle phase must never feed it.
-            "readiness_ceiling_today": None,
+            "readiness_ceiling_today": readiness_ceiling_today,
             "days_since_rest": rest.value,
             "days_since_rest_partial": rest.partial,
         },
@@ -251,6 +330,7 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
             "goal_recently_changed": recently_changed,
             "insufficient_data_for_adaptation": insufficient,
         },
+        "plan_delta": plan_delta,
     }
 
 
@@ -283,6 +363,7 @@ def compute_user_state(user, as_of: datetime.date | None = None) -> dict:
         },
         "energy": metrics["energy"],
         "training": metrics["training"],
+        "plan_delta": metrics["plan_delta"],
         "body": {
             "latest_weight_kg": metrics["body_trend"]["latest_weight_kg"],
             "weight_trend_kg_per_week": metrics["body_trend"]["weight_trend_kg_per_week"],

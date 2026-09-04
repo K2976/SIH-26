@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git config *)",
+      "Bash(git -C /Users/kartik/Documents/SIH-26 log --oneline -5 -- fitforge/backend)"
+    ]
+  }
+}

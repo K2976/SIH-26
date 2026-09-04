@@ -79,12 +79,22 @@ class FlagsStateSerializer(serializers.Serializer):
     insufficient_data_for_adaptation = serializers.BooleanField()
 
 
+class PlanDeltaSerializer(serializers.Serializer):
+    target_kcal = serializers.FloatField(allow_null=True)
+    volume_today_kg = serializers.FloatField(allow_null=True)
+    readiness_ceiling = serializers.FloatField(allow_null=True)
+    dropped_sessions = serializers.IntegerField(allow_null=True)
+    reason = serializers.CharField(allow_null=True)
+    clamped_by = serializers.ListField(child=serializers.CharField(), default=list)
+
+
 class UserStateSerializer(serializers.Serializer):
     as_of = serializers.DateField()
     profile = ProfileStateSerializer()
     goal = GoalStateSerializer()
     energy = EnergyStateSerializer()
     training = TrainingStateSerializer()
+    plan_delta = PlanDeltaSerializer(allow_null=True)
     body = BodyStateSerializer()
     cycle = CycleStateSerializer()
     flags = FlagsStateSerializer()

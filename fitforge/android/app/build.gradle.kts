@@ -152,6 +152,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.datetime)
 
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.espresso.core)

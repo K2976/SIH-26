@@ -86,6 +86,8 @@ class TestStateEndpointEmptyUser:
         assert flags["goal_recently_changed"] is False
         assert flags["insufficient_data_for_adaptation"] is True
 
+        assert data["plan_delta"] is None
+
     def test_requires_auth(self):
         resp = APIClient().get(reverse("state"))
         assert resp.status_code == 401
@@ -181,3 +183,10 @@ class TestStateEndpointSeededUser:
         assert body["trend_confidence"] is not None
 
         assert data["flags"]["missing_weight_days_14d"] < 14
+
+        plan_delta = data["plan_delta"]
+        assert plan_delta is not None
+        assert plan_delta["target_kcal"] is not None
+        assert len(plan_delta["reason"]) > 0
+        assert isinstance(plan_delta["clamped_by"], list)
+        assert training["readiness_ceiling_today"] is not None

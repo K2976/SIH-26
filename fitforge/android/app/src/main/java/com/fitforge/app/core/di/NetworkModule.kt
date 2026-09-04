@@ -10,6 +10,7 @@ import com.fitforge.app.data.remote.generated.apis.AuthApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import com.fitforge.app.data.remote.generated.apis.ReferenceApi
+import com.fitforge.app.data.remote.generated.apis.StateApi
 import com.fitforge.app.data.remote.generated.apis.SyncApi
 import com.fitforge.app.data.remote.generated.infrastructure.Serializer
 import dagger.Module
@@ -122,4 +123,9 @@ object NetworkModule {
     @Singleton
     fun provideReferenceApi(retrofit: Retrofit): ReferenceApi =
         retrofit.create(ReferenceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStateApi(retrofit: Retrofit): StateApi =
+        retrofit.create(StateApi::class.java)
 }

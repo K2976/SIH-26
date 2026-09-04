@@ -253,6 +253,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Manifest'
           description: ''
+  /api/v1/state/:
+    get:
+      operationId: state_retrieve
+      tags:
+      - state
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserState'
+          description: ''
   /api/v1/sync/:
     post:
       operationId: sync_create
@@ -738,6 +752,299 @@ components:
           readOnly: true
       required:
       - field_states
+    BodyState:
+      type: object
+      properties:
+        latest_weight_kg:
+          type: number
+          format: double
+          nullable: true
+        weight_trend_kg_per_week:
+          type: number
+          format: double
+          nullable: true
+        trend_confidence:
+          type: number
+          format: double
+          nullable: true
+        fitness_age:
+          type: number
+          format: double
+          nullable: true
+        fitness_age_inputs:
+          nullable: true
+      required:
+      - fitness_age
+      - fitness_age_inputs
+      - latest_weight_kg
+      - trend_confidence
+      - weight_trend_kg_per_week
+    CycleState:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        tracking_mode:
+          type: string
+          nullable: true
+        phase:
+          type: string
+          nullable: true
+        cycle_day:
+          type: integer
+          nullable: true
+        confidence:
+          type: number
+          format: double
+          nullable: true
+        days_until_predicted_period:
+          type: integer
+          nullable: true
+        learned_pattern:
+          nullable: true
+        energy_availability_flag:
+          type: string
+          nullable: true
+      required:
+      - confidence
+      - cycle_day
+      - days_until_predicted_period
+      - enabled
+      - energy_availability_flag
+      - learned_pattern
+      - phase
+      - tracking_mode
+    EnergyState:
+      type: object
+      properties:
+        maintenance_kcal:
+          type: number
+          format: double
+          nullable: true
+        maintenance_source:
+          type: string
+          nullable: true
+        maintenance_confidence:
+          type: number
+          format: double
+          nullable: true
+        target_kcal_today:
+          type: number
+          format: double
+          nullable: true
+        consumed_kcal_today:
+          type: number
+          format: double
+          nullable: true
+        consumed_kcal_today_partial:
+          type: boolean
+        burned_kcal_today:
+          type: number
+          format: double
+          nullable: true
+        burned_kcal_today_partial:
+          type: boolean
+        week_balance_kcal:
+          type: number
+          format: double
+          nullable: true
+        week_balance_kcal_partial:
+          type: boolean
+        data_sufficiency:
+          type: string
+      required:
+      - burned_kcal_today
+      - burned_kcal_today_partial
+      - consumed_kcal_today
+      - consumed_kcal_today_partial
+      - data_sufficiency
+      - maintenance_confidence
+      - maintenance_kcal
+      - maintenance_source
+      - target_kcal_today
+      - week_balance_kcal
+      - week_balance_kcal_partial
+    FlagsState:
+      type: object
+      properties:
+        missing_food_days_7d:
+          type: integer
+        missing_weight_days_14d:
+          type: integer
+        goal_recently_changed:
+          type: boolean
+        insufficient_data_for_adaptation:
+          type: boolean
+      required:
+      - goal_recently_changed
+      - insufficient_data_for_adaptation
+      - missing_food_days_7d
+      - missing_weight_days_14d
+    GoalState:
+      type: object
+      properties:
+        energy_direction:
+          type: string
+          nullable: true
+        training_focus:
+          type: string
+          nullable: true
+        target_rate_kg_per_week:
+          type: number
+          format: double
+          nullable: true
+        auto_adjust:
+          type: boolean
+          nullable: true
+      required:
+      - auto_adjust
+      - energy_direction
+      - target_rate_kg_per_week
+      - training_focus
+    PlanDelta:
+      type: object
+      properties:
+        target_kcal:
+          type: number
+          format: double
+          nullable: true
+        volume_today_kg:
+          type: number
+          format: double
+          nullable: true
+        readiness_ceiling:
+          type: number
+          format: double
+          nullable: true
+        dropped_sessions:
+          type: integer
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        clamped_by:
+          type: array
+          items:
+            type: string
+      required:
+      - dropped_sessions
+      - readiness_ceiling
+      - reason
+      - target_kcal
+      - volume_today_kg
+    ProfileState:
+      type: object
+      properties:
+        age:
+          type: integer
+          nullable: true
+        sex_at_birth:
+          type: string
+          nullable: true
+        height_cm:
+          type: number
+          format: double
+          nullable: true
+        unit_preference:
+          type: string
+          nullable: true
+        tracks_cycle:
+          type: boolean
+          nullable: true
+        timezone:
+          type: string
+          nullable: true
+      required:
+      - age
+      - height_cm
+      - sex_at_birth
+      - timezone
+      - tracks_cycle
+      - unit_preference
+    TrainingState:
+      type: object
+      properties:
+        week_volume_planned:
+          type: number
+          format: double
+          nullable: true
+        week_volume_planned_partial:
+          type: boolean
+        week_volume_completed:
+          type: number
+          format: double
+          nullable: true
+        week_volume_completed_partial:
+          type: boolean
+        volume_by_muscle_group:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+          nullable: true
+        volume_by_muscle_group_partial:
+          type: boolean
+        adherence_7d:
+          type: number
+          format: double
+          nullable: true
+        adherence_7d_partial:
+          type: boolean
+        readiness_ceiling_today:
+          type: number
+          format: double
+          nullable: true
+        days_since_rest:
+          type: integer
+          nullable: true
+        days_since_rest_partial:
+          type: boolean
+      required:
+      - adherence_7d
+      - adherence_7d_partial
+      - days_since_rest
+      - days_since_rest_partial
+      - readiness_ceiling_today
+      - volume_by_muscle_group
+      - volume_by_muscle_group_partial
+      - week_volume_completed
+      - week_volume_completed_partial
+      - week_volume_planned
+      - week_volume_planned_partial
+    UserState:
+      type: object
+      properties:
+        as_of:
+          type: string
+          format: date
+        profile:
+          $ref: '#/components/schemas/ProfileState'
+        goal:
+          $ref: '#/components/schemas/GoalState'
+        energy:
+          $ref: '#/components/schemas/EnergyState'
+        training:
+          $ref: '#/components/schemas/TrainingState'
+        plan_delta:
+          allOf:
+          - $ref: '#/components/schemas/PlanDelta'
+          nullable: true
+        body:
+          $ref: '#/components/schemas/BodyState'
+        cycle:
+          $ref: '#/components/schemas/CycleState'
+        flags:
+          $ref: '#/components/schemas/FlagsState'
+      required:
+      - as_of
+      - body
+      - cycle
+      - energy
+      - flags
+      - goal
+      - plan_delta
+      - profile
+      - training
   securitySchemes:
     jwtAuth:
       type: http

@@ -10,8 +10,9 @@ import androidx.room.TypeConverters
         ExerciseSearchEntity::class,
         WorkoutSessionEntity::class,
         SetLogEntity::class,
+        UserStateEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -19,4 +20,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
     abstract fun workoutSessionDao(): WorkoutSessionDao
     abstract fun setLogDao(): SetLogDao
+    abstract fun userStateDao(): UserStateDao
 }
