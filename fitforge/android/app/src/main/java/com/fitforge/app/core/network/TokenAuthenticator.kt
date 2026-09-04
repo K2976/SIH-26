@@ -1,5 +1,6 @@
 package com.fitforge.app.core.network
 
+import android.util.Log
 import com.fitforge.app.core.datastore.UserPreferencesDataStore
 import com.fitforge.app.data.remote.generated.apis.AuthApi
 import com.fitforge.app.data.remote.generated.models.TokenRefresh
@@ -12,6 +13,8 @@ import okhttp3.Response
 import okhttp3.Route
 import java.io.IOException
 import javax.inject.Inject
+
+private const val TAG = "TokenAuthenticator"
 
 private const val MAX_RETRIES = 3
 private const val AUTH_HEADER = "Authorization"
@@ -36,8 +39,9 @@ class TokenAuthenticator @Inject constructor(
     private val mutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (responseCount(response) > MAX_RETRIES) return null
-        if (response.request.url.encodedPath.contains("/auth/")) return null
+        val alreadyRetriedOrIsAuthCall = responseCount(response) > MAX_RETRIES ||
+            response.request.url.encodedPath.contains("/auth/")
+        if (alreadyRetriedOrIsAuthCall) return null
 
         val failedToken = response.request.header(AUTH_HEADER)?.removePrefix(BEARER_PREFIX)
 
@@ -80,6 +84,7 @@ class TokenAuthenticator @Inject constructor(
         } catch (e: IOException) {
             // Network unreachable; leave the stored session alone and just
             // fail this one request.
+            Log.w(TAG, "Refresh call failed", e)
             null
         }
     }

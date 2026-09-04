@@ -1,5 +1,6 @@
 package com.fitforge.app.core.startup
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitforge.app.BuildConfig
@@ -13,6 +14,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
+
+private const val TAG = "AppStartupViewModel"
 
 sealed interface StartupState {
     data object Loading : StartupState
@@ -51,6 +54,7 @@ class AppStartupViewModel @Inject constructor(
         appConfigApi.appConfigRetrieve().body()?.minSupportedVersion
     } catch (e: IOException) {
         // Backend unreachable — don't block startup on a check that can't complete.
+        Log.w(TAG, "app-config check failed", e)
         null
     }
 }

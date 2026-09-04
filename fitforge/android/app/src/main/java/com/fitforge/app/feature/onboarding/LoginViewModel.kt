@@ -1,5 +1,6 @@
 package com.fitforge.app.feature.onboarding
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitforge.app.core.datastore.UserPreferencesDataStore
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
+
+private const val TAG = "LoginViewModel"
 
 sealed interface LoginUiState {
     data object Idle : LoginUiState
@@ -47,6 +50,7 @@ class LoginViewModel @Inject constructor(
                     _uiState.value = LoginUiState.Error
                 }
             } catch (e: IOException) {
+                Log.w(TAG, "Login call failed", e)
                 _uiState.value = LoginUiState.Error
             }
         }
