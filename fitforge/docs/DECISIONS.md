@@ -101,3 +101,77 @@ product wants different numbers.
   the two can't drift, and correctness never depends on a warm cache. No
   code reads `DailyState` yet; it exists for later slices (historical
   trends, anything that shouldn't pay live-query cost per request).
+
+## 2026-09-05 — Camera rep counter: pose model benchmark not run on a device
+
+**The benchmark itself did not happen — this is a gap, not a result.** The
+task asked for lite/full/heavy FPS and accuracy notes measured on a real
+device. `adb devices` is empty in this environment, and the only local AVD
+(`Medium_Phone_API_35`) has no system image installed (`emulator` fails
+immediately with "Cannot find AVD system path" — the image was never
+downloaded, only the AVD config exists). Installing a multi-GB system image
+unprompted to manufacture a device felt like a step past what running code
+in this session should silently do, and CLAUDE.md rule 2 ("never return a
+value the code did not derive from stored data... no plausible defaults
+presented as measurements") rules out estimating numbers from published
+MediaPipe benchmarks or general TFLite-on-mobile intuition and presenting
+them as if they were measured here. So: no FPS numbers are recorded below,
+by design, rather than invented ones.
+
+What exists instead is a runnable harness —
+`app/src/androidTest/java/com/fitforge/app/feature/repcounter/camera/PoseLandmarkerBenchmarkTest.kt`
+— that measures real numbers the moment a device is available:
+
+```
+./gradlew :app:connectedDebugAndroidTest \
+  --tests "com.fitforge.app.feature.repcounter.camera.PoseLandmarkerBenchmarkTest"
+```
+
+It runs all three bundled `.task` models (CPU delegate, `RunningMode.IMAGE`)
+against `androidTest/assets/pose_benchmark_sample.jpg` — MediaPipe's own
+public sample image (`storage.googleapis.com/mediapipe-assets/pose.jpg`,
+the one their own Pose Landmarker quickstart docs use, not a fabricated or
+placeholder image), 5 warmup + 20 timed detections per variant — and writes
+FPS and mean landmark visibility per variant to both logcat (tag
+`PoseBenchmark`) and `<app-external-files-dir>/pose_benchmark_results.txt`
+on the device. Whoever runs this on real hardware should paste the output
+here, replacing this paragraph, not append around it.
+
+Until then, `ModelVariant.DEFAULT = FULL` (see
+`feature/repcounter/camera/ModelVariant.kt`) is a **provisional** pick —
+MediaPipe's own documented middle ground between LITE and HEAVY, not a
+measured one. Re-pick after the benchmark actually runs.
+
+Related judgment calls from the same slice, while this is fresh:
+
+- **Rep segmentation is peak/valley (turning-point) detection, not a single
+  hysteresis threshold.** An early version used one threshold crossing to
+  both close a rep and grade "lockout achieved" — a step-function closes
+  right at the threshold value by construction, so a stricter "did they
+  really get all the way back" check compared against the same crossing
+  can never independently be true or false; it was refuted directly by a
+  Python simulation, not just design taste. `RepStateMachine.kt` instead
+  tracks a running peak (depth) while descending and a running trough
+  (lockout) while ascending, closing a rep either on a reversal (the trough
+  becomes the next rep's start — this also means an incomplete-lockout set
+  of bouncy reps segments correctly instead of merging into one) or via an
+  explicit `finalizeRepStateMachine` call the caller makes when the set
+  ends, since a live stream can't otherwise know the last rep is "the last
+  one."
+- **Symmetry is never persisted.** `SetLog` has no symmetry column and
+  none was added — `CompletedRep.symmetryDeviationDeg` is live-session UI
+  feedback only, and it's `null` whenever `camera_position == SIDE`
+  regardless of landmark visibility, because a side-on camera fundamentally
+  cannot see left/right deviation no matter how confident the pose model
+  is about the occluded limb. This is the concrete mechanism behind "can't
+  assess from this angle."
+- **`pose_config` required-landmark visibility is "at least one full side,"
+  not "both sides."** A side camera only ever clearly sees the near
+  leg/arm; requiring both would refuse to start on every side-on setup.
+- **Front camera, not back, for the live preview** (`RepCounterScreen.kt`).
+  Mirrors real fitness apps: the lifter needs to see themselves to get into
+  frame during calibration. This doesn't affect angle math — "left"/"right"
+  in `PoseLandmark` just names whichever side the image shows there, and
+  since every calculation either uses one side's magnitude or the symmetric
+  deviation between both, mirroring never changes a result, only which
+  physical limb the label points at.

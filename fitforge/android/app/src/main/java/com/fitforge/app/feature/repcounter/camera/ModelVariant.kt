@@ -8,7 +8,10 @@ enum class ModelVariant(val assetPath: String, val label: String) {
     ;
 
     companion object {
-        /** Chosen from the on-device benchmark in docs/DECISIONS.md — the fastest variant with acceptable joint-angle accuracy. */
+        // ponytail: provisional pick, not an empirical one — no device was available to run
+        // PoseLandmarkerBenchmarkTest in the environment this slice was built in (see
+        // docs/DECISIONS.md). FULL is MediaPipe's own documented middle ground between LITE
+        // and HEAVY. Re-pick after running the benchmark on a real target device.
         val DEFAULT = FULL
     }
 }
