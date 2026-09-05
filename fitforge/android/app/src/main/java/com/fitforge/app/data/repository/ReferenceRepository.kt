@@ -21,6 +21,17 @@ private data class ReferenceBundleDto(
 )
 
 @Serializable
+private data class AngleJointDto(val from: String, val vertex: String, val to: String)
+
+@Serializable
+private data class PoseConfigDto(
+    @SerialName("angle_joint") val angleJoint: AngleJointDto,
+    @SerialName("min_rep_seconds") val minRepSeconds: Double,
+    @SerialName("max_rep_seconds") val maxRepSeconds: Double,
+    @SerialName("symmetry_tolerance_deg") val symmetryToleranceDeg: Double,
+)
+
+@Serializable
 private data class ExerciseBundleDto(
     val slug: String,
     val name: Map<String, String>,
@@ -31,6 +42,8 @@ private data class ExerciseBundleDto(
     @SerialName("movement_pattern") val movementPattern: String,
     @SerialName("met_value") val metValue: String,
     @SerialName("is_bodyweight") val isBodyweight: Boolean = false,
+    @SerialName("pose_config") val poseConfig: PoseConfigDto? = null,
+    @SerialName("camera_position") val cameraPosition: String? = null,
     @SerialName("is_active") val isActive: Boolean = true,
     @SerialName("updated_at_version") val updatedAtVersion: Int = 0,
 )
@@ -47,6 +60,13 @@ private fun ExerciseBundleDto.toEntity() = ExerciseEntity(
     isBodyweight = isBodyweight,
     isActive = isActive,
     updatedAtVersion = updatedAtVersion,
+    cameraPosition = cameraPosition,
+    poseAngleFrom = poseConfig?.angleJoint?.from,
+    poseAngleVertex = poseConfig?.angleJoint?.vertex,
+    poseAngleTo = poseConfig?.angleJoint?.to,
+    poseMinRepSeconds = poseConfig?.minRepSeconds,
+    poseMaxRepSeconds = poseConfig?.maxRepSeconds,
+    poseSymmetryToleranceDeg = poseConfig?.symmetryToleranceDeg,
 )
 
 @Suppress("UNCHECKED_CAST")
@@ -55,6 +75,8 @@ private fun Exercise.toEntity(): ExerciseEntity {
     val instructionsMap = instructions as? Map<String, String>
     val primary = (primaryMuscles as? List<String>).orEmpty()
     val secondary = (secondaryMuscles as? List<String>).orEmpty()
+    val poseConfigMap = poseConfig as? Map<String, Any?>
+    val angleJointMap = poseConfigMap?.get("angle_joint") as? Map<String, Any?>
     return ExerciseEntity(
         slug = slug,
         name = nameMap?.get("en") ?: nameMap?.values?.firstOrNull() ?: slug,
@@ -67,6 +89,13 @@ private fun Exercise.toEntity(): ExerciseEntity {
         isBodyweight = isBodyweight ?: false,
         isActive = isActive ?: true,
         updatedAtVersion = updatedAtVersion ?: 0,
+        cameraPosition = cameraPosition?.value,
+        poseAngleFrom = angleJointMap?.get("from") as? String,
+        poseAngleVertex = angleJointMap?.get("vertex") as? String,
+        poseAngleTo = angleJointMap?.get("to") as? String,
+        poseMinRepSeconds = (poseConfigMap?.get("min_rep_seconds") as? Number)?.toDouble(),
+        poseMaxRepSeconds = (poseConfigMap?.get("max_rep_seconds") as? Number)?.toDouble(),
+        poseSymmetryToleranceDeg = (poseConfigMap?.get("symmetry_tolerance_deg") as? Number)?.toDouble(),
     )
 }
 

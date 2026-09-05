@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.work.WorkManager
 import com.fitforge.app.core.database.AppDatabase
+import com.fitforge.app.core.database.CalibrationProfileDao
 import com.fitforge.app.core.database.ExerciseDao
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.UserStateDao
@@ -37,6 +38,9 @@ object DatabaseModule {
 
     @Provides
     fun provideUserStateDao(db: AppDatabase): UserStateDao = db.userStateDao()
+
+    @Provides
+    fun provideCalibrationProfileDao(db: AppDatabase): CalibrationProfileDao = db.calibrationProfileDao()
 
     @Provides
     @Singleton
