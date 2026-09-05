@@ -311,10 +311,14 @@ class TestOnboardingFlow:
 
 
 class TestGoal:
-    def test_get_goal_is_null_before_any_goal_set(self, auth_client):
+    def test_get_goal_is_404_before_any_goal_set(self, auth_client):
+        # Not 200+null: DRF's JSONRenderer renders a None payload as an
+        # empty body, not the JSON literal `null`, which the generated
+        # Retrofit client (typed as non-nullable Goal) can't decode either
+        # way. 404 needs no body and Retrofit's null-body-on-error handling
+        # already treats a missing goal the same as any other null field.
         resp = auth_client.get("/api/v1/goal/")
-        assert resp.status_code == 200
-        assert resp.data is None
+        assert resp.status_code == 404
 
     def test_post_creates_a_goal(self, auth_client):
         resp = auth_client.post(

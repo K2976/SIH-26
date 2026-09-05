@@ -56,6 +56,12 @@ android {
         buildConfig = true
     }
 
+    // MediaPipe's setModelAssetPath mmaps the .task file directly; AGP's default
+    // asset compression breaks that. Keep these stored, not deflated.
+    androidResources {
+        noCompress += listOf("task", "tflite")
+    }
+
     sourceSets {
         getByName("main") {
             // AGP 9's sourceSets API rejects a lazy Provider<Directory> here
@@ -93,6 +99,7 @@ tasks.named<GenerateTask>("openApiGenerate") {
         mapOf(
             "serializationLibrary" to "kotlinx_serialization",
             "useCoroutines" to "true",
+            "dateLibrary" to "kotlinx-datetime"
         )
     )
     generateApiTests.set(false)
@@ -136,6 +143,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.kotlinx.serialization)
@@ -148,6 +157,15 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.datetime)
+
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mediapipe.tasks.vision)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

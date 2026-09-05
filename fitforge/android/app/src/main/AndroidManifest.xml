@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:name=".FitForgeApplication"
@@ -9,6 +12,27 @@
         android:icon="@android:drawable/sym_def_app_icon"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+
+        <!--
+          WorkManager's default androidx.startup initializer runs from a
+          ContentProvider.onCreate(), which fires before Application.onCreate()
+          — before Hilt has injected HiltWorkerFactory. It silently falls back
+          to reflection-based worker construction, which throws
+          NoSuchMethodException for any @HiltWorker (assisted-injection
+          constructor, no bare Context/WorkerParameters ctor). Disabled here;
+          FitForgeApplication calls WorkManager.initialize() manually instead,
+          after injection has happened.
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
 
         <activity
             android:name=".MainActivity"

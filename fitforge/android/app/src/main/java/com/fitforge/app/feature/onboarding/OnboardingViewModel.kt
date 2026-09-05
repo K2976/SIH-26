@@ -3,10 +3,14 @@ package com.fitforge.app.feature.onboarding
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fitforge.app.core.datastore.UserPreferencesDataStore
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
-import com.fitforge.app.data.remote.generated.models.GoalRequest
+import com.fitforge.app.data.remote.generated.models.EnergyDirectionEnum
+import com.fitforge.app.data.remote.generated.models.Goal
 import com.fitforge.app.data.remote.generated.models.PatchedUserProfile
+import com.fitforge.app.data.remote.generated.models.TrainingFocusEnum
+import com.fitforge.app.data.remote.generated.models.UnitPreferenceEnum
 import com.fitforge.app.data.remote.generated.models.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import kotlin.time.Clock
+import kotlinx.datetime.LocalDate
 import javax.inject.Inject
 
 private const val TAG = "OnboardingViewModel"
@@ -73,6 +76,7 @@ data class OnboardingUiState(
 class OnboardingViewModel @Inject constructor(
     private val profileApi: ProfileApi,
     private val goalApi: GoalApi,
+    private val preferences: UserPreferencesDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
@@ -89,6 +93,7 @@ class OnboardingViewModel @Inject constructor(
                 val profile = profileResp.body()
                 val goalResp = goalApi.goalRetrieve()
                 val goal = goalResp.body()
+                profile?.currentWeightKg?.toDouble()?.let { preferences.setBodyweightKg(it) }
 
                 if (profile != null) {
                     _uiState.update { state ->
@@ -97,18 +102,19 @@ class OnboardingViewModel @Inject constructor(
                             isRerun = profile.onboardingCompletedAt != null,
                             dateOfBirth = profile.dateOfBirth,
                             sexAtBirth = profile.sexAtBirth?.value,
-                            heightCm = profile.heightCm ?: "",
-                            currentWeightKg = profile.currentWeightKg ?: "",
+                            heightCm = profile.heightCm?.toPlainString() ?: "",
+                            currentWeightKg = profile.currentWeightKg?.toPlainString() ?: "",
                             unitPreference = profile.unitPreference?.value ?: "metric",
                             timezone = profile.timezone ?: state.timezone,
                             tracksCycle = profile.tracksCycle,
-                            waistCm = profile.waistCm ?: "",
+                            waistCm = profile.waistCm?.toPlainString() ?: "",
                             restingHr = profile.restingHr?.toString() ?: "",
                             activityLevel = profile.activityLevel?.value,
-                            declinedFields = profile.declinedFields?.toMutableList() ?: mutableListOf(),
+                            declinedFields = (profile.declinedFields as? List<*>)
+                                ?.filterIsInstance<String>()?.toMutableList() ?: mutableListOf(),
                             energyDirection = goal?.energyDirection?.value,
                             trainingFocus = goal?.trainingFocus?.value,
-                            targetRateKgPerWeek = goal?.targetRateKgPerWeek ?: "0.5",
+                            targetRateKgPerWeek = goal?.targetRateKgPerWeek?.toPlainString() ?: "0.5",
                         )
                     }
                 } else {
@@ -201,13 +207,17 @@ class OnboardingViewModel @Inject constructor(
                 profileApi.profilePartialUpdate(
                     PatchedUserProfile(
                         dateOfBirth = state.dateOfBirth,
-                        sexAtBirth = state.sexAtBirth,
-                        heightCm = state.heightCm,
-                        currentWeightKg = state.currentWeightKg,
-                        unitPreference = state.unitPreference,
+                        sexAtBirth = state.sexAtBirth?.let { PatchedUserProfile.SexAtBirth.valueOf(it) },
+                        heightCm = state.heightCm.toBigDecimalOrNull(),
+                        currentWeightKg = state.currentWeightKg.toBigDecimalOrNull(),
+                        unitPreference = UnitPreferenceEnum.valueOf(state.unitPreference),
                         timezone = state.timezone,
                     ),
                 )
+                // ponytail: currentWeightKg is the raw typed string, not unit-converted
+                // regardless of display preference (pre-existing gap, see BasicsStep) —
+                // this cache inherits that same assumption rather than fixing it here.
+                state.currentWeightKg.toDoubleOrNull()?.let { preferences.setBodyweightKg(it) }
                 _uiState.update { it.copy(isSaving = false, currentStep = OnboardingStep.CYCLE_TRACKING) }
             } catch (e: IOException) {
                 Log.w(TAG, "Failed to save basics", e)
@@ -266,10 +276,15 @@ class OnboardingViewModel @Inject constructor(
             _uiState.update { it.copy(isSaving = true, error = null) }
             try {
                 val response = goalApi.goalCreate(
-                    GoalRequest(
-                        energyDirection = GoalRequest.EnergyDirection.valueOf(direction),
-                        trainingFocus = GoalRequest.TrainingFocus.valueOf(focus),
-                        targetRateKgPerWeek = state.targetRateKgPerWeek,
+                    Goal(
+                        energyDirection = EnergyDirectionEnum.valueOf(direction),
+                        trainingFocus = TrainingFocusEnum.valueOf(focus),
+                        // startedAt/endedAt/clampReason are read_only on the backend
+                        // serializer — ignored on write, only meaningful in the response.
+                        startedAt = Clock.System.now(),
+                        endedAt = null,
+                        clampReason = null,
+                        targetRateKgPerWeek = state.targetRateKgPerWeek.toBigDecimalOrNull(),
                         autoAdjust = true,
                     ),
                 )
@@ -283,7 +298,8 @@ class OnboardingViewModel @Inject constructor(
                     it.copy(
                         isSaving = false,
                         clampReason = goal?.clampReason,
-                        targetRateKgPerWeek = goal?.targetRateKgPerWeek ?: state.targetRateKgPerWeek,
+                        targetRateKgPerWeek = goal?.targetRateKgPerWeek?.toPlainString()
+                            ?: state.targetRateKgPerWeek,
                         currentStep = nextStep,
                     )
                 }
@@ -308,10 +324,13 @@ class OnboardingViewModel @Inject constructor(
             _uiState.update { it.copy(isSaving = true, error = null) }
             try {
                 val response = goalApi.goalCreate(
-                    GoalRequest(
-                        energyDirection = GoalRequest.EnergyDirection.valueOf(direction),
-                        trainingFocus = GoalRequest.TrainingFocus.valueOf(focus),
-                        targetRateKgPerWeek = state.targetRateKgPerWeek,
+                    Goal(
+                        energyDirection = EnergyDirectionEnum.valueOf(direction),
+                        trainingFocus = TrainingFocusEnum.valueOf(focus),
+                        startedAt = Clock.System.now(),
+                        endedAt = null,
+                        clampReason = null,
+                        targetRateKgPerWeek = state.targetRateKgPerWeek.toBigDecimalOrNull(),
                         autoAdjust = true,
                     ),
                 )
@@ -320,7 +339,8 @@ class OnboardingViewModel @Inject constructor(
                     it.copy(
                         isSaving = false,
                         clampReason = goal?.clampReason,
-                        targetRateKgPerWeek = goal?.targetRateKgPerWeek ?: state.targetRateKgPerWeek,
+                        targetRateKgPerWeek = goal?.targetRateKgPerWeek?.toPlainString()
+                            ?: state.targetRateKgPerWeek,
                         currentStep = OnboardingStep.FITNESS_INPUTS,
                     )
                 }
@@ -344,9 +364,9 @@ class OnboardingViewModel @Inject constructor(
             try {
                 profileApi.profilePartialUpdate(
                     PatchedUserProfile(
-                        waistCm = state.waistCm.ifBlank { null },
+                        waistCm = state.waistCm.toBigDecimalOrNull(),
                         restingHr = state.restingHr.toIntOrNull(),
-                        activityLevel = state.activityLevel,
+                        activityLevel = state.activityLevel?.let { PatchedUserProfile.ActivityLevel.valueOf(it) },
                     ),
                 )
                 _uiState.update { it.copy(isSaving = false, currentStep = OnboardingStep.COMPLETION) }
@@ -389,7 +409,7 @@ class OnboardingViewModel @Inject constructor(
             try {
                 profileApi.profilePartialUpdate(
                     PatchedUserProfile(
-                        onboardingCompletedAt = OffsetDateTime.now(ZoneOffset.UTC),
+                        onboardingCompletedAt = Clock.System.now(),
                     ),
                 )
                 _uiState.update { it.copy(isSaving = false) }
