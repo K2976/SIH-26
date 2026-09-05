@@ -65,9 +65,11 @@ class AppStartupViewModel @Inject constructor(
 
     /**
      * Checks whether onboarding has been completed by fetching the profile
-     * and looking at onboarding_completed_at.
+     * and looking at onboarding_completed_at. Also called by [FitForgeApp]
+     * right after a fresh login, since a login can hit an already-onboarded
+     * account just as easily as a brand-new one.
      */
-    private suspend fun checkOnboardingNeeded(): Boolean = try {
+    suspend fun checkOnboardingNeeded(): Boolean = try {
         val response = profileApi.profileRetrieve()
         val profile = response.body()
         profile?.currentWeightKg?.toDouble()?.let { preferences.setBodyweightKg(it) }
