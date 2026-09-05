@@ -20,6 +20,9 @@ import javax.inject.Singleton
 
 private const val EVENT_SOURCE = "user_created"
 
+/** `SetLog.source` for a rep counted by the camera pipeline — see WorkoutRepository.addSet. */
+const val CAMERA_SOURCE = "camera"
+
 private fun currentUtcOffset(): String {
     val offset = TimeZone.currentSystemDefault().offsetAt(Clock.System.now())
     val totalMinutes = offset.totalSeconds / 60
@@ -29,13 +32,41 @@ private fun currentUtcOffset(): String {
     return "%s%02d:%02d".format(sign, hours, minutes)
 }
 
-private fun newDiaryColumns() = BaseDiaryColumns(
+private fun newDiaryColumns(source: String = EVENT_SOURCE) = BaseDiaryColumns(
     clientUuid = UUID.randomUUID().toString(),
     occurredAt = Clock.System.now(),
     utcOffset = currentUtcOffset(),
-    source = EVENT_SOURCE,
+    source = source,
     createdAt = Clock.System.now(),
     syncStatus = SyncStatus.PENDING,
+)
+
+/**
+ * The one place a `SetLog` row gets built, whether the set was typed in or
+ * counted by the camera — pulled out of [WorkoutRepository.addSet] so the
+ * "camera rows are identical to manual ones except source/rom/tempo"
+ * property is directly unit-testable without a DAO or WorkManager.
+ */
+internal fun buildSetLogEntity(
+    sessionUuid: String,
+    exerciseSlug: String,
+    setIndex: Int,
+    reps: Int,
+    weightKg: Double?,
+    isWarmup: Boolean,
+    source: String,
+    romAchieved: String?,
+    tempoMs: Int?,
+) = SetLogEntity(
+    diary = newDiaryColumns(source),
+    sessionClientUuid = sessionUuid,
+    exerciseSlug = exerciseSlug,
+    setIndex = setIndex,
+    reps = reps,
+    weightKg = weightKg,
+    isWarmup = isWarmup,
+    romAchieved = romAchieved,
+    tempoMs = tempoMs,
 )
 
 /**
@@ -83,18 +114,13 @@ class WorkoutRepository @Inject constructor(
         reps: Int,
         weightKg: Double?,
         isWarmup: Boolean = false,
+        source: String = EVENT_SOURCE,
+        romAchieved: String? = null,
+        tempoMs: Int? = null,
     ) {
         val nextIndex = setLogDao.getMaxSetIndex(sessionUuid) + 1
         setLogDao.insert(
-            SetLogEntity(
-                diary = newDiaryColumns(),
-                sessionClientUuid = sessionUuid,
-                exerciseSlug = exerciseSlug,
-                setIndex = nextIndex,
-                reps = reps,
-                weightKg = weightKg,
-                isWarmup = isWarmup,
-            ),
+            buildSetLogEntity(sessionUuid, exerciseSlug, nextIndex, reps, weightKg, isWarmup, source, romAchieved, tempoMs),
         )
         SyncWorker.enqueue(workManager)
     }
