@@ -1,5 +1,5 @@
 {
-  "reference_version": 32,
+  "reference_version": 35,
   "exercises": [
     {
       "slug": "barbell-back-squat",
@@ -139,10 +139,19 @@
       ],
       "met_value": "3.0",
       "is_bodyweight": true,
-      "pose_config": null,
-      "camera_position": null,
+      "pose_config": {
+        "angle_joint": {
+          "to": "LEFT_ANKLE",
+          "from": "LEFT_HIP",
+          "vertex": "LEFT_KNEE"
+        },
+        "max_rep_seconds": 8.0,
+        "min_rep_seconds": 0.6,
+        "symmetry_tolerance_deg": 12.0
+      },
+      "camera_position": "side",
       "is_active": true,
-      "updated_at_version": 3
+      "updated_at_version": 33
     },
     {
       "slug": "brisk-walking",
@@ -296,10 +305,19 @@
       ],
       "met_value": "3.5",
       "is_bodyweight": false,
-      "pose_config": null,
-      "camera_position": null,
+      "pose_config": {
+        "angle_joint": {
+          "to": "LEFT_WRIST",
+          "from": "LEFT_SHOULDER",
+          "vertex": "LEFT_ELBOW"
+        },
+        "max_rep_seconds": 6.0,
+        "min_rep_seconds": 0.5,
+        "symmetry_tolerance_deg": 8.0
+      },
+      "camera_position": "front",
       "is_active": true,
-      "updated_at_version": 21
+      "updated_at_version": 35
     },
     {
       "slug": "farmers-carry",
@@ -683,10 +701,19 @@
       ],
       "met_value": "7.5",
       "is_bodyweight": true,
-      "pose_config": null,
-      "camera_position": null,
+      "pose_config": {
+        "angle_joint": {
+          "to": "LEFT_WRIST",
+          "from": "LEFT_SHOULDER",
+          "vertex": "LEFT_ELBOW"
+        },
+        "max_rep_seconds": 8.0,
+        "min_rep_seconds": 0.6,
+        "symmetry_tolerance_deg": 10.0
+      },
+      "camera_position": "side",
       "is_active": true,
-      "updated_at_version": 11
+      "updated_at_version": 34
     },
     {
       "slug": "romanian-deadlift",
