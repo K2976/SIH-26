@@ -65,6 +65,7 @@
     <string name="login_button">Log in</string>
     <string name="login_error">Couldn\'t log in. Check your email and password and try again.</string>
     <string name="login_go_to_signup">Don\'t have an account? Sign up</string>
+    <string name="login_try_demo">Try demo</string>
 
     <string name="signup_title">Create account</string>
     <string name="signup_button">Sign up</string>

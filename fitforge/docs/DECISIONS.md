@@ -195,3 +195,59 @@ Related judgment calls from the same slice, while this is fresh:
   burst. Clamped to `max(sensorTimestampMs, previous + 1)` defensively —
   never observed the collision, since no device was available to burst
   frames through it.
+
+## 2026-09-05 — Demo account: seeded, not scripted
+
+`manage.py seed_demo_account` creates a fixed account (`demo@fitforge.app`)
+with 6 weeks of history across every diary table (`WorkoutSession`/`SetLog`,
+`MealLog`/`MealItem`, `WeightLog`, `CycleLog`) plus a `UserProfile` and
+`Goal`, written through the same model layer `apps/api/sync.py` uses for a
+real device. Nothing writes to `UserState` or `DailyState` — the demo
+account's dashboard is `compute_user_state` running over these rows, exactly
+like any other account. Confirmed against the real dev DB: maintenance,
+weight trend (with real regression confidence, not a manufactured 1.0),
+weekly training volume by muscle group, and a fully narrated `plan_delta`
+(including the ±300 kcal floor actually engaging) all came out of the
+calculator/engine, not out of the command.
+
+- **Idempotent via delete-and-recreate, not per-row upsert.** Re-running
+  deletes the demo `User` — which cascades through every diary table via FK
+  — and rebuilds it from scratch. An idempotent diff across six tables would
+  be far more code for the same guarantee the task actually asked for:
+  "resets to its seeded state," not "merges."
+- **`bulk_create`, not one `.create()` per row.** The first version used
+  `.objects.create()` per row (~500 rows) and took several minutes against
+  the real (Neon, remote) dev database — plainly wrong for a command whose
+  purpose is a fast reset right before a live demo. Rewritten to build
+  `WorkoutSession`/`MealLog` objects, `bulk_create` them (Postgres populates
+  `.pk` on the returned objects), then build the dependent `SetLog`/
+  `MealItem` rows against those ids and `bulk_create` those too. Cut the
+  runtime to ~10 seconds.
+- **Deterministic, not random.** Weight-log noise and meal/exercise
+  variation come from fixed lookup tables and modular arithmetic on the day
+  offset, not `random`. Re-running the command on the same day reproduces
+  byte-identical seeded rows — a real property of "resets to its seeded
+  state," not just an approximation of one.
+- **`DailyState` is deliberately not warmed by this command.** It's a pure
+  cache nothing reads yet (see the entry above) — populating it here would
+  reintroduce the per-day query cost the `bulk_create` rewrite exists to
+  remove, for a cache no code consumes.
+- **Cycle phase stays `null` for the demo account too.** `CycleLog` rows are
+  seeded (two realistic periods plus an ovulation-window symptom entry), and
+  `profile.tracks_cycle = True`, so `cycle.enabled` is `True`. But
+  `apps/engine/service.py` hard-codes `phase`/`cycle_day`/etc. to `null` for
+  every account — §10 cycle-phase derivation isn't built yet. Seeding cycle
+  history now means a future slice has real data to compute against; it
+  does not and should not make the demo account special-case truthier
+  output than a real user would get today.
+- **The fixed password is not a secret.** `demo@fitforge.app` /
+  `FitForgeDemo!2026` are hardcoded in both the seed command and the Android
+  "Try demo" button on purpose — the button's entire job is to authenticate
+  as this account through the normal `/api/v1/auth/login/` endpoint, no
+  bypass path. Treating it as a credential to protect would contradict its
+  own reachability.
+- **The Android button is gated on `BuildConfig.DEBUG`**, not a runtime
+  flag or a visual-only condition — AGP compiles `DEBUG` per variant, so a
+  release build has no code path that can show it, regardless of any
+  runtime state.
+
