@@ -56,6 +56,12 @@ android {
         buildConfig = true
     }
 
+    // MediaPipe's setModelAssetPath mmaps the .task file directly; AGP's default
+    // asset compression breaks that. Keep these stored, not deflated.
+    androidResources {
+        noCompress += listOf("task", "tflite")
+    }
+
     sourceSets {
         getByName("main") {
             // AGP 9's sourceSets API rejects a lazy Provider<Directory> here

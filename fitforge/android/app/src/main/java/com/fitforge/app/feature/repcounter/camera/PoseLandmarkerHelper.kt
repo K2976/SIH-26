@@ -50,11 +50,16 @@ class PoseLandmarkerHelper(
             .build(),
     )
 
+    private var lastTimestampMs = 0L
+
     /** Submits one CameraX frame for detection and closes it. Results arrive asynchronously via [onResult]. */
     fun detectAsync(imageProxy: ImageProxy) {
         val mpImage = BitmapImageBuilder(imageProxy.toRotatedBitmap()).build()
         val processingOptions = ImageProcessingOptions.builder().build()
-        val timestampMs = imageProxy.imageInfo.timestamp / 1_000_000
+        // LIVE_STREAM requires a strictly increasing timestamp; the sensor clock's ms-truncated
+        // value can repeat under fast bursts, so clamp forward rather than let detectAsync throw.
+        val timestampMs = maxOf(imageProxy.imageInfo.timestamp / 1_000_000, lastTimestampMs + 1)
+        lastTimestampMs = timestampMs
         imageProxy.close()
         landmarker.detectAsync(mpImage, processingOptions, timestampMs)
     }

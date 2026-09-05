@@ -175,3 +175,23 @@ Related judgment calls from the same slice, while this is fresh:
   since every calculation either uses one side's magnitude or the symmetric
   deviation between both, mirroring never changes a result, only which
   physical limb the label points at.
+- **`.task` model assets are excluded from AGP's asset compression**
+  (`noCompress += listOf("task", "tflite")` in `app/build.gradle.kts`).
+  MediaPipe's `setModelAssetPath` mmaps the file directly out of the APK;
+  a compressed asset would fail to load at runtime with no local device
+  available to have caught that the hard way. Reasoned from how
+  `setModelAssetPath` is documented to work, not observed failing here.
+- **`PoseOverlay` mirrors its x-axis to match the front camera preview.**
+  `PreviewView` mirrors front-camera output by default; `ImageAnalysis`
+  frames (and therefore the landmarks drawn from them) are not mirrored.
+  Without the flip the skeleton would be a correct-shaped but
+  horizontally-reflected ghost overlaid on the mirrored preview. This
+  follows from documented CameraX behavior, not from having watched it
+  render on a device.
+- **`detectAsync`'s timestamp is clamped to strictly increase**
+  (`PoseLandmarkerHelper.kt`). `RunningMode.LIVE_STREAM` throws if a frame's
+  timestamp doesn't exceed the previous one; `imageProxy.imageInfo.timestamp`
+  truncated to milliseconds could in principle repeat under a fast frame
+  burst. Clamped to `max(sensorTimestampMs, previous + 1)` defensively —
+  never observed the collision, since no device was available to burst
+  frames through it.

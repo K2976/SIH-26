@@ -26,12 +26,22 @@ private val SKELETON_LINES = listOf(
 
 private const val MIN_VISIBLE = 0.5f
 
-/** Draws the tracked skeleton over the camera preview from normalized (0..1) landmark coordinates. */
+/**
+ * Draws the tracked skeleton over the camera preview from normalized (0..1) landmark coordinates.
+ *
+ * [mirror] flips the x-axis to match [androidx.camera.view.PreviewView], which mirrors the front
+ * camera's preview by default while [androidx.camera.core.ImageAnalysis] frames — and therefore
+ * these landmarks — are delivered unmirrored. RepCounterScreen always binds the front camera, so
+ * it always needs this on; a future back-camera mode would pass `false`.
+ */
 @Composable
-fun PoseOverlay(frame: PoseFrame?, modifier: Modifier = Modifier) {
+fun PoseOverlay(frame: PoseFrame?, modifier: Modifier = Modifier, mirror: Boolean = true) {
     Canvas(modifier = modifier) {
         if (frame == null) return@Canvas
-        val toOffset = { point: Landmark -> Offset(point.x * size.width, point.y * size.height) }
+        val toOffset = { point: Landmark ->
+            val x = if (mirror) size.width - point.x * size.width else point.x * size.width
+            Offset(x, point.y * size.height)
+        }
 
         for ((from, to) in SKELETON_LINES) {
             val a = frame.landmarks[from] ?: continue
