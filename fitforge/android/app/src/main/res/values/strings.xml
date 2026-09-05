@@ -43,6 +43,7 @@
     <string name="log_rest_timer_label">Rest: %1$d:%2$02d</string>
     <string name="log_skip_rest">Skip rest</string>
     <string name="log_done_exercise">Done with this exercise</string>
+    <string name="log_use_camera">Count reps with camera</string>
 
     <!-- Logbook — session detail -->
     <string name="log_session_detail_title">Workout</string>

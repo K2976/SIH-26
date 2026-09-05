@@ -28,6 +28,7 @@ import com.fitforge.app.core.database.SetLogEntity
 @Composable
 fun AddSetScreen(
     onDone: () -> Unit,
+    onUseCamera: () -> Unit,
     viewModel: AddSetViewModel = hiltViewModel(),
 ) {
     val exercise by viewModel.exercise.collectAsStateWithLifecycle()
@@ -38,6 +39,12 @@ fun AddSetScreen(
 
     Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
         Text(exercise?.name.orEmpty(), style = MaterialTheme.typography.titleLarge)
+
+        if (exercise?.poseAngleFrom != null) {
+            OutlinedButton(onClick = onUseCamera, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                Text(stringResource(R.string.log_use_camera))
+            }
+        }
 
         LazyColumn(modifier = Modifier.weight(1f).padding(vertical = 8.dp)) {
             items(loggedSets, key = { it.diary.clientUuid }) { set ->

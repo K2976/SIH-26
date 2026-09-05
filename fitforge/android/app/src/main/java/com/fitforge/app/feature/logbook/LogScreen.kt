@@ -6,10 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.fitforge.app.feature.repcounter.RepCounterScreen
 
 private const val ROUTE_HOME = "log_home"
 private const val ROUTE_PICK_EXERCISE = "log_pick_exercise/{sessionUuid}"
 private const val ROUTE_ADD_SET = "log_add_set/{sessionUuid}/{slug}"
+private const val ROUTE_CAMERA_REP = "log_camera_rep/{sessionUuid}/{slug}"
 private const val ROUTE_SESSION_DETAIL = "log_session/{sessionUuid}"
 private const val ROUTE_EXERCISE_HISTORY = "log_exercise/{slug}"
 
@@ -52,8 +54,22 @@ fun LogScreen() {
                 navArgument("sessionUuid") { type = NavType.StringType },
                 navArgument("slug") { type = NavType.StringType },
             ),
+        ) { backStackEntry ->
+            val sessionUuid = backStackEntry.arguments?.getString("sessionUuid").orEmpty()
+            val slug = backStackEntry.arguments?.getString("slug").orEmpty()
+            AddSetScreen(
+                onDone = { navController.popBackStack(ROUTE_HOME, inclusive = false) },
+                onUseCamera = { navController.navigate("log_camera_rep/$sessionUuid/$slug") },
+            )
+        }
+        composable(
+            ROUTE_CAMERA_REP,
+            arguments = listOf(
+                navArgument("sessionUuid") { type = NavType.StringType },
+                navArgument("slug") { type = NavType.StringType },
+            ),
         ) {
-            AddSetScreen(onDone = { navController.popBackStack(ROUTE_HOME, inclusive = false) })
+            RepCounterScreen(onDone = { navController.popBackStack() })
         }
         composable(
             ROUTE_SESSION_DETAIL,
