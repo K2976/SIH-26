@@ -148,6 +148,7 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.health.connect)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

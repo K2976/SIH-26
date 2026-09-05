@@ -5,5 +5,12 @@
     "dirName": "260903-monorepo-skeleton",
     "scope": "monorepo-skeleton",
     "status": "in-flight"
+  },
+  {
+    "uuid": "01a0734f-d70f-7d33-a21a-3f46053ec028",
+    "slug": "health-connect",
+    "dirName": "260905-health-connect",
+    "scope": "feature",
+    "status": "in-flight"
   }
 ]

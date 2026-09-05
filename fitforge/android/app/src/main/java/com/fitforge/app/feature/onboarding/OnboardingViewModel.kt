@@ -87,8 +87,12 @@ class OnboardingViewModel @Inject constructor(
             try {
                 val profileResp = profileApi.profileRetrieve()
                 val profile = profileResp.body()
-                val goalResp = goalApi.goalRetrieve()
-                val goal = goalResp.body()
+                val goal = try {
+                    goalApi.goalRetrieve().body()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Goal not set or failed to deserialize (expected for new accounts)", e)
+                    null
+                }
 
                 if (profile != null) {
                     _uiState.update { state ->
@@ -114,7 +118,7 @@ class OnboardingViewModel @Inject constructor(
                 } else {
                     _uiState.update { it.copy(isLoading = false) }
                 }
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 Log.w(TAG, "Failed to load existing profile", e)
                 _uiState.update { it.copy(isLoading = false) }
             }
