@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import java.util.Locale
 import com.fitforge.app.R
 
 /**
@@ -56,10 +57,10 @@ fun TargetRateStep(
 
         // Rate display
         val displayRate = if (isMetric) {
-            stringResource(R.string.onboarding_rate_kg_per_week, String.format("%.1f", currentRate))
+            stringResource(R.string.onboarding_rate_kg_per_week, String.format(Locale.US, "%.1f", currentRate))
         } else {
             val lbRate = currentRate * 2.205f
-            stringResource(R.string.onboarding_rate_lb_per_week, String.format("%.1f", lbRate))
+            stringResource(R.string.onboarding_rate_lb_per_week, String.format(Locale.US, "%.1f", lbRate))
         }
         Text(
             text = displayRate,
@@ -72,7 +73,7 @@ fun TargetRateStep(
         Slider(
             value = currentRate,
             onValueChange = { newValue ->
-                onTargetRateChanged(String.format("%.2f", newValue))
+                onTargetRateChanged(String.format(Locale.US, "%.2f", newValue))
             },
             valueRange = 0f..1f,
             steps = 9,

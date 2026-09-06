@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
+import retrofit2.HttpException
 import java.io.IOException
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -89,8 +91,17 @@ class OnboardingViewModel @Inject constructor(
                 val profile = profileResp.body()
                 val goal = try {
                     goalApi.goalRetrieve().body()
-                } catch (e: Exception) {
-                    Log.w(TAG, "Goal not set or failed to deserialize (expected for new accounts)", e)
+                } catch (e: IOException) {
+                    Log.w(TAG, "Goal fetch network error", e)
+                    null
+                } catch (e: HttpException) {
+                    Log.w(TAG, "Goal not set (HTTP ${e.code()})", e)
+                    null
+                } catch (e: SerializationException) {
+                    Log.w(TAG, "Goal failed to deserialize", e)
+                    null
+                } catch (e: IllegalStateException) {
+                    Log.w(TAG, "Goal illegal state", e)
                     null
                 }
 
@@ -118,8 +129,17 @@ class OnboardingViewModel @Inject constructor(
                 } else {
                     _uiState.update { it.copy(isLoading = false) }
                 }
-            } catch (e: Exception) {
-                Log.w(TAG, "Failed to load existing profile", e)
+            } catch (e: IOException) {
+                Log.w(TAG, "Failed to load existing profile due to network IO error", e)
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: HttpException) {
+                Log.w(TAG, "Failed to load existing profile due to HTTP error", e)
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: SerializationException) {
+                Log.w(TAG, "Failed to deserialize profile response", e)
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: IllegalStateException) {
+                Log.w(TAG, "Illegal state loading existing profile", e)
                 _uiState.update { it.copy(isLoading = false) }
             }
         }

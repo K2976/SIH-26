@@ -50,6 +50,7 @@ import com.fitforge.app.domain.model.HealthDataSummary
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun HealthConnectScreen(
@@ -252,61 +253,77 @@ private fun StatusCard(
 @Composable
 private fun HealthDataCards(data: HealthDataSummary?) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        // Activity Group
-        MetricCard(
-            title = "Activity",
-            icon = Icons.Default.DirectionsRun,
-            items = listOf(
-                "Daily Steps" to (data?.steps?.let { "$it steps" } ?: "No data"),
-                "Distance" to (data?.distanceMeters?.let { String.format("%.2f km", it / 1000.0) } ?: "No data"),
-                "Active Calories" to (data?.activeCaloriesKcal?.let { String.format("%.0f kcal", it) } ?: "No data"),
-                "Total Energy" to (data?.totalCaloriesKcal?.let { String.format("%.0f kcal", it) } ?: "No data"),
-            ),
-        )
-
-        // Heart Group
-        MetricCard(
-            title = "Heart Rate",
-            icon = Icons.Default.Favorite,
-            items = listOf(
-                "Resting Heart Rate" to (data?.restingHeartRateBpm?.let { "$it bpm" } ?: "No data"),
-                "Latest Heart Rate" to (data?.latestHeartRateBpm?.let { "$it bpm" } ?: "No data"),
-            ),
-        )
-
-        // Sleep Group
-        MetricCard(
-            title = "Sleep",
-            icon = Icons.Default.Nightlight,
-            items = listOf(
-                "Sleep Duration" to (data?.sleepDurationMinutes?.let { "${it / 60}h ${it % 60}m" } ?: "No data"),
-                "Session Details" to (data?.sleepStagesSummary ?: "No data"),
-            ),
-        )
-
-        // Exercise Sessions
-        MetricCard(
-            title = "Workouts & Exercises",
-            icon = Icons.Default.FitnessCenter,
-            items = listOf(
-                "Latest Workout" to (data?.latestExerciseSessionTitle ?: "No data"),
-                "Duration" to (data?.latestExerciseDurationMinutes?.let { "$it minutes" } ?: "No data"),
-            ),
-        )
-
-        // Body Composition & Vitals
-        MetricCard(
-            title = "Body & Vitals",
-            icon = Icons.Default.MonitorWeight,
-            items = listOf(
-                "Weight" to (data?.weightKg?.let { String.format("%.1f kg", it) } ?: "No data"),
-                "Height" to (data?.heightMeters?.let { String.format("%.0f cm", it * 100) } ?: "No data"),
-                "Body Fat" to (data?.bodyFatPercentage?.let { String.format("%.1f %%", it) } ?: "No data"),
-                "Blood Oxygen (SpO2)" to (data?.oxygenSaturationPercentage?.let { String.format("%.0f %%", it) } ?: "No data"),
-                "Respiratory Rate" to (data?.respiratoryRateBpm?.let { String.format("%.0f rpm", it) } ?: "No data"),
-            ),
-        )
+        ActivityCard(data)
+        HeartRateCard(data)
+        SleepCard(data)
+        WorkoutsCard(data)
+        BodyVitalsCard(data)
     }
+}
+
+@Composable
+private fun ActivityCard(data: HealthDataSummary?) {
+    MetricCard(
+        title = "Activity",
+        icon = Icons.Default.DirectionsRun,
+        items = listOf(
+            "Daily Steps" to (data?.steps?.let { "$it steps" } ?: "No data"),
+            "Distance" to (data?.distanceMeters?.let { String.format(Locale.US, "%.2f km", it / 1000.0) } ?: "No data"),
+            "Active Calories" to (data?.activeCaloriesKcal?.let { String.format(Locale.US, "%.0f kcal", it) } ?: "No data"),
+            "Total Energy" to (data?.totalCaloriesKcal?.let { String.format(Locale.US, "%.0f kcal", it) } ?: "No data"),
+        ),
+    )
+}
+
+@Composable
+private fun HeartRateCard(data: HealthDataSummary?) {
+    MetricCard(
+        title = "Heart Rate",
+        icon = Icons.Default.Favorite,
+        items = listOf(
+            "Resting Heart Rate" to (data?.restingHeartRateBpm?.let { "$it bpm" } ?: "No data"),
+            "Latest Heart Rate" to (data?.latestHeartRateBpm?.let { "$it bpm" } ?: "No data"),
+        ),
+    )
+}
+
+@Composable
+private fun SleepCard(data: HealthDataSummary?) {
+    MetricCard(
+        title = "Sleep",
+        icon = Icons.Default.Nightlight,
+        items = listOf(
+            "Sleep Duration" to (data?.sleepDurationMinutes?.let { "${it / 60}h ${it % 60}m" } ?: "No data"),
+            "Session Details" to (data?.sleepStagesSummary ?: "No data"),
+        ),
+    )
+}
+
+@Composable
+private fun WorkoutsCard(data: HealthDataSummary?) {
+    MetricCard(
+        title = "Workouts & Exercises",
+        icon = Icons.Default.FitnessCenter,
+        items = listOf(
+            "Latest Workout" to (data?.latestExerciseSessionTitle ?: "No data"),
+            "Duration" to (data?.latestExerciseDurationMinutes?.let { "$it minutes" } ?: "No data"),
+        ),
+    )
+}
+
+@Composable
+private fun BodyVitalsCard(data: HealthDataSummary?) {
+    MetricCard(
+        title = "Body & Vitals",
+        icon = Icons.Default.MonitorWeight,
+        items = listOf(
+            "Weight" to (data?.weightKg?.let { String.format(Locale.US, "%.1f kg", it) } ?: "No data"),
+            "Height" to (data?.heightMeters?.let { String.format(Locale.US, "%.0f cm", it * 100) } ?: "No data"),
+            "Body Fat" to (data?.bodyFatPercentage?.let { String.format(Locale.US, "%.1f %%", it) } ?: "No data"),
+            "Blood Oxygen (SpO2)" to (data?.oxygenSaturationPercentage?.let { String.format(Locale.US, "%.0f %%", it) } ?: "No data"),
+            "Respiratory Rate" to (data?.respiratoryRateBpm?.let { String.format(Locale.US, "%.0f rpm", it) } ?: "No data"),
+        ),
+    )
 }
 
 @Composable

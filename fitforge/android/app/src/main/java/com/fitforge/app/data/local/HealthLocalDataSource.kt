@@ -2,6 +2,7 @@ package com.fitforge.app.data.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -86,22 +87,41 @@ class HealthDataStoreLocalDataSource @Inject constructor(
     override suspend fun saveHealthSummary(summary: HealthDataSummary) {
         dataStore.edit { prefs ->
             prefs[Keys.LAST_SYNCED_AT_EPOCH_MS] = summary.lastSyncedAt.toEpochMilli()
+            prefs.saveActivityMetrics(summary)
+            prefs.saveVitals(summary)
+            prefs.saveBodyMetrics(summary)
+        }
+    }
 
-            summary.steps?.let { prefs[Keys.STEPS] = it } ?: prefs.remove(Keys.STEPS)
-            summary.distanceMeters?.let { prefs[Keys.DISTANCE_METERS] = it } ?: prefs.remove(Keys.DISTANCE_METERS)
-            summary.activeCaloriesKcal?.let { prefs[Keys.ACTIVE_CALORIES_KCAL] = it } ?: prefs.remove(Keys.ACTIVE_CALORIES_KCAL)
-            summary.totalCaloriesKcal?.let { prefs[Keys.TOTAL_CALORIES_KCAL] = it } ?: prefs.remove(Keys.TOTAL_CALORIES_KCAL)
-            summary.latestHeartRateBpm?.let { prefs[Keys.LATEST_HEART_RATE_BPM] = it } ?: prefs.remove(Keys.LATEST_HEART_RATE_BPM)
-            summary.restingHeartRateBpm?.let { prefs[Keys.RESTING_HEART_RATE_BPM] = it } ?: prefs.remove(Keys.RESTING_HEART_RATE_BPM)
-            summary.sleepDurationMinutes?.let { prefs[Keys.SLEEP_DURATION_MINUTES] = it } ?: prefs.remove(Keys.SLEEP_DURATION_MINUTES)
-            summary.sleepStagesSummary?.let { prefs[Keys.SLEEP_STAGES_SUMMARY] = it } ?: prefs.remove(Keys.SLEEP_STAGES_SUMMARY)
-            summary.latestExerciseSessionTitle?.let { prefs[Keys.LATEST_EXERCISE_SESSION_TITLE] = it } ?: prefs.remove(Keys.LATEST_EXERCISE_SESSION_TITLE)
-            summary.latestExerciseDurationMinutes?.let { prefs[Keys.LATEST_EXERCISE_DURATION_MINUTES] = it } ?: prefs.remove(Keys.LATEST_EXERCISE_DURATION_MINUTES)
-            summary.weightKg?.let { prefs[Keys.WEIGHT_KG] = it } ?: prefs.remove(Keys.WEIGHT_KG)
-            summary.heightMeters?.let { prefs[Keys.HEIGHT_METERS] = it } ?: prefs.remove(Keys.HEIGHT_METERS)
-            summary.bodyFatPercentage?.let { prefs[Keys.BODY_FAT_PERCENTAGE] = it } ?: prefs.remove(Keys.BODY_FAT_PERCENTAGE)
-            summary.oxygenSaturationPercentage?.let { prefs[Keys.OXYGEN_SATURATION_PERCENTAGE] = it } ?: prefs.remove(Keys.OXYGEN_SATURATION_PERCENTAGE)
-            summary.respiratoryRateBpm?.let { prefs[Keys.RESPIRATORY_RATE_BPM] = it } ?: prefs.remove(Keys.RESPIRATORY_RATE_BPM)
+    private fun MutablePreferences.saveActivityMetrics(summary: HealthDataSummary) {
+        setOrRemove(Keys.STEPS, summary.steps)
+        setOrRemove(Keys.DISTANCE_METERS, summary.distanceMeters)
+        setOrRemove(Keys.ACTIVE_CALORIES_KCAL, summary.activeCaloriesKcal)
+        setOrRemove(Keys.TOTAL_CALORIES_KCAL, summary.totalCaloriesKcal)
+        setOrRemove(Keys.LATEST_EXERCISE_SESSION_TITLE, summary.latestExerciseSessionTitle)
+        setOrRemove(Keys.LATEST_EXERCISE_DURATION_MINUTES, summary.latestExerciseDurationMinutes)
+    }
+
+    private fun MutablePreferences.saveVitals(summary: HealthDataSummary) {
+        setOrRemove(Keys.LATEST_HEART_RATE_BPM, summary.latestHeartRateBpm)
+        setOrRemove(Keys.RESTING_HEART_RATE_BPM, summary.restingHeartRateBpm)
+        setOrRemove(Keys.SLEEP_DURATION_MINUTES, summary.sleepDurationMinutes)
+        setOrRemove(Keys.SLEEP_STAGES_SUMMARY, summary.sleepStagesSummary)
+        setOrRemove(Keys.OXYGEN_SATURATION_PERCENTAGE, summary.oxygenSaturationPercentage)
+        setOrRemove(Keys.RESPIRATORY_RATE_BPM, summary.respiratoryRateBpm)
+    }
+
+    private fun MutablePreferences.saveBodyMetrics(summary: HealthDataSummary) {
+        setOrRemove(Keys.WEIGHT_KG, summary.weightKg)
+        setOrRemove(Keys.HEIGHT_METERS, summary.heightMeters)
+        setOrRemove(Keys.BODY_FAT_PERCENTAGE, summary.bodyFatPercentage)
+    }
+
+    private fun <T> MutablePreferences.setOrRemove(key: Preferences.Key<T>, value: T?) {
+        if (value != null) {
+            this[key] = value
+        } else {
+            this.remove(key)
         }
     }
 

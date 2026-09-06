@@ -51,91 +51,126 @@ fun GoalStep(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Energy direction
-        Text(
-            text = stringResource(R.string.onboarding_energy_direction_label),
-            style = MaterialTheme.typography.titleMedium,
+        EnergyDirectionSection(
+            selectedDirection = uiState.energyDirection,
+            onDirectionChanged = onEnergyDirectionChanged,
         )
-        Text(
-            text = stringResource(R.string.onboarding_energy_direction_hint),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        val energyOptions = listOf(
-            "cut" to R.string.onboarding_energy_cut,
-            "maintain" to R.string.onboarding_energy_maintain,
-            "gain" to R.string.onboarding_energy_gain,
-            "not_tracking" to R.string.onboarding_energy_not_tracking,
-        )
-        energyOptions.forEach { (value, labelRes) ->
-            SelectableCard(
-                label = stringResource(labelRes),
-                selected = uiState.energyDirection == value,
-                onClick = { onEnergyDirectionChanged(value) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-            )
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Training focus
-        Text(
-            text = stringResource(R.string.onboarding_training_focus_label),
-            style = MaterialTheme.typography.titleMedium,
+        TrainingFocusSection(
+            selectedFocus = uiState.trainingFocus,
+            onFocusChanged = onTrainingFocusChanged,
         )
-        Text(
-            text = stringResource(R.string.onboarding_training_focus_hint),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        val focusOptions = listOf(
-            "strength" to R.string.onboarding_focus_strength,
-            "hypertrophy" to R.string.onboarding_focus_hypertrophy,
-            "endurance" to R.string.onboarding_focus_endurance,
-            "general" to R.string.onboarding_focus_general,
-        )
-        focusOptions.forEach { (value, labelRes) ->
-            SelectableCard(
-                label = stringResource(labelRes),
-                selected = uiState.trainingFocus == value,
-                onClick = { onTrainingFocusChanged(value) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-            )
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = onNext,
-            enabled = !uiState.isSaving && uiState.energyDirection != null && uiState.trainingFocus != null,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (uiState.isSaving) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp))
-            } else {
-                Text(stringResource(R.string.onboarding_next))
-            }
-        }
+        GoalStepButtons(
+            isSaving = uiState.isSaving,
+            canProceed = uiState.energyDirection != null && uiState.trainingFocus != null,
+            onNext = onNext,
+            onSkip = onSkip,
+        )
+    }
+}
 
-        TextButton(
-            onClick = onSkip,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isSaving,
-        ) {
-            Text(stringResource(R.string.onboarding_skip))
+@Composable
+private fun EnergyDirectionSection(
+    selectedDirection: String?,
+    onDirectionChanged: (String) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.onboarding_energy_direction_label),
+        style = MaterialTheme.typography.titleMedium,
+    )
+    Text(
+        text = stringResource(R.string.onboarding_energy_direction_hint),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 4.dp),
+    )
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    val energyOptions = listOf(
+        "cut" to R.string.onboarding_energy_cut,
+        "maintain" to R.string.onboarding_energy_maintain,
+        "gain" to R.string.onboarding_energy_gain,
+        "not_tracking" to R.string.onboarding_energy_not_tracking,
+    )
+    energyOptions.forEach { (value, labelRes) ->
+        SelectableCard(
+            label = stringResource(labelRes),
+            selected = selectedDirection == value,
+            onClick = { onDirectionChanged(value) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+        )
+    }
+}
+
+@Composable
+private fun TrainingFocusSection(
+    selectedFocus: String?,
+    onFocusChanged: (String) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.onboarding_training_focus_label),
+        style = MaterialTheme.typography.titleMedium,
+    )
+    Text(
+        text = stringResource(R.string.onboarding_training_focus_hint),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 4.dp),
+    )
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    val focusOptions = listOf(
+        "strength" to R.string.onboarding_focus_strength,
+        "hypertrophy" to R.string.onboarding_focus_hypertrophy,
+        "endurance" to R.string.onboarding_focus_endurance,
+        "general" to R.string.onboarding_focus_general,
+    )
+    focusOptions.forEach { (value, labelRes) ->
+        SelectableCard(
+            label = stringResource(labelRes),
+            selected = selectedFocus == value,
+            onClick = { onFocusChanged(value) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+        )
+    }
+}
+
+@Composable
+private fun GoalStepButtons(
+    isSaving: Boolean,
+    canProceed: Boolean,
+    onNext: () -> Unit,
+    onSkip: () -> Unit,
+) {
+    Button(
+        onClick = onNext,
+        enabled = !isSaving && canProceed,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        if (isSaving) {
+            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+        } else {
+            Text(stringResource(R.string.onboarding_next))
         }
+    }
+
+    TextButton(
+        onClick = onSkip,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = !isSaving,
+    ) {
+        Text(stringResource(R.string.onboarding_skip))
     }
 }
 

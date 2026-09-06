@@ -53,122 +53,163 @@ fun FitnessInputsStep(
             .verticalScroll(scrollState)
             .padding(24.dp),
     ) {
-        Text(
-            text = stringResource(R.string.onboarding_fitness_title),
-            style = MaterialTheme.typography.headlineSmall,
-        )
-        Text(
-            text = stringResource(R.string.onboarding_fitness_subtitle),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-
+        FitnessInputsHeader()
         Spacer(modifier = Modifier.height(24.dp))
-
-        // Waist circumference
-        val waistLabel = if (isMetric) {
-            stringResource(R.string.onboarding_waist_cm)
-        } else {
-            stringResource(R.string.onboarding_waist_in)
-        }
-        OutlinedTextField(
+        WaistInputField(
             value = uiState.waistCm,
-            onValueChange = { value -> onWaistCmChanged(value.filter { it.isDigit() || it == '.' }) },
-            label = { Text(waistLabel) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.fillMaxWidth(),
+            isMetric = isMetric,
+            onValueChange = onWaistCmChanged,
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Resting heart rate
-        OutlinedTextField(
+        RestingHrInputField(
             value = uiState.restingHr,
-            onValueChange = { value -> onRestingHrChanged(value.filter { it.isDigit() }) },
-            label = { Text(stringResource(R.string.onboarding_resting_hr)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            suffix = { Text(stringResource(R.string.onboarding_bpm)) },
-            modifier = Modifier.fillMaxWidth(),
+            onValueChange = onRestingHrChanged,
         )
-
         Spacer(modifier = Modifier.height(20.dp))
-
-        // Activity level
-        Text(
-            text = stringResource(R.string.onboarding_activity_level_label),
-            style = MaterialTheme.typography.titleMedium,
+        ActivityLevelSection(
+            selectedLevel = uiState.activityLevel,
+            onLevelChanged = onActivityLevelChanged,
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        val activityOptions = listOf(
-            "sedentary" to R.string.onboarding_activity_sedentary,
-            "lightly_active" to R.string.onboarding_activity_lightly_active,
-            "moderately_active" to R.string.onboarding_activity_moderately_active,
-            "very_active" to R.string.onboarding_activity_very_active,
-            "extra_active" to R.string.onboarding_activity_extra_active,
-        )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            activityOptions.forEach { (value, labelRes) ->
-                val selected = uiState.activityLevel == value
-                OutlinedCard(
-                    onClick = { onActivityLevelChanged(value) },
-                    colors = CardDefaults.outlinedCardColors(
-                        containerColor = if (selected) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surface
-                        },
-                    ),
-                    border = BorderStroke(
-                        width = if (selected) 2.dp else 1.dp,
-                        color = if (selected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.outlineVariant
-                        },
-                    ),
-                ) {
-                    Text(
-                        text = stringResource(labelRes),
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (selected) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
-                    )
-                }
-            }
-        }
-
         Spacer(modifier = Modifier.height(24.dp))
+        FitnessStepButtons(
+            isSaving = uiState.isSaving,
+            onNext = onNext,
+            onSkip = onSkip,
+        )
+    }
+}
 
-        Button(
-            onClick = onNext,
-            enabled = !uiState.isSaving,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            if (uiState.isSaving) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp))
-            } else {
-                Text(stringResource(R.string.onboarding_next))
+@Composable
+private fun FitnessInputsHeader() {
+    Text(
+        text = stringResource(R.string.onboarding_fitness_title),
+        style = MaterialTheme.typography.headlineSmall,
+    )
+    Text(
+        text = stringResource(R.string.onboarding_fitness_subtitle),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 4.dp),
+    )
+}
+
+@Composable
+private fun WaistInputField(
+    value: String,
+    isMetric: Boolean,
+    onValueChange: (String) -> Unit,
+) {
+    val waistLabel = if (isMetric) {
+        stringResource(R.string.onboarding_waist_cm)
+    } else {
+        stringResource(R.string.onboarding_waist_in)
+    }
+    OutlinedTextField(
+        value = value,
+        onValueChange = { input -> onValueChange(input.filter { it.isDigit() || it == '.' }) },
+        label = { Text(waistLabel) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Composable
+private fun RestingHrInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { input -> onValueChange(input.filter { it.isDigit() }) },
+        label = { Text(stringResource(R.string.onboarding_resting_hr)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        suffix = { Text(stringResource(R.string.onboarding_bpm)) },
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ActivityLevelSection(
+    selectedLevel: String?,
+    onLevelChanged: (String) -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.onboarding_activity_level_label),
+        style = MaterialTheme.typography.titleMedium,
+    )
+    Spacer(modifier = Modifier.height(12.dp))
+
+    val activityOptions = listOf(
+        "sedentary" to R.string.onboarding_activity_sedentary,
+        "lightly_active" to R.string.onboarding_activity_lightly_active,
+        "moderately_active" to R.string.onboarding_activity_moderately_active,
+        "very_active" to R.string.onboarding_activity_very_active,
+        "extra_active" to R.string.onboarding_activity_extra_active,
+    )
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        activityOptions.forEach { (value, labelRes) ->
+            val selected = selectedLevel == value
+            OutlinedCard(
+                onClick = { onLevelChanged(value) },
+                colors = CardDefaults.outlinedCardColors(
+                    containerColor = if (selected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surface
+                    },
+                ),
+                border = BorderStroke(
+                    width = if (selected) 2.dp else 1.dp,
+                    color = if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    },
+                ),
+            ) {
+                Text(
+                    text = stringResource(labelRes),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (selected) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                )
             }
         }
+    }
+}
 
-        // Visible skip — records DECLINED, not null
-        TextButton(
-            onClick = onSkip,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isSaving,
-        ) {
-            Text(stringResource(R.string.onboarding_skip))
+@Composable
+private fun FitnessStepButtons(
+    isSaving: Boolean,
+    onNext: () -> Unit,
+    onSkip: () -> Unit,
+) {
+    Button(
+        onClick = onNext,
+        enabled = !isSaving,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        if (isSaving) {
+            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+        } else {
+            Text(stringResource(R.string.onboarding_next))
         }
+    }
+
+    TextButton(
+        onClick = onSkip,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = !isSaving,
+    ) {
+        Text(stringResource(R.string.onboarding_skip))
     }
 }

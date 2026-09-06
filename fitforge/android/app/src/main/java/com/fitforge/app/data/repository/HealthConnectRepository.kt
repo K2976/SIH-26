@@ -1,7 +1,9 @@
 package com.fitforge.app.data.repository
 
 import android.content.Context
+import android.os.RemoteException
 import android.util.Log
+import java.io.IOException
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
@@ -35,6 +37,23 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TAG = "HealthConnectRepo"
+
+private data class AggregateMetrics(
+    val steps: Long? = null,
+    val distanceMeters: Double? = null,
+    val activeCalories: Double? = null,
+    val totalCalories: Double? = null,
+)
+
+private data class SleepData(
+    val durationMinutes: Long? = null,
+    val title: String? = null,
+)
+
+private data class ExerciseData(
+    val title: String? = null,
+    val durationMinutes: Long? = null,
+)
 
 @Singleton
 class HealthConnectRepository @Inject constructor(
@@ -84,8 +103,14 @@ class HealthConnectRepository @Inject constructor(
         val client = healthConnectClient ?: return emptySet()
         return try {
             client.permissionController.getGrantedPermissions()
-        } catch (e: Exception) {
-            Log.w(TAG, "Error fetching granted permissions", e)
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException fetching granted permissions", e)
+            emptySet()
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException fetching granted permissions", e)
+            emptySet()
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException fetching granted permissions", e)
             emptySet()
         }
     }
@@ -104,257 +129,371 @@ class HealthConnectRepository @Inject constructor(
         val client = healthConnectClient
             ?: return Result.failure(IllegalStateException("Health Connect is not available on this device"))
 
-        return runCatching {
-            val granted = getGrantedPermissions()
-            val timeRange = TimeRangeFilter.between(startTime, endTime)
+        val granted = getGrantedPermissions()
+        val timeRange = TimeRangeFilter.between(startTime, endTime)
+        Log.d(TAG, "readHealthSummary: startTime=$startTime, endTime=$endTime, grantedPermissions=$granted")
 
-            Log.d(TAG, "readHealthSummary: startTime=$startTime, endTime=$endTime, grantedPermissions=$granted")
+        val aggregates = readAggregateMetrics(client, timeRange, granted)
+        val latestHeartRate = readLatestHeartRate(client, timeRange, granted)
+        val restingHeartRate = readRestingHeartRate(client, timeRange, granted)
+        val sleepData = readSleepSession(client, timeRange, granted)
+        val exerciseData = readExerciseSession(client, timeRange, granted)
+        val weight = readWeight(client, timeRange, granted)
+        val height = readHeight(client, timeRange, granted)
+        val bodyFat = readBodyFat(client, timeRange, granted)
+        val oxygenSat = readOxygenSaturation(client, timeRange, granted)
+        val respRate = readRespiratoryRate(client, timeRange, granted)
 
-            var steps: Long? = null
-            var distanceMeters: Double? = null
-            var activeCalories: Double? = null
-            var totalCalories: Double? = null
-
-            // Aggregate metrics if permitted
-            val aggregateMetrics = mutableSetOf<androidx.health.connect.client.aggregate.AggregateMetric<*>>()
-            if (HealthPermission.getReadPermission(StepsRecord::class) in granted) {
-                aggregateMetrics.add(StepsRecord.COUNT_TOTAL)
-            }
-            if (HealthPermission.getReadPermission(DistanceRecord::class) in granted) {
-                aggregateMetrics.add(DistanceRecord.DISTANCE_TOTAL)
-            }
-            if (HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class) in granted) {
-                aggregateMetrics.add(ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL)
-            }
-            if (HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class) in granted) {
-                aggregateMetrics.add(TotalCaloriesBurnedRecord.ENERGY_TOTAL)
-            }
-
-            if (aggregateMetrics.isNotEmpty()) {
-                try {
-                    val aggregateResult = client.aggregate(
-                        AggregateRequest(
-                            metrics = aggregateMetrics,
-                            timeRangeFilter = timeRange,
-                        )
-                    )
-                    steps = aggregateResult[StepsRecord.COUNT_TOTAL]
-                    distanceMeters = aggregateResult[DistanceRecord.DISTANCE_TOTAL]?.inMeters
-                    activeCalories = aggregateResult[ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL]?.inKilocalories
-                    totalCalories = aggregateResult[TotalCaloriesBurnedRecord.ENERGY_TOTAL]?.inKilocalories
-                    
-                    Log.d(TAG, "Aggregate result: steps=$steps, distanceMeters=$distanceMeters, activeCalories=$activeCalories, totalCalories=$totalCalories")
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading aggregated health metrics", e)
-                }
-            } else {
-                Log.w(TAG, "No aggregate metrics requested - no permissions granted for aggregated metrics")
-            }
-
-            // Latest Heart Rate
-            var latestHeartRate: Long? = null
-            if (HealthPermission.getReadPermission(HeartRateRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = HeartRateRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    latestHeartRate = records.records.firstOrNull()?.samples?.lastOrNull()?.beatsPerMinute
-                    Log.d(TAG, "HeartRateRecord: count=${records.records.size}, latestHeartRate=$latestHeartRate")
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading HeartRateRecord", e)
-                }
-            } else {
-                Log.d(TAG, "HeartRateRecord permission not granted")
-            }
-
-            // Resting Heart Rate
-            var restingHeartRate: Long? = null
-            if (HealthPermission.getReadPermission(RestingHeartRateRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = RestingHeartRateRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    restingHeartRate = records.records.firstOrNull()?.beatsPerMinute
-                    Log.d(TAG, "RestingHeartRateRecord: count=${records.records.size}, restingHeartRate=$restingHeartRate")
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading RestingHeartRateRecord", e)
-                }
-            } else {
-                Log.d(TAG, "RestingHeartRateRecord permission not granted")
-            }
-
-            // Sleep Session
-            var sleepDurationMinutes: Long? = null
-            var sleepTitle: String? = null
-            if (HealthPermission.getReadPermission(SleepSessionRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = SleepSessionRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    val latestSleep = records.records.firstOrNull()
-                    if (latestSleep != null) {
-                        sleepDurationMinutes = Duration.between(latestSleep.startTime, latestSleep.endTime).toMinutes()
-                        sleepTitle = latestSleep.title ?: "Sleep Session"
-                    }
-                    Log.d(TAG, "SleepSessionRecord: count=${records.records.size}, sleepDurationMinutes=$sleepDurationMinutes, sleepTitle=$sleepTitle")
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading SleepSessionRecord", e)
-                }
-            } else {
-                Log.d(TAG, "SleepSessionRecord permission not granted")
-            }
-
-            // Exercise Session
-            var exerciseTitle: String? = null
-            var exerciseDurationMinutes: Long? = null
-            if (HealthPermission.getReadPermission(ExerciseSessionRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = ExerciseSessionRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    val latestExercise = records.records.firstOrNull()
-                    if (latestExercise != null) {
-                        exerciseDurationMinutes = Duration.between(latestExercise.startTime, latestExercise.endTime).toMinutes()
-                        exerciseTitle = latestExercise.title ?: "Exercise Session"
-                    }
-                    Log.d(TAG, "ExerciseSessionRecord: count=${records.records.size}, exerciseDurationMinutes=$exerciseDurationMinutes, exerciseTitle=$exerciseTitle")
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading ExerciseSessionRecord", e)
-                }
-            } else {
-                Log.d(TAG, "ExerciseSessionRecord permission not granted")
-            }
-
-            // Weight
-            var weightKg: Double? = null
-            if (HealthPermission.getReadPermission(WeightRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = WeightRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    weightKg = records.records.firstOrNull()?.weight?.inKilograms
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading WeightRecord", e)
-                }
-            }
-
-            // Height
-            var heightMeters: Double? = null
-            if (HealthPermission.getReadPermission(HeightRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = HeightRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    heightMeters = records.records.firstOrNull()?.height?.inMeters
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading HeightRecord", e)
-                }
-            }
-
-            // Body Fat
-            var bodyFatPercentage: Double? = null
-            if (HealthPermission.getReadPermission(BodyFatRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = BodyFatRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    bodyFatPercentage = records.records.firstOrNull()?.percentage?.value
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading BodyFatRecord", e)
-                }
-            }
-
-            // Oxygen Saturation
-            var oxygenSaturationPercentage: Double? = null
-            if (HealthPermission.getReadPermission(OxygenSaturationRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = OxygenSaturationRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    oxygenSaturationPercentage = records.records.firstOrNull()?.percentage?.value
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading OxygenSaturationRecord", e)
-                }
-            }
-
-            // Respiratory Rate
-            var respiratoryRateBpm: Double? = null
-            if (HealthPermission.getReadPermission(RespiratoryRateRecord::class) in granted) {
-                try {
-                    val records = client.readRecords(
-                        ReadRecordsRequest(
-                            recordType = RespiratoryRateRecord::class,
-                            timeRangeFilter = timeRange,
-                            ascendingOrder = false,
-                            pageSize = 1,
-                        )
-                    )
-                    respiratoryRateBpm = records.records.firstOrNull()?.rate
-                } catch (e: Exception) {
-                    Log.w(TAG, "Error reading RespiratoryRateRecord", e)
-                }
-            }
-
-            Log.d(TAG, "Final HealthDataSummary: steps=$steps, distanceMeters=$distanceMeters, activeCalories=$activeCalories, totalCalories=$totalCalories, latestHeartRate=$latestHeartRate, restingHeartRate=$restingHeartRate, sleepDurationMinutes=$sleepDurationMinutes, sleepTitle=$sleepTitle, exerciseTitle=$exerciseTitle, exerciseDurationMinutes=$exerciseDurationMinutes, weightKg=$weightKg, heightMeters=$heightMeters, bodyFatPercentage=$bodyFatPercentage, oxygenSaturation=$oxygenSaturationPercentage, respiratoryRate=$respiratoryRateBpm")
-
+        return Result.success(
             HealthDataSummary(
-                steps = steps,
-                distanceMeters = distanceMeters,
-                activeCaloriesKcal = activeCalories,
-                totalCaloriesKcal = totalCalories,
+                steps = aggregates.steps,
+                distanceMeters = aggregates.distanceMeters,
+                activeCaloriesKcal = aggregates.activeCalories,
+                totalCaloriesKcal = aggregates.totalCalories,
                 latestHeartRateBpm = latestHeartRate,
                 restingHeartRateBpm = restingHeartRate,
-                sleepDurationMinutes = sleepDurationMinutes,
-                sleepStagesSummary = sleepTitle,
-                latestExerciseSessionTitle = exerciseTitle,
-                latestExerciseDurationMinutes = exerciseDurationMinutes,
-                weightKg = weightKg,
-                heightMeters = heightMeters,
-                bodyFatPercentage = bodyFatPercentage,
-                oxygenSaturationPercentage = oxygenSaturationPercentage,
-                respiratoryRateBpm = respiratoryRateBpm,
+                sleepDurationMinutes = sleepData.durationMinutes,
+                sleepStagesSummary = sleepData.title,
+                latestExerciseSessionTitle = exerciseData.title,
+                latestExerciseDurationMinutes = exerciseData.durationMinutes,
+                weightKg = weight,
+                heightMeters = height,
+                bodyFatPercentage = bodyFat,
+                oxygenSaturationPercentage = oxygenSat,
+                respiratoryRateBpm = respRate,
                 lastSyncedAt = Instant.now(),
             )
+        )
+    }
+
+    private suspend fun readAggregateMetrics(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): AggregateMetrics {
+        val aggregateMetrics = mutableSetOf<androidx.health.connect.client.aggregate.AggregateMetric<*>>()
+        if (HealthPermission.getReadPermission(StepsRecord::class) in granted) {
+            aggregateMetrics.add(StepsRecord.COUNT_TOTAL)
+        }
+        if (HealthPermission.getReadPermission(DistanceRecord::class) in granted) {
+            aggregateMetrics.add(DistanceRecord.DISTANCE_TOTAL)
+        }
+        if (HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class) in granted) {
+            aggregateMetrics.add(ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL)
+        }
+        if (HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class) in granted) {
+            aggregateMetrics.add(TotalCaloriesBurnedRecord.ENERGY_TOTAL)
+        }
+
+        if (aggregateMetrics.isEmpty()) return AggregateMetrics()
+
+        return try {
+            val result = client.aggregate(AggregateRequest(metrics = aggregateMetrics, timeRangeFilter = timeRange))
+            AggregateMetrics(
+                steps = result[StepsRecord.COUNT_TOTAL],
+                distanceMeters = result[DistanceRecord.DISTANCE_TOTAL]?.inMeters,
+                activeCalories = result[ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL]?.inKilocalories,
+                totalCalories = result[TotalCaloriesBurnedRecord.ENERGY_TOTAL]?.inKilocalories,
+            )
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading aggregates", e)
+            AggregateMetrics()
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading aggregates", e)
+            AggregateMetrics()
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading aggregates", e)
+            AggregateMetrics()
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading aggregates", e)
+            AggregateMetrics()
+        }
+    }
+
+    private suspend fun readLatestHeartRate(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Long? {
+        if (HealthPermission.getReadPermission(HeartRateRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = HeartRateRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.samples?.lastOrNull()?.beatsPerMinute
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading HeartRateRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading HeartRateRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading HeartRateRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading HeartRateRecord", e)
+            null
+        }
+    }
+
+    private suspend fun readRestingHeartRate(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Long? {
+        if (HealthPermission.getReadPermission(RestingHeartRateRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = RestingHeartRateRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.beatsPerMinute
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading RestingHeartRateRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading RestingHeartRateRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading RestingHeartRateRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading RestingHeartRateRecord", e)
+            null
+        }
+    }
+
+    private suspend fun readSleepSession(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): SleepData {
+        if (HealthPermission.getReadPermission(SleepSessionRecord::class) !in granted) return SleepData()
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = SleepSessionRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            val latestSleep = records.records.firstOrNull() ?: return SleepData()
+            SleepData(
+                durationMinutes = Duration.between(latestSleep.startTime, latestSleep.endTime).toMinutes(),
+                title = latestSleep.title ?: "Sleep Session",
+            )
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading SleepSessionRecord", e)
+            SleepData()
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading SleepSessionRecord", e)
+            SleepData()
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading SleepSessionRecord", e)
+            SleepData()
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading SleepSessionRecord", e)
+            SleepData()
+        }
+    }
+
+    private suspend fun readExerciseSession(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): ExerciseData {
+        if (HealthPermission.getReadPermission(ExerciseSessionRecord::class) !in granted) return ExerciseData()
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = ExerciseSessionRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            val latestExercise = records.records.firstOrNull() ?: return ExerciseData()
+            ExerciseData(
+                title = latestExercise.title ?: "Exercise Session",
+                durationMinutes = Duration.between(latestExercise.startTime, latestExercise.endTime).toMinutes(),
+            )
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading ExerciseSessionRecord", e)
+            ExerciseData()
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading ExerciseSessionRecord", e)
+            ExerciseData()
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading ExerciseSessionRecord", e)
+            ExerciseData()
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading ExerciseSessionRecord", e)
+            ExerciseData()
+        }
+    }
+
+    private suspend fun readWeight(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Double? {
+        if (HealthPermission.getReadPermission(WeightRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = WeightRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.weight?.inKilograms
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading WeightRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading WeightRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading WeightRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading WeightRecord", e)
+            null
+        }
+    }
+
+    private suspend fun readHeight(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Double? {
+        if (HealthPermission.getReadPermission(HeightRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = HeightRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.height?.inMeters
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading HeightRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading HeightRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading HeightRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading HeightRecord", e)
+            null
+        }
+    }
+
+    private suspend fun readBodyFat(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Double? {
+        if (HealthPermission.getReadPermission(BodyFatRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = BodyFatRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.percentage?.value
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading BodyFatRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading BodyFatRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading BodyFatRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading BodyFatRecord", e)
+            null
+        }
+    }
+
+    private suspend fun readOxygenSaturation(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Double? {
+        if (HealthPermission.getReadPermission(OxygenSaturationRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = OxygenSaturationRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.percentage?.value
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading OxygenSaturationRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading OxygenSaturationRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading OxygenSaturationRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading OxygenSaturationRecord", e)
+            null
+        }
+    }
+
+    private suspend fun readRespiratoryRate(
+        client: HealthConnectClient,
+        timeRange: TimeRangeFilter,
+        granted: Set<String>,
+    ): Double? {
+        if (HealthPermission.getReadPermission(RespiratoryRateRecord::class) !in granted) return null
+        return try {
+            val records = client.readRecords(
+                ReadRecordsRequest(
+                    recordType = RespiratoryRateRecord::class,
+                    timeRangeFilter = timeRange,
+                    ascendingOrder = false,
+                    pageSize = 1,
+                )
+            )
+            records.records.firstOrNull()?.rate
+        } catch (e: RemoteException) {
+            Log.w(TAG, "RemoteException reading RespiratoryRateRecord", e)
+            null
+        } catch (e: SecurityException) {
+            Log.w(TAG, "SecurityException reading RespiratoryRateRecord", e)
+            null
+        } catch (e: IOException) {
+            Log.w(TAG, "IOException reading RespiratoryRateRecord", e)
+            null
+        } catch (e: IllegalStateException) {
+            Log.w(TAG, "IllegalStateException reading RespiratoryRateRecord", e)
+            null
         }
     }
 
