@@ -8,6 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class FitForgeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        Log.d("FitForgeApp", "Application onCreate - FitForge starting")
         initCrashReporting()
     }
 

@@ -93,6 +93,8 @@ class HealthConnectRepository @Inject constructor(
             val granted = getGrantedPermissions()
             val timeRange = TimeRangeFilter.between(startTime, endTime)
 
+            Log.d(TAG, "readHealthSummary: startTime=$startTime, endTime=$endTime, grantedPermissions=$granted")
+
             var steps: Long? = null
             var distanceMeters: Double? = null
             var activeCalories: Double? = null
@@ -125,9 +127,13 @@ class HealthConnectRepository @Inject constructor(
                     distanceMeters = aggregateResult[DistanceRecord.DISTANCE_TOTAL]?.inMeters
                     activeCalories = aggregateResult[ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL]?.inKilocalories
                     totalCalories = aggregateResult[TotalCaloriesBurnedRecord.ENERGY_TOTAL]?.inKilocalories
+                    
+                    Log.d(TAG, "Aggregate result: steps=$steps, distanceMeters=$distanceMeters, activeCalories=$activeCalories, totalCalories=$totalCalories")
                 } catch (e: Exception) {
                     Log.w(TAG, "Error reading aggregated health metrics", e)
                 }
+            } else {
+                Log.w(TAG, "No aggregate metrics requested - no permissions granted for aggregated metrics")
             }
 
             // Latest Heart Rate
@@ -143,9 +149,12 @@ class HealthConnectRepository @Inject constructor(
                         )
                     )
                     latestHeartRate = records.records.firstOrNull()?.samples?.lastOrNull()?.beatsPerMinute
+                    Log.d(TAG, "HeartRateRecord: count=${records.records.size}, latestHeartRate=$latestHeartRate")
                 } catch (e: Exception) {
                     Log.w(TAG, "Error reading HeartRateRecord", e)
                 }
+            } else {
+                Log.d(TAG, "HeartRateRecord permission not granted")
             }
 
             // Resting Heart Rate
@@ -161,9 +170,12 @@ class HealthConnectRepository @Inject constructor(
                         )
                     )
                     restingHeartRate = records.records.firstOrNull()?.beatsPerMinute
+                    Log.d(TAG, "RestingHeartRateRecord: count=${records.records.size}, restingHeartRate=$restingHeartRate")
                 } catch (e: Exception) {
                     Log.w(TAG, "Error reading RestingHeartRateRecord", e)
                 }
+            } else {
+                Log.d(TAG, "RestingHeartRateRecord permission not granted")
             }
 
             // Sleep Session
@@ -184,9 +196,12 @@ class HealthConnectRepository @Inject constructor(
                         sleepDurationMinutes = Duration.between(latestSleep.startTime, latestSleep.endTime).toMinutes()
                         sleepTitle = latestSleep.title ?: "Sleep Session"
                     }
+                    Log.d(TAG, "SleepSessionRecord: count=${records.records.size}, sleepDurationMinutes=$sleepDurationMinutes, sleepTitle=$sleepTitle")
                 } catch (e: Exception) {
                     Log.w(TAG, "Error reading SleepSessionRecord", e)
                 }
+            } else {
+                Log.d(TAG, "SleepSessionRecord permission not granted")
             }
 
             // Exercise Session
@@ -207,9 +222,12 @@ class HealthConnectRepository @Inject constructor(
                         exerciseDurationMinutes = Duration.between(latestExercise.startTime, latestExercise.endTime).toMinutes()
                         exerciseTitle = latestExercise.title ?: "Exercise Session"
                     }
+                    Log.d(TAG, "ExerciseSessionRecord: count=${records.records.size}, exerciseDurationMinutes=$exerciseDurationMinutes, exerciseTitle=$exerciseTitle")
                 } catch (e: Exception) {
                     Log.w(TAG, "Error reading ExerciseSessionRecord", e)
                 }
+            } else {
+                Log.d(TAG, "ExerciseSessionRecord permission not granted")
             }
 
             // Weight
@@ -301,6 +319,8 @@ class HealthConnectRepository @Inject constructor(
                     Log.w(TAG, "Error reading RespiratoryRateRecord", e)
                 }
             }
+
+            Log.d(TAG, "Final HealthDataSummary: steps=$steps, distanceMeters=$distanceMeters, activeCalories=$activeCalories, totalCalories=$totalCalories, latestHeartRate=$latestHeartRate, restingHeartRate=$restingHeartRate, sleepDurationMinutes=$sleepDurationMinutes, sleepTitle=$sleepTitle, exerciseTitle=$exerciseTitle, exerciseDurationMinutes=$exerciseDurationMinutes, weightKg=$weightKg, heightMeters=$heightMeters, bodyFatPercentage=$bodyFatPercentage, oxygenSaturation=$oxygenSaturationPercentage, respiratoryRate=$respiratoryRateBpm")
 
             HealthDataSummary(
                 steps = steps,

@@ -47,6 +47,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fitforge.app.domain.model.HealthConnectAvailability
 import com.fitforge.app.domain.model.HealthDataSummary
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HealthConnectScreen(
@@ -87,6 +90,7 @@ fun HealthConnectScreen(
             hasAllPermissions = uiState.hasAllPermissions,
             grantedCount = uiState.grantedPermissionsCount,
             totalCount = uiState.totalPermissionsCount,
+            lastSyncedAt = uiState.lastSyncedAt,
             onConnectClick = {
                 permissionLauncher.launch(viewModel.getRequiredPermissions())
             },
@@ -169,6 +173,7 @@ private fun StatusCard(
     hasAllPermissions: Boolean,
     grantedCount: Int,
     totalCount: Int,
+    lastSyncedAt: Instant?,
     onConnectClick: () -> Unit,
     onInstallClick: () -> Unit,
 ) {
@@ -197,7 +202,7 @@ private fun StatusCard(
                 Column {
                     Text(
                         text = when (availability) {
-                            HealthConnectAvailability.Available -> if (hasAllPermissions) "Connected & Synced" else "Permissions Partial ($grantedCount/$totalCount)"
+                            HealthConnectAvailability.Available -> if (hasAllPermissions) "Connected" else "Permissions Partial ($grantedCount/$totalCount)"
                             HealthConnectAvailability.NotInstalled -> "Health Connect Not Installed"
                             HealthConnectAvailability.NotSupported -> "Health Connect Not Supported"
                         },
@@ -205,7 +210,10 @@ private fun StatusCard(
                     )
                     Text(
                         text = when (availability) {
-                            HealthConnectAvailability.Available -> if (hasAllPermissions) "FitForge has access to all requested health data." else "Grant permissions to import metrics from your wearable or phone."
+                            HealthConnectAvailability.Available -> if (hasAllPermissions) {
+                                val syncText = lastSyncedAt?.let { "\nLast sync: ${it.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm"))}" } ?: ""
+                                "FitForge has access to all requested health data.$syncText"
+                            } else "Grant permissions to import metrics from your wearable or phone."
                             HealthConnectAvailability.NotInstalled -> "Please download Health Connect from the Google Play Store."
                             HealthConnectAvailability.NotSupported -> "This Android device does not support Health Connect."
                         },
@@ -249,7 +257,7 @@ private fun HealthDataCards(data: HealthDataSummary?) {
             title = "Activity",
             icon = Icons.Default.DirectionsRun,
             items = listOf(
-                "Daily Steps" to (data?.steps?.let { "$it steps" } ?: "No data (device unprovided)"),
+                "Daily Steps" to (data?.steps?.let { "$it steps" } ?: "No data"),
                 "Distance" to (data?.distanceMeters?.let { String.format("%.2f km", it / 1000.0) } ?: "No data"),
                 "Active Calories" to (data?.activeCaloriesKcal?.let { String.format("%.0f kcal", it) } ?: "No data"),
                 "Total Energy" to (data?.totalCaloriesKcal?.let { String.format("%.0f kcal", it) } ?: "No data"),
@@ -261,8 +269,8 @@ private fun HealthDataCards(data: HealthDataSummary?) {
             title = "Heart Rate",
             icon = Icons.Default.Favorite,
             items = listOf(
-                "Resting Heart Rate" to (data?.restingHeartRateBpm?.let { "$it bpm" } ?: "No data recorded"),
-                "Latest Heart Rate" to (data?.latestHeartRateBpm?.let { "$it bpm" } ?: "No data recorded"),
+                "Resting Heart Rate" to (data?.restingHeartRateBpm?.let { "$it bpm" } ?: "No data"),
+                "Latest Heart Rate" to (data?.latestHeartRateBpm?.let { "$it bpm" } ?: "No data"),
             ),
         )
 
@@ -271,8 +279,8 @@ private fun HealthDataCards(data: HealthDataSummary?) {
             title = "Sleep",
             icon = Icons.Default.Nightlight,
             items = listOf(
-                "Sleep Duration" to (data?.sleepDurationMinutes?.let { "${it / 60}h ${it % 60}m" } ?: "No data recorded"),
-                "Session Details" to (data?.sleepStagesSummary ?: "No session logged"),
+                "Sleep Duration" to (data?.sleepDurationMinutes?.let { "${it / 60}h ${it % 60}m" } ?: "No data"),
+                "Session Details" to (data?.sleepStagesSummary ?: "No data"),
             ),
         )
 
@@ -281,8 +289,8 @@ private fun HealthDataCards(data: HealthDataSummary?) {
             title = "Workouts & Exercises",
             icon = Icons.Default.FitnessCenter,
             items = listOf(
-                "Latest Workout" to (data?.latestExerciseSessionTitle ?: "No workouts logged today"),
-                "Duration" to (data?.latestExerciseDurationMinutes?.let { "$it minutes" } ?: "—"),
+                "Latest Workout" to (data?.latestExerciseSessionTitle ?: "No data"),
+                "Duration" to (data?.latestExerciseDurationMinutes?.let { "$it minutes" } ?: "No data"),
             ),
         )
 
@@ -291,8 +299,8 @@ private fun HealthDataCards(data: HealthDataSummary?) {
             title = "Body & Vitals",
             icon = Icons.Default.MonitorWeight,
             items = listOf(
-                "Weight" to (data?.weightKg?.let { String.format("%.1f kg", it) } ?: "No weight logged"),
-                "Height" to (data?.heightMeters?.let { String.format("%.0f cm", it * 100) } ?: "No height logged"),
+                "Weight" to (data?.weightKg?.let { String.format("%.1f kg", it) } ?: "No data"),
+                "Height" to (data?.heightMeters?.let { String.format("%.0f cm", it * 100) } ?: "No data"),
                 "Body Fat" to (data?.bodyFatPercentage?.let { String.format("%.1f %%", it) } ?: "No data"),
                 "Blood Oxygen (SpO2)" to (data?.oxygenSaturationPercentage?.let { String.format("%.0f %%", it) } ?: "No data"),
                 "Respiratory Rate" to (data?.respiratoryRateBpm?.let { String.format("%.0f rpm", it) } ?: "No data"),
