@@ -49,9 +49,7 @@ class UserProfile(models.Model):
         max_length=16, choices=SexAtBirth.choices, null=True, blank=True
     )
     height_cm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
-    current_weight_kg = models.DecimalField(
-        max_digits=5, decimal_places=1, null=True, blank=True
-    )
+    current_weight_kg = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
     waist_cm = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
     resting_hr = models.PositiveSmallIntegerField(null=True, blank=True)
     timezone = models.CharField(max_length=64, default="UTC")

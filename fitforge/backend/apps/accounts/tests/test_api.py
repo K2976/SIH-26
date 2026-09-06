@@ -129,9 +129,7 @@ class TestProfile:
         assert resp.status_code == 401
 
     def test_patch_sets_current_weight(self, auth_client):
-        resp = auth_client.patch(
-            "/api/v1/profile/", {"current_weight_kg": "72.5"}, format="json"
-        )
+        resp = auth_client.patch("/api/v1/profile/", {"current_weight_kg": "72.5"}, format="json")
         assert resp.status_code == 200
         assert resp.data["current_weight_kg"] == "72.5"
         assert resp.data["field_states"]["current_weight_kg"] == UserProfile.KNOWN
@@ -145,9 +143,7 @@ class TestProfile:
         assert resp.data["field_states"]["activity_level"] == UserProfile.KNOWN
 
     def test_patch_declines_activity_level(self, auth_client):
-        auth_client.patch(
-            "/api/v1/profile/", {"activity_level": "sedentary"}, format="json"
-        )
+        auth_client.patch("/api/v1/profile/", {"activity_level": "sedentary"}, format="json")
         resp = auth_client.patch(
             "/api/v1/profile/", {"declined_fields": ["activity_level"]}, format="json"
         )
@@ -181,9 +177,7 @@ class TestOnboardingFlow:
         assert resp.status_code == 200
 
         # Step 2 — cycle tracking
-        resp = auth_client.patch(
-            "/api/v1/profile/", {"tracks_cycle": True}, format="json"
-        )
+        resp = auth_client.patch("/api/v1/profile/", {"tracks_cycle": True}, format="json")
         assert resp.status_code == 200
         assert resp.data["tracks_cycle"] is True
 
@@ -248,9 +242,7 @@ class TestOnboardingFlow:
         )
 
         # Step 2 — skip cycle tracking
-        auth_client.patch(
-            "/api/v1/profile/", {"declined_fields": ["tracks_cycle"]}, format="json"
-        )
+        auth_client.patch("/api/v1/profile/", {"declined_fields": ["tracks_cycle"]}, format="json")
 
         # Step 5 — skip fitness inputs
         auth_client.patch(
