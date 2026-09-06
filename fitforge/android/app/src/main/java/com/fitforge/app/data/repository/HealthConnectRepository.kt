@@ -20,12 +20,17 @@ import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
+import com.fitforge.app.data.local.HealthLocalDataSource
 import com.fitforge.app.domain.model.HealthConnectAvailability
 import com.fitforge.app.domain.model.HealthDataSummary
 import com.fitforge.app.domain.repository.HealthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,10 +38,15 @@ private const val TAG = "HealthConnectRepo"
 
 @Singleton
 class HealthConnectRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
+    private val healthLocalDataSource: HealthLocalDataSource,
 ) : HealthRepository {
 
+    override val latestHealthData: Flow<HealthDataSummary?> = healthLocalDataSource.latestHealthData
+    override val lastSyncedAt: Flow<Instant?> = healthLocalDataSource.lastSyncedAt
+
     private val healthConnectClient: HealthConnectClient? by lazy {
+
         if (HealthConnectClient.getSdkStatus(context) == HealthConnectClient.SDK_AVAILABLE) {
             HealthConnectClient.getOrCreate(context)
         } else {
@@ -83,6 +93,11 @@ class HealthConnectRepository @Inject constructor(
     override suspend fun hasAllPermissions(): Boolean {
         val granted = getGrantedPermissions()
         return requiredPermissionsSet.all { it in granted }
+    }
+
+    override suspend fun hasAnyPermission(): Boolean {
+        val granted = getGrantedPermissions()
+        return granted.isNotEmpty()
     }
 
     override suspend fun readHealthSummary(startTime: Instant, endTime: Instant): Result<HealthDataSummary> {
@@ -342,4 +357,34 @@ class HealthConnectRepository @Inject constructor(
             )
         }
     }
+
+    override suspend fun syncHealthData(): Result<HealthDataSummary> {
+        val availability = getAvailability()
+        if (availability != HealthConnectAvailability.Available) {
+            return Result.failure(IllegalStateException("Health Connect is not available on this device ($availability)"))
+        }
+
+        if (!hasAnyPermission()) {
+            return Result.failure(SecurityException("No Health Connect permissions are currently granted"))
+        }
+
+        val now = Instant.now()
+        // Query from start of current day in user's local timezone
+        val startOfDay = ZonedDateTime.now(ZoneId.systemDefault())
+            .truncatedTo(ChronoUnit.DAYS)
+            .toInstant()
+
+        Log.d(TAG, "Starting health data sync: time window $startOfDay to $now")
+        val summaryResult = readHealthSummary(startOfDay, now)
+
+        summaryResult.onSuccess { summary ->
+            Log.d(TAG, "Health data sync succeeded, persisting summary locally")
+            healthLocalDataSource.saveHealthSummary(summary)
+        }.onFailure { error ->
+            Log.e(TAG, "Health data sync query failed", error)
+        }
+
+        return summaryResult
+    }
 }
+

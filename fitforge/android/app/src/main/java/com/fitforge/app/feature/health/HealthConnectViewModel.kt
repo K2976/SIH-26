@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.fitforge.app.domain.model.HealthConnectAvailability
 import com.fitforge.app.domain.model.HealthDataSummary
 import com.fitforge.app.domain.repository.HealthRepository
+import com.fitforge.app.sync.HealthConnectSyncScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,9 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 private const val TAG = "HealthConnectViewModel"
@@ -34,6 +32,7 @@ data class HealthConnectUiState(
 @HiltViewModel
 class HealthConnectViewModel @Inject constructor(
     private val healthRepository: HealthRepository,
+    private val syncScheduler: HealthConnectSyncScheduler,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HealthConnectUiState())
@@ -41,7 +40,25 @@ class HealthConnectViewModel @Inject constructor(
 
     init {
         Log.d(TAG, "HealthConnectViewModel created")
+        observePersistentHealthData()
         checkAvailabilityAndPermissions()
+    }
+
+    private fun observePersistentHealthData() {
+        viewModelScope.launch {
+            healthRepository.latestHealthData.collect { data ->
+                if (data != null) {
+                    _uiState.update { it.copy(healthData = data) }
+                }
+            }
+        }
+        viewModelScope.launch {
+            healthRepository.lastSyncedAt.collect { timestamp ->
+                if (timestamp != null) {
+                    _uiState.update { it.copy(lastSyncedAt = timestamp) }
+                }
+            }
+        }
     }
 
     fun getRequiredPermissions(): Set<String> {
@@ -68,8 +85,12 @@ class HealthConnectViewModel @Inject constructor(
             }
 
             if (availability == HealthConnectAvailability.Available && granted.isNotEmpty()) {
-                Log.d(TAG, "Loading health data...")
+                Log.d(TAG, "Scheduling periodic sync and performing initial data load")
+                syncScheduler.schedulePeriodicSync()
                 loadHealthData()
+            } else {
+                Log.d(TAG, "Permissions missing or Health Connect unavailable; cancelling periodic sync")
+                syncScheduler.cancelPeriodicSync()
             }
         }
     }
@@ -89,37 +110,36 @@ class HealthConnectViewModel @Inject constructor(
             }
 
             if (granted.isNotEmpty()) {
+                Log.d(TAG, "Permissions granted: scheduling periodic sync and triggering initial sync")
+                syncScheduler.schedulePeriodicSync()
                 loadHealthData()
+            } else {
+                Log.d(TAG, "Permissions revoked/empty: cancelling periodic sync")
+                syncScheduler.cancelPeriodicSync()
             }
         }
     }
 
     fun loadHealthData() {
-        Log.d(TAG, "loadHealthData called")
+        Log.d(TAG, "loadHealthData (Sync Now) called")
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            val now = Instant.now()
-            // Query from start of current day in user's local timezone
-            val startOfDay = ZonedDateTime.now(ZoneId.systemDefault())
-                .truncatedTo(ChronoUnit.DAYS)
-                .toInstant()
-            Log.d(TAG, "Querying health data from $startOfDay (start of day) to $now")
 
-            val result = healthRepository.readHealthSummary(startOfDay, now)
+            val result = healthRepository.syncHealthData()
             result.fold(
                 onSuccess = { data ->
-                    Log.d(TAG, "Health data loaded successfully: $data")
+                    Log.d(TAG, "Health data sync succeeded: $data")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             healthData = data,
                             errorMessage = null,
-                            lastSyncedAt = Instant.now(),
+                            lastSyncedAt = data.lastSyncedAt,
                         )
                     }
                 },
                 onFailure = { error ->
-                    Log.e(TAG, "Failed to load health data", error)
+                    Log.e(TAG, "Failed to sync health data", error)
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -131,3 +151,4 @@ class HealthConnectViewModel @Inject constructor(
         }
     }
 }
+

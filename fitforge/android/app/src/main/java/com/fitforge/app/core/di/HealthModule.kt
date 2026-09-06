@@ -1,5 +1,7 @@
 package com.fitforge.app.core.di
 
+import com.fitforge.app.data.local.HealthDataStoreLocalDataSource
+import com.fitforge.app.data.local.HealthLocalDataSource
 import com.fitforge.app.data.repository.HealthConnectRepository
 import com.fitforge.app.domain.repository.HealthRepository
 import dagger.Binds
@@ -17,4 +19,11 @@ abstract class HealthModule {
     abstract fun bindHealthRepository(
         healthConnectRepository: HealthConnectRepository,
     ): HealthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHealthLocalDataSource(
+        healthDataStoreLocalDataSource: HealthDataStoreLocalDataSource,
+    ): HealthLocalDataSource
 }
+
