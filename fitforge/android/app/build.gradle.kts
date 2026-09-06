@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
@@ -76,6 +77,10 @@ detekt {
     buildUponDefaultConfig = true
     config.setFrom("$rootDir/config/detekt/detekt.yml")
     source.setFrom("src/main/java", "src/test/java", "src/androidTest/java")
+}
+
+tasks.withType<Detekt>().configureEach {
+    jvmTarget = "17"
 }
 
 val openApiGeneratedDir = layout.buildDirectory.dir("generated/openapi").get().asFile
