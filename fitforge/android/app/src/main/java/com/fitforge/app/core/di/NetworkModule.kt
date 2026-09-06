@@ -12,6 +12,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import com.fitforge.app.core.network.createJsonWithJavaTime
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -26,7 +27,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+    fun provideJson(): Json = createJsonWithJavaTime()
 
     @Provides
     @Singleton
