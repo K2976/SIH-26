@@ -59,6 +59,10 @@ human action — no auto-merge, ever, including by an AI agent (affirmed (affirm
 into any AIDLC artifact, questions file, memory diary, or audit log (affirmed 2026-09-04)
 (already affirmed at intent-capture 2026-09-03; restated here as a (affirmed 2026-09-04)
 standing team practice). (affirmed 2026-09-04)
+- NEVER push directly to `master`/`main`, or merge into it without explicit human action. (affirmed 2026-09-07)
+- NEVER write secrets (e.g. database connection strings or tokens) into code, artifacts, questions files, or logs. (affirmed 2026-09-07)
+- NEVER modify or remove existing tables, columns, or types in `accounts_*`, `diary_*`, `reference_*`, or `engine_*`. (affirmed 2026-09-07)
+- NEVER alter authentication behavior in a way that breaks existing website login or signup. (affirmed 2026-09-07)
 ## Mandated
 
 <!-- Populated by practices-discovery affirmation gate. -->
@@ -74,6 +78,10 @@ rather than guessing; flag anything that can't be confirmed (affirmed (affirmed 
 (and the shared `base.py` default), not as a truthy-defaulted environment (affirmed 2026-09-04)
 read — devsecops review flagged that an env-var default can silently flip (affirmed 2026-09-04)
 (affirmed 2026-09-04). (affirmed 2026-09-04)
+- ALWAYS branch as `slice/<name>` for any change to this repo. (affirmed 2026-09-07)
+- ALWAYS isolate social functionality inside `backend/apps/social/` on backend and `com.fitforge.app.feature.social` on Android. (affirmed 2026-09-07)
+- ALWAYS use separate public `social_profile.username` for public identities, preserving `auth_user.username == auth_user.email` for existing website compatibility. (affirmed 2026-09-07)
+- ALWAYS reuse existing `diary_workoutsession` records via nullable foreign key rather than duplicating workout tables. (affirmed 2026-09-07)
 ## Corrections
 
 <!-- Project-specific corrections from human feedback. -->

@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from apps.accounts.views import GoalView, LoginView, ProfileView, RefreshView, SignupView
@@ -14,6 +14,7 @@ urlpatterns = [
     path("app-config/", AppConfigView.as_view(), name="app-config"),
     path("reference/manifest/", ManifestView.as_view(), name="reference-manifest"),
     path("reference/exercises/", ExerciseDeltaView.as_view(), name="reference-exercises"),
+    path("social/", include("apps.social.urls")),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
 ]

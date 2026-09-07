@@ -8,6 +8,7 @@ import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
+import com.fitforge.app.data.remote.generated.apis.SocialApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -98,4 +99,9 @@ object NetworkModule {
     @Singleton
     fun provideGoalApi(retrofit: Retrofit): GoalApi =
         retrofit.create(GoalApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSocialApi(retrofit: Retrofit): SocialApi =
+        retrofit.create(SocialApi::class.java)
 }

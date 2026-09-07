@@ -1,0 +1,1 @@
+"""FitForge Social app package."""

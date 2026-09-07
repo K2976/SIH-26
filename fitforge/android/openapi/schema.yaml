@@ -161,6 +161,117 @@ paths:
               schema:
                 $ref: '#/components/schemas/Goal'
           description: ''
+  /api/v1/social/profile/:
+    get:
+      operationId: social_my_profile_retrieve
+      tags:
+      - social
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+    post:
+      operationId: social_my_profile_create
+      tags:
+      - social
+      security:
+      - jwtAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialProfileCreate'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+    patch:
+      operationId: social_my_profile_partial_update
+      tags:
+      - social
+      security:
+      - jwtAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialProfileUpdate'
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+  /api/v1/social/profile/{username}/:
+    get:
+      operationId: social_user_profile_retrieve
+      tags:
+      - social
+      parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        description: Unique public handle
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+  /api/v1/social/search/:
+    get:
+      operationId: social_search_users
+      tags:
+      - social
+      parameters:
+      - in: query
+        name: q
+        required: false
+        schema:
+          type: string
+        description: Search query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialProfile'
+          description: ''
+  /api/v1/social/check-username/:
+    get:
+      operationId: social_check_username
+      tags:
+      - social
+      parameters:
+      - in: query
+        name: username
+        required: true
+        schema:
+          type: string
+        description: Candidate username to check
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsernameCheckResponse'
+          description: ''
 components:
   schemas:
     AppConfig:
@@ -377,6 +488,77 @@ components:
       - training_focus
       - target_rate_kg_per_week
       - auto_adjust
+    SocialProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+        display_name:
+          type: string
+        bio:
+          type: string
+        profile_image:
+          type: string
+          nullable: true
+        is_private:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - username
+      - display_name
+      - bio
+      - is_private
+      - created_at
+      - updated_at
+    SocialProfileCreate:
+      type: object
+      properties:
+        username:
+          type: string
+        display_name:
+          type: string
+        bio:
+          type: string
+        is_private:
+          type: boolean
+      required:
+      - username
+      - display_name
+    SocialProfileUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+        display_name:
+          type: string
+        bio:
+          type: string
+        is_private:
+          type: boolean
+    UsernameCheckResponse:
+      type: object
+      properties:
+        available:
+          type: boolean
+        reason:
+          type: string
+          nullable: true
+        message:
+          type: string
+      required:
+      - available
+      - message
   securitySchemes:
     jwtAuth:
       type: http
