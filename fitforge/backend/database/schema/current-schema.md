@@ -287,3 +287,29 @@ Public social identity table extending `auth_user` without mutating existing web
 - `auth_user 1 ─── 1 accounts_userprofile`: Existing private demographic and physiological data (DOB, height, weight, waist, cycle tracking).
 - `auth_user 1 ─── 1 social_profile`: New public-facing social handle, display name, bio, and avatar.
 
+---
+
+### 3.2 Communities Domain (`apps/social`) - Phase 2 Addition
+
+#### `social_community`
+Fitness communities, accountability groups, and clubs.
+- **`id`**: `bigint` | PK | NOT NULL
+- **`owner_id`**: `integer` | FK -> `auth_user.id` ON DELETE CASCADE | NOT NULL
+- **`name`**: `varchar(100)` | NOT NULL
+- **`description`**: `text` | NOT NULL | Default `""`
+- **`visibility`**: `varchar(10)` | NOT NULL | Default `'public'` (Choices: `'public'`, `'private'`)
+- **`created_at`**: `timestamptz` | NOT NULL
+- **`updated_at`**: `timestamptz` | NOT NULL
+
+#### `social_communitymembership`
+Membership roster and role hierarchy for fitness communities.
+- **`id`**: `bigint` | PK | NOT NULL
+- **`community_id`**: `bigint` | FK -> `social_community.id` ON DELETE CASCADE | NOT NULL
+- **`user_id`**: `integer` | FK -> `auth_user.id` ON DELETE CASCADE | NOT NULL
+- **`role`**: `varchar(10)` | NOT NULL | Default `'member'` (Choices: `'owner'`, `'admin'`, `'member'`)
+- **`joined_at`**: `timestamptz` | NOT NULL
+- **Constraints & Indexes**:
+  - UNIQUE `(community_id, user_id)` (`unique_community_membership`)
+  - Index on `(community_id, role)`
+
+

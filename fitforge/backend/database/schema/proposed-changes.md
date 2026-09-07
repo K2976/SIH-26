@@ -81,49 +81,39 @@ Dedicated public identity table linked 1-to-1 with `auth_user`. **Already implem
 
 ---
 
-## 4. Upcoming Additions: Phase 2 — Communities Domain
+## 4. Completed Additions: Phase 2 — Communities Domain
 
 FitForge focuses on **accountability groups** (gyms, college groups, hostel groups, sports clubs, friends circles).
 Traditional open feeds and algorithmic timelines are **deferred**.
 
-### 4.1 [ADD] `social_community`
-Represents an accountability group or fitness community.
+### 4.1 [ADD] [COMPLETED] `social_community`
+Represents an accountability group or fitness community. **Implemented and migrated to Neon (`0002_community_communitymembership.py`).**
 
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | `bigint` | PK, Auto Increment | Primary key |
-| `name` | `varchar(128)` | NOT NULL | Human-readable community name (e.g. `Iron Gym 6AM Club`) |
-| `slug` | `varchar(128)` | UNIQUE, NOT NULL, INDEX | URL-safe identifier for deep links and sharing |
+| `owner_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Community creator and owner |
+| `name` | `varchar(100)` | NOT NULL | Human-readable community name (e.g. `Iron Gym 6AM Club`) |
 | `description` | `text` | NOT NULL, Default `""` | Community purpose, rules, and focus |
-| `avatar_url` | `varchar(512)` | NULL | Community logo or icon |
-| `banner_url` | `varchar(512)` | NULL | Community header banner |
-| `visibility` | `varchar(16)` | NOT NULL, Default `'public'` | Choices: `'public'`, `'private'`, `'invite_only'` |
-| `owner_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Community creator and primary administrator |
-| `members_count` | `integer` | NOT NULL, Default `1` | Denormalized member count for fast UI lists |
+| `visibility` | `varchar(10)` | NOT NULL, Default `'public'` | Choices: `'public'`, `'private'` |
 | `created_at` | `timestamptz` | NOT NULL, Default `now()` | Creation timestamp |
 | `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Last modification timestamp |
 
-**Indexes**:
-- `social_community_slug_idx` on `(slug)`: Instant resolution from routes.
-- `social_community_owner_idx` on `(owner_id)`: Fast filtering for owner operations.
-- `social_community_visibility_idx` on `(visibility)`: Discovery queries for public communities.
-
-### 4.2 [ADD] `social_communitymembership`
-Manages user membership, roles, and admission status in communities.
+### 4.2 [ADD] [COMPLETED] `social_communitymembership`
+Manages user membership, roles, and admission status in communities. **Implemented and migrated to Neon (`0002_community_communitymembership.py`).**
 
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | `bigint` | PK, Auto Increment | Primary key |
 | `community_id` | `bigint` | FK -> `social_community.id` ON DELETE CASCADE, NOT NULL | Target community |
 | `user_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Member user |
-| `role` | `varchar(16)` | NOT NULL, Default `'member'` | Choices: `'owner'`, `'admin'`, `'member'` |
-| `status` | `varchar(16)` | NOT NULL, Default `'active'` | Choices: `'active'`, `'pending'` (for private communities), `'banned'` |
+| `role` | `varchar(10)` | NOT NULL, Default `'member'` | Choices: `'owner'`, `'admin'`, `'member'` |
 | `joined_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp of joining |
 
 **Constraints & Indexes**:
 - UNIQUE `(community_id, user_id)`: **Guarantees a user cannot have duplicate memberships in the same community.**
-- Index on `(user_id, status)`: Fast query for "My Communities".
-- Index on `(community_id, status, role)`: Fast query for member roster and role-based access checks.
+- Index on `(community_id, role)`: Fast query for member roster and role-based access checks.
+
 
 ---
 

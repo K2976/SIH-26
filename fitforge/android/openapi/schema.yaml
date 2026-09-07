@@ -272,6 +272,161 @@ paths:
               schema:
                 $ref: '#/components/schemas/UsernameCheckResponse'
           description: ''
+  /api/v1/social/communities/:
+    get:
+      operationId: social_communities_list
+      tags:
+      - community
+      parameters:
+      - in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+          default: discover
+        description: Filter options
+      - in: query
+        name: search
+        required: false
+        schema:
+          type: string
+        description: Search keyword
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommunityList'
+          description: ''
+    post:
+      operationId: social_communities_create
+      tags:
+      - community
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunityCreate'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDetail'
+          description: ''
+  /api/v1/social/communities/{id}/:
+    get:
+      operationId: social_communities_retrieve
+      tags:
+      - community
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDetail'
+          description: ''
+    patch:
+      operationId: social_communities_partial_update
+      tags:
+      - community
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCommunityUpdate'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDetail'
+          description: ''
+    delete:
+      operationId: social_communities_destroy
+      tags:
+      - community
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/communities/{id}/members/:
+    get:
+      operationId: social_communities_members_list
+      tags:
+      - community
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommunityMember'
+          description: ''
+  /api/v1/social/communities/{id}/join/:
+    post:
+      operationId: social_communities_join_create
+      tags:
+      - community
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityMember'
+          description: ''
+  /api/v1/social/communities/{id}/leave/:
+    post:
+      operationId: social_communities_leave_create
+      tags:
+      - community
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+          description: ''
 components:
   schemas:
     AppConfig:
@@ -559,8 +714,142 @@ components:
       required:
       - available
       - message
+    VisibilityEnum:
+      enum:
+      - public
+      - private
+      type: string
+    RoleEnum:
+      enum:
+      - owner
+      - admin
+      - member
+      type: string
+    CommunityMemberUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        display_name:
+          type: string
+        profile_image:
+          type: string
+          nullable: true
+        bio:
+          type: string
+      required:
+      - id
+      - username
+      - display_name
+      - bio
+    CommunityMember:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        joined_at:
+          type: string
+          format: date-time
+        user:
+          $ref: '#/components/schemas/CommunityMemberUser'
+      required:
+      - id
+      - role
+      - joined_at
+      - user
+    CommunityList:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        members_count:
+          type: integer
+        current_user_role:
+          type: string
+          nullable: true
+        is_member:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - description
+      - visibility
+      - members_count
+      - is_member
+      - created_at
+    CommunityDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        owner:
+          $ref: '#/components/schemas/CommunityMemberUser'
+        members_count:
+          type: integer
+        current_user_role:
+          type: string
+          nullable: true
+        is_member:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - description
+      - visibility
+      - owner
+      - members_count
+      - is_member
+      - created_at
+      - updated_at
+    CommunityCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          default: ''
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+      required:
+      - name
+    PatchedCommunityUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
   securitySchemes:
     jwtAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+

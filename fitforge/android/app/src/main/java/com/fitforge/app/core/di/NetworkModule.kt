@@ -6,6 +6,7 @@ import com.fitforge.app.core.network.RefreshApi
 import com.fitforge.app.core.network.TokenAuthenticator
 import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
+import com.fitforge.app.data.remote.generated.apis.CommunityApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import com.fitforge.app.data.remote.generated.apis.SocialApi
@@ -104,4 +105,10 @@ object NetworkModule {
     @Singleton
     fun provideSocialApi(retrofit: Retrofit): SocialApi =
         retrofit.create(SocialApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCommunityApi(retrofit: Retrofit): CommunityApi =
+        retrofit.create(CommunityApi::class.java)
 }
+

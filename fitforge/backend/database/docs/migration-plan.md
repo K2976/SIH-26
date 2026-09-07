@@ -34,16 +34,18 @@ All migrations reside inside `backend/apps/social/migrations/`.
   - Successfully verified in production Neon database.
   - Public username decoupled from `auth_user.username` (email).
 
-### Phase 2: Communities & Memberships Domain [NEXT UP]
-**Target Migration**: `apps/social/migrations/0002_communities.py`
-- **Actions**:
-  1. Create model `Community` with `(name, slug, description, avatar_url, banner_url, visibility, owner, members_count, created_at, updated_at)`.
-  2. Create model `CommunityMembership` with `(community, user, role, status, joined_at)`.
-  3. Add `UniqueConstraint(fields=["community", "user"], name="unique_community_membership")` to prevent duplicate memberships.
-  4. Add index on `(user, status)` and `(community, status, role)` for performant queries.
+### Phase 2: Communities & Memberships Domain [COMPLETED & APPLIED]
+**Target Migration**: `apps/social/migrations/0002_community_communitymembership.py` — **STATUS: APPLIED ON NEON**
+- **Actions Completed**:
+  1. Created model `Community` (`social_community`) with `(owner, name, description, visibility, created_at, updated_at)`.
+  2. Created model `CommunityMembership` (`social_communitymembership`) with `(community, user, role, joined_at)`.
+  3. Added `UniqueConstraint(fields=["community", "user"], name="unique_community_membership")` to prevent duplicate memberships.
+  4. Added index on `(community, role)` for performant queries.
 - **Dependencies**: `("social", "0001_initial")`.
-- **Backward-Compatibility Evaluation**:
-  - Fully additive. Zero locks or changes to existing accounts or diary tables.
+- **Verification**:
+  - 23 automated backend tests passing (100% pass rate).
+  - Applied to active Neon PostgreSQL database (`OK`).
+
 
 ### Phase 3: Challenges & Participation Domain
 **Target Migration**: `apps/social/migrations/0003_challenges.py`
