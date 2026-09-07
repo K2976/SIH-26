@@ -37,8 +37,12 @@ flowchart LR
 
 - **Zero Breaking Changes**: Existing tables, column names, column types, and constraints must remain intact.
 - **Auth Integrity**: `auth_user.username` currently stores user email addresses. This behavior is tightly coupled to website authentication (`EmailTokenObtainPairSerializer`, `SignupSerializer`) and must remain completely untouched.
-- **Isolated Social Domain**: New social networking features reside strictly within an independent app (`apps/social/`), preventing ripple effects on `accounts`, `diary`, `reference`, or `engine`.
-- **User Profile Architecture (Phase 1)**:
+- **Dedicated Community Domain**: Social and accountability features reside strictly within `apps/social/` (`social_*` tables), preventing ripple effects on `accounts`, `diary`, `reference`, or `engine`.
+- **Fitness Accountability Philosophy**: FitForge is **not** a traditional social-media platform (posts, feeds, likes, comments, reels, stories, and DMs are deferred). The core is:
+  ```
+  COMMUNITY ──► CHALLENGE ──► PARTICIPATION ──► PROGRESS ──► STREAK
+  ```
+- **User Profile Architecture (Phase 1 - Complete)**:
   - **Existing**: `auth_user` (identity & web credentials), `accounts_userprofile` (private fitness & biometric data).
   - **New**: `social_profile` (public `@username` handle, display name, bio, profile image).
   - **Relationship**:
@@ -46,7 +50,21 @@ flowchart LR
     auth_user 1 ─── 1 accounts_userprofile  (Private fitness profile)
     auth_user 1 ─── 1 social_profile         (Public social identity)
     ```
-- **Reuse Over Duplication**: Workout-sharing and activity posts reference existing diary records (`diary_workoutsession`) rather than duplicating fitness schemas.
+- **Reuse Over Duplication**: Challenges and streaks consume existing workout sessions (`diary_workoutsession`), set logs (`diary_setlog`), and daily state (`engine_dailystate`) through server-side calculation rather than duplicating fitness schemas or creating redundant "community_workout" tables.
+- **Server-Derived Accountability (Streaks)**: Streaks and challenge progress are computed on the backend from valid stored activity. Clients never submit arbitrary streak counters.
+
+---
+
+## Phased Roadmap
+
+| Phase | Domain | Status | Key Entities & Capabilities |
+| :--- | :--- | :--- | :--- |
+| **Phase 1** | **Social Profile** | **Complete & Verified** | `social_profile`, unique `@username` handle, profile API, discovery search, username availability check. |
+| **Phase 2** | **Communities** | **Planned (Next)** | `social_community`, `social_communitymembership`, roles (owner, admin, member), public/private/invite visibility, join/leave. |
+| **Phase 3** | **Challenges** | **Planned** | `social_challenge`, `social_challengeparticipation`, targets, duration, progress tracking, status lifecycle. |
+| **Phase 4** | **Streaks** | **Planned** | Server-derived streaks based on valid stored activity logs; continuity/break logic. |
+| **Phase 5** | **Community Challenges**| **Planned** | Custom community challenges, community-wide progress aggregation, leaderboards. |
+| **Phase 6** | **Notifications** | **Planned** | Accountability alerts, challenge reminders, streak notifications. |
 
 ---
 

@@ -165,12 +165,12 @@ erDiagram
     }
 
     %% ========================================================
-    %% PROPOSED NEW SOCIAL DOMAIN (apps/social)
+    %% SOCIAL & COMMUNITY DOMAIN (apps/social)
     %% ========================================================
     social_profile {
         bigint id PK
-        int user_id FK,UK "1-to-1 with auth_user"
-        varchar username UK "Public handle e.g. @lifter"
+        int user_id FK,UK "1-to-1 with auth_user [PHASE 1 - COMPLETED]"
+        varchar username UK "Public handle e.g. @iron_lifter"
         varchar display_name
         text bio
         varchar profile_image
@@ -179,83 +179,78 @@ erDiagram
         timestamptz updated_at
     }
 
-    social_follow {
+    social_community {
         bigint id PK
-        int follower_id FK "auth_user.id"
-        int following_id FK "auth_user.id"
-        varchar status "accepted or pending"
-        timestamptz created_at
-    }
-
-    social_post {
-        bigint id PK
-        int author_id FK "auth_user.id"
-        varchar post_type "general, workout_share, pr"
-        text caption
-        bigint workout_session_id FK "Nullable FK -> diary_workoutsession"
-        varchar visibility
-        int likes_count
-        int comments_count
+        int owner_id FK "auth_user.id [PHASE 2]"
+        varchar name "e.g. Iron Gym 6AM Club"
+        varchar slug UK "URL-safe identifier"
+        text description
+        varchar avatar_url
+        varchar banner_url
+        varchar visibility "public, private, invite_only"
+        int members_count
         timestamptz created_at
         timestamptz updated_at
     }
 
-    social_postmedia {
+    social_communitymembership {
         bigint id PK
-        bigint post_id FK
-        varchar media_url
-        varchar media_type "image or video"
-        smallint order
-        timestamptz created_at
+        bigint community_id FK "social_community.id [PHASE 2]"
+        int user_id FK "auth_user.id [PHASE 2]"
+        varchar role "owner, admin, member"
+        varchar status "active, pending, banned"
+        timestamptz joined_at
     }
 
-    social_like {
+    social_challenge {
         bigint id PK
-        int user_id FK "auth_user.id"
-        bigint post_id FK
+        bigint community_id FK "social_community.id (nullable for platform challenges) [PHASE 3]"
+        int creator_id FK "auth_user.id [PHASE 3]"
+        varchar title "e.g. 30-Day Consistency Challenge"
+        text description
+        varchar challenge_type "workout_count, volume_kg, step_count, days"
+        numeric target_value
+        varchar target_unit
+        date start_date
+        date end_date
+        varchar status "upcoming, active, completed, cancelled"
+        int participants_count
         timestamptz created_at
+        timestamptz updated_at
     }
 
-    social_comment {
+    social_challengeparticipation {
         bigint id PK
-        bigint post_id FK
-        int author_id FK "auth_user.id"
-        bigint parent_id FK "Self-ref for nesting"
-        text content
-        timestamptz created_at
+        bigint challenge_id FK "social_challenge.id [PHASE 3]"
+        int user_id FK "auth_user.id [PHASE 3]"
+        varchar status "active, completed, abandoned"
+        numeric current_progress "Derived from logged workouts"
+        timestamptz completed_at
+        timestamptz joined_at
+        timestamptz updated_at
+    }
+
+    social_userstreak {
+        bigint id PK
+        int user_id FK,UK "auth_user.id [PHASE 4 - Server-derived]"
+        int current_streak_days "Continuous verified days"
+        int longest_streak_days "All-time PR"
+        date last_activity_date "Date of last valid logged workout"
+        int streak_freeze_credits
         timestamptz updated_at
     }
 
     social_notification {
         bigint id PK
-        int recipient_id FK "auth_user.id"
-        int actor_id FK "auth_user.id"
-        varchar notification_type
-        bigint post_id FK
-        bigint comment_id FK
+        int recipient_id FK "auth_user.id [PHASE 6]"
+        int actor_id FK "auth_user.id (nullable)"
+        varchar notification_type "challenge_invite, streak_alert, etc."
+        bigint community_id FK "Nullable"
+        bigint challenge_id FK "Nullable"
+        varchar title
+        text message
         boolean is_read
         timestamptz created_at
-    }
-
-    social_challenge {
-        bigint id PK
-        int creator_id FK "auth_user.id"
-        varchar title
-        text description
-        varchar challenge_type
-        numeric target_value
-        date start_date
-        date end_date
-        timestamptz created_at
-    }
-
-    social_challengeparticipant {
-        bigint id PK
-        bigint challenge_id FK
-        int user_id FK "auth_user.id"
-        numeric current_progress
-        boolean completed
-        timestamptz joined_at
     }
 
     %% ========================================================
@@ -275,34 +270,40 @@ erDiagram
     reference_exercise ||--o{ diary_setlog : "performed in"
     diary_meallog ||--o{ diary_mealitem : "contains"
 
-    %% New Social domain connections
-    auth_user ||--o| social_profile : "has public profile [NEW]"
-    auth_user ||--o{ social_follow : "follower [NEW]"
-    auth_user ||--o{ social_follow : "following [NEW]"
-    auth_user ||--o{ social_post : "authors [NEW]"
-    auth_user ||--o{ social_like : "likes [NEW]"
-    auth_user ||--o{ social_comment : "comments [NEW]"
-    auth_user ||--o{ social_notification : "receives [NEW]"
-    auth_user ||--o{ social_challenge : "creates [NEW]"
-    auth_user ||--o{ social_challengeparticipant : "joins [NEW]"
+    %% Social Domain (Phase 1)
+    auth_user ||--o| social_profile : "has public profile [PHASE 1 - COMPLETED]"
 
-    social_post ||--o{ social_postmedia : "attaches [NEW]"
-    social_post ||--o{ social_like : "receives [NEW]"
-    social_post ||--o{ social_comment : "has [NEW]"
-    social_comment ||--o{ social_comment : "replies to [NEW]"
-    social_challenge ||--o{ social_challengeparticipant : "has participants [NEW]"
+    %% Community Domain (Phase 2)
+    auth_user ||--o{ social_community : "owns [PHASE 2]"
+    auth_user ||--o{ social_communitymembership : "joins [PHASE 2]"
+    social_community ||--o{ social_communitymembership : "has members [PHASE 2]"
 
-    %% Cross-domain integration (NO duplicate workout tables)
-    diary_workoutsession ||--o{ social_post : "shared as highlight in [NEW]"
+    %% Challenge Domain (Phase 3 & 5)
+    social_community ||--o{ social_challenge : "hosts [PHASE 3/5]"
+    auth_user ||--o{ social_challenge : "originates [PHASE 3]"
+    auth_user ||--o{ social_challengeparticipation : "enters [PHASE 3]"
+    social_challenge ||--o{ social_challengeparticipation : "enrolls [PHASE 3]"
+
+    %% Streak & Accountability (Phase 4)
+    auth_user ||--o| social_userstreak : "earns [PHASE 4]"
+
+    %% Notifications (Phase 6)
+    auth_user ||--o{ social_notification : "receives [PHASE 6]"
+
+    %% Cross-Domain Derivation (Server Logic — NO duplicate tables)
+    diary_workoutsession ..> social_challengeparticipation : "server computes challenge progress"
+    diary_workoutsession ..> social_userstreak : "server derives active streak"
 ```
 
 ---
 
-## Architectural Distinctions
+## Architectural Distinctions & Deferred Scope
 
-| Domain | Entity | Visibility | Primary Purpose |
+| Domain | Entity | Scope / Access | Primary Purpose |
 | :--- | :--- | :--- | :--- |
 | **Existing Accounts** | `accounts_userprofile` | **Private** | Biometrics, DOB, onboarding flags, engine configs. |
-| **New Social** | `social_profile` | **Public** | Public `@username` handle, bio, display name, avatar. |
-| **Existing Diary** | `diary_workoutsession` | **User Private** | Raw workout logbook synced from Android Room. |
-| **New Social** | `social_post` | **Public / Followers** | Post referencing the workout session for community feeds. |
+| **Social (Phase 1)** | `social_profile` | **Public** | Public `@username` handle, bio, display name, avatar. |
+| **Community (Phase 2)**| `social_community` | **Community** | Groups, gyms, clubs, hostels for collective accountability. |
+| **Challenges (Phase 3)**| `social_challenge` | **Community/Global** | Measurable fitness goals (volume, sessions, consistency). |
+| **Streaks (Phase 4)** | `social_userstreak` | **Personal** | Server-verified consecutive fitness habits. |
+| **Deferred Features** | Posts, Likes, Comments, Reels, DMs | **Deferred** | Kept out of scope to prevent social media bloat. |

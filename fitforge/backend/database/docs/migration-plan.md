@@ -20,57 +20,70 @@ This plan details how the proposed social database extensions will be introduced
 
 ## 2. Progressive Migration Phases
 
-All migrations will be housed inside `backend/apps/social/migrations/`.
+All migrations reside inside `backend/apps/social/migrations/`.
 
-### Phase 1: Modular Foundation & Public Identity
-**Target Migration**: `apps/social/migrations/0001_initial.py`
-- **Actions**:
-  1. Create model `SocialProfile` with `(user_id, username, display_name, bio, profile_image, is_private, created_at, updated_at)`.
+### Phase 1: Modular Foundation & Public Identity [COMPLETED & APPLIED]
+**Target Migration**: `apps/social/migrations/0001_initial.py` — **STATUS: APPLIED ON NEON**
+- **Actions Completed**:
+  1. Created model `SocialProfile` with `(user_id, username, display_name, bio, profile_image, is_private, created_at, updated_at)`.
   2. Set `user` as `OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="social_profile")`.
   3. Set `username` as `CharField(max_length=32, unique=True, db_index=True)`.
 - **Dependencies**: `("auth", "0012_alter_user_first_name_max_length")`.
-- **Backward-Compatibility Evaluation**:
-  - `auth_user` remains completely untouched.
-  - Existing website continues signing up users with `username=email`.
-  - Social profiles can be created lazily upon first mobile app login or via a dedicated onboarding step.
+- **Verification**:
+  - 31 automated tests passing.
+  - Successfully verified in production Neon database.
+  - Public username decoupled from `auth_user.username` (email).
 
-### Phase 2: Social Graph (Follows)
-**Target Migration**: `apps/social/migrations/0002_social_follow.py`
+### Phase 2: Communities & Memberships Domain [NEXT UP]
+**Target Migration**: `apps/social/migrations/0002_communities.py`
 - **Actions**:
-  1. Create model `Follow` with `(follower, following, status, created_at)`.
-  2. Add `UniqueConstraint(fields=["follower", "following"], name="unique_user_follow")`.
-  3. Add `CheckConstraint(check=~Q(follower=models.F("following")), name="prevent_self_follow")`.
+  1. Create model `Community` with `(name, slug, description, avatar_url, banner_url, visibility, owner, members_count, created_at, updated_at)`.
+  2. Create model `CommunityMembership` with `(community, user, role, status, joined_at)`.
+  3. Add `UniqueConstraint(fields=["community", "user"], name="unique_community_membership")` to prevent duplicate memberships.
+  4. Add index on `(user, status)` and `(community, status, role)` for performant queries.
 - **Dependencies**: `("social", "0001_initial")`.
 - **Backward-Compatibility Evaluation**:
-  - Independent table. Zero impact on website queries or auth checks.
+  - Fully additive. Zero locks or changes to existing accounts or diary tables.
 
-### Phase 3: Posts & Workout Integration
-**Target Migration**: `apps/social/migrations/0003_social_post_and_media.py`
+### Phase 3: Challenges & Participation Domain
+**Target Migration**: `apps/social/migrations/0003_challenges.py`
 - **Actions**:
-  1. Create model `Post` with `author`, `post_type`, `caption`, `workout_session`, `visibility`, `likes_count`, `comments_count`.
-  2. `workout_session` is `ForeignKey("diary.WorkoutSession", null=True, blank=True, on_delete=models.SET_NULL, related_name="social_shares")`.
-  3. Create model `PostMedia` with `post`, `media_url`, `media_type`, `order`.
-- **Dependencies**:
-  - `("social", "0002_social_follow")`
-  - `("diary", "0001_initial")` (Guarantees `diary_workoutsession` table exists prior to applying FK).
+  1. Create model `Challenge` with `(community, creator, title, description, challenge_type, target_value, target_unit, start_date, end_date, status, participants_count, created_at, updated_at)`.
+     - `community` is a nullable foreign key (`null=True, blank=True, on_delete=models.CASCADE`) to accommodate both community-specific and platform-wide challenges.
+  2. Create model `ChallengeParticipation` with `(challenge, user, status, current_progress, completed_at, joined_at, updated_at)`.
+  3. Add `UniqueConstraint(fields=["challenge", "user"], name="unique_challenge_participation")` to prevent duplicate entries.
+- **Dependencies**: `("social", "0002_communities")`.
 - **Backward-Compatibility Evaluation**:
-  - `diary_workoutsession` is referenced purely as a read-only foreign target with `SET_NULL` on delete. If a user deletes a workout session in their private diary, the social post retains its caption and sets `workout_session_id = NULL`, avoiding cascades or corruption.
+  - Independent models. Logic derives progress from `diary_workoutsession` via backend calculation queries. No schema coupling or locks on diary tables.
 
-### Phase 4: Social Engagement (Likes & Comments)
-**Target Migration**: `apps/social/migrations/0004_social_engagement.py`
+### Phase 4: Streaks & Habit Accountability
+**Target Migration**: `apps/social/migrations/0004_streaks.py`
 - **Actions**:
-  1. Create model `Like` with `(user, post, created_at)` and `UniqueConstraint(fields=["user", "post"])`.
-  2. Create model `Comment` with `(post, author, parent, content, created_at, updated_at)`.
-- **Dependencies**: `("social", "0003_social_post_and_media")`.
+  1. Create model `UserStreak` with `(user, current_streak_days, longest_streak_days, last_activity_date, streak_freeze_credits, updated_at)`.
+  2. `user` has `OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="fitness_streak")`.
+- **Dependencies**: `("social", "0001_initial")`.
 - **Backward-Compatibility Evaluation**:
-  - Self-contained in social app. Zero website impact.
+  - Additive cache table. Server calculates streak intervals from stored `diary_workoutsession` dates.
 
-### Phase 5: Notifications & Community Challenges
-**Target Migration**: `apps/social/migrations/0005_notifications_and_challenges.py`
+### Phase 5: Community-Driven Challenges & Leaderboards
+- Leverages `Community` and `Challenge` models from Phases 2 and 3.
+- Community leaderboard rankings computed via DRF aggregation endpoints over `ChallengeParticipation`.
+- Zero new destructive DDL operations.
+
+### Phase 6: Accountability Notifications
+**Target Migration**: `apps/social/migrations/0005_notifications.py`
 - **Actions**:
-  1. Create `Notification` table for social events.
-  2. Create `Challenge` and `ChallengeParticipant` tables.
-- **Dependencies**: `("social", "0004_social_engagement")`.
+  1. Create `Notification` table for challenge milestones, community invites, and streak alerts.
+- **Dependencies**: `("social", "0003_challenges")`.
+
+---
+
+## 3. Deferred Features (No Migrations Planned)
+
+In accordance with product guidelines, traditional social feed tables are deferred:
+- No `social_post` or `social_postmedia`
+- No `social_like` or `social_comment`
+- No feed timeline or follower graph tables
 
 ---
 

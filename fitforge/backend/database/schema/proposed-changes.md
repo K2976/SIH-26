@@ -55,12 +55,12 @@ Introduce a dedicated **`social_profile`** table.
 
 ---
 
-## 3. Immediate Additions: Phase 1 — Social Profile Domain
+## 3. Completed Additions: Phase 1 — Social Profile Domain
 
-All new tables will reside in a dedicated Django app: **`apps/social/`** (table prefix `social_`).
+All social models reside in a dedicated Django app: **`apps/social/`** (table prefix `social_`).
 
-### 3.1 [ADD] `social_profile`
-Dedicated public identity table linked 1-to-1 with `auth_user`.
+### 3.1 [ADD] [COMPLETED] `social_profile`
+Dedicated public identity table linked 1-to-1 with `auth_user`. **Already implemented, migrated to Neon, and verified.**
 
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
@@ -70,126 +70,173 @@ Dedicated public identity table linked 1-to-1 with `auth_user`.
 | `display_name` | `varchar(64)` | NOT NULL | User's public display name (e.g. `Alex Rivera`) |
 | `bio` | `text` | NOT NULL, Default `""` | User self-description or motto |
 | `profile_image` | `varchar(255)` | NULL | Avatar image URL / path |
-| `is_private` | `boolean` | NOT NULL, Default `false` | Whether posts require follow approval |
+| `is_private` | `boolean` | NOT NULL, Default `false` | Privacy preference flag |
 | `created_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp of profile creation |
 | `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp of last modification |
 
-**Indexes**:
+**Indexes & Constraints**:
 - `social_profile_username_idx` on `(username)`: Fast lookup for search, mentions, and route handling.
 - `social_profile_user_id_idx` on `(user_id)`: Instant resolution from authenticated session.
+- Django validation constraint: Regex for alphanumeric + underscores, 3-30 chars, lowercase.
 
 ---
 
-## 4. Progressive Additions: Phase 2 — Social Graph (Follow/Unfollow)
+## 4. Upcoming Additions: Phase 2 — Communities Domain
 
-### 4.1 [ADD] `social_follow`
-Directed graph of user follow relationships.
+FitForge focuses on **accountability groups** (gyms, college groups, hostel groups, sports clubs, friends circles).
+Traditional open feeds and algorithmic timelines are **deferred**.
 
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `bigint` | PK, Auto Increment | Primary key |
-| `follower_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | User initiating the follow |
-| `following_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | User being followed |
-| `status` | `varchar(16)` | NOT NULL, Default `'accepted'` | Choices: `'accepted'`, `'pending'` (for private accounts) |
-| `created_at` | `timestamptz` | NOT NULL, Default `now()` | Follow timestamp |
-
-**Constraints & Indexes**:
-- UNIQUE `(follower_id, following_id)`: Prevents duplicate follow links.
-- CHECK `(follower_id != following_id)`: Prevents self-following.
-- Index on `(following_id, status)`: Fast followers list querying.
-- Index on `(follower_id, status)`: Fast following list querying.
-
----
-
-## 5. Progressive Additions: Phase 3 — Posts & Workout Sharing
-
-### 5.1 [ADD] `social_post`
-Feed posts supporting general text/media updates and rich workout highlights.
+### 4.1 [ADD] `social_community`
+Represents an accountability group or fitness community.
 
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | `bigint` | PK, Auto Increment | Primary key |
-| `author_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Post creator |
-| `post_type` | `varchar(20)` | NOT NULL, Default `'general'` | Choices: `'general'`, `'workout_share'`, `'pr_achievement'`, `'milestone'` |
-| `caption` | `text` | NOT NULL, Default `""` | User post text |
-| `workout_session_id` | `bigint` | FK -> `diary_workoutsession.id` ON DELETE SET NULL, NULL | **Reuses existing workout session data** |
-| `visibility` | `varchar(16)` | NOT NULL, Default `'public'` | Choices: `'public'`, `'followers_only'`, `'private'` |
-| `likes_count` | `integer` | NOT NULL, Default `0` | Denormalized count for performant feed reads |
-| `comments_count` | `integer` | NOT NULL, Default `0` | Denormalized count for performant feed reads |
-| `created_at` | `timestamptz` | NOT NULL, Default `now()`, INDEX | Feed sorting |
-| `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Edit tracking |
-
-> **Key Architectural Pattern**: `workout_session_id` links directly to `diary_workoutsession.id`. When displaying a workout post, the API queries sets from `diary_setlog` associated with that session. This eliminates data duplication and keeps the source of truth in the existing diary domain.
-
-### 5.2 [ADD] `social_postmedia`
-Media attachments (images/videos) for posts.
-
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `bigint` | PK, Auto Increment | Primary key |
-| `post_id` | `bigint` | FK -> `social_post.id` ON DELETE CASCADE, NOT NULL | Associated post |
-| `media_url` | `varchar(512)` | NOT NULL | File storage URL |
-| `media_type` | `varchar(16)` | NOT NULL | Choices: `'image'`, `'video'` |
-| `order` | `smallint` | NOT NULL, Default `0` | Display carousel order |
-| `created_at` | `timestamptz` | NOT NULL, Default `now()` | Upload timestamp |
-
----
-
-## 6. Progressive Additions: Phase 4 — Social Engagement
-
-### 6.1 [ADD] `social_like`
-User likes on posts.
-
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `bigint` | PK, Auto Increment | Primary key |
-| `user_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | User who liked |
-| `post_id` | `bigint` | FK -> `social_post.id` ON DELETE CASCADE, NOT NULL | Liked post |
-| `created_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp |
-
-**Constraints & Indexes**:
-- UNIQUE `(user_id, post_id)`: Prevents duplicate likes.
-- Index on `(post_id)`: Fast like enumeration.
-
-### 6.2 [ADD] `social_comment`
-Threaded comments on posts.
-
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `bigint` | PK, Auto Increment | Primary key |
-| `post_id` | `bigint` | FK -> `social_post.id` ON DELETE CASCADE, NOT NULL | Target post |
-| `author_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Commenter |
-| `parent_id` | `bigint` | FK -> `social_comment.id` ON DELETE CASCADE, NULL | Parent comment for nested threads |
-| `content` | `text` | NOT NULL | Comment body |
+| `name` | `varchar(128)` | NOT NULL | Human-readable community name (e.g. `Iron Gym 6AM Club`) |
+| `slug` | `varchar(128)` | UNIQUE, NOT NULL, INDEX | URL-safe identifier for deep links and sharing |
+| `description` | `text` | NOT NULL, Default `""` | Community purpose, rules, and focus |
+| `avatar_url` | `varchar(512)` | NULL | Community logo or icon |
+| `banner_url` | `varchar(512)` | NULL | Community header banner |
+| `visibility` | `varchar(16)` | NOT NULL, Default `'public'` | Choices: `'public'`, `'private'`, `'invite_only'` |
+| `owner_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Community creator and primary administrator |
+| `members_count` | `integer` | NOT NULL, Default `1` | Denormalized member count for fast UI lists |
 | `created_at` | `timestamptz` | NOT NULL, Default `now()` | Creation timestamp |
-| `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Edit timestamp |
+| `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Last modification timestamp |
 
 **Indexes**:
-- Index on `(post_id, created_at)`: Fast ordered comment retrieval.
+- `social_community_slug_idx` on `(slug)`: Instant resolution from routes.
+- `social_community_owner_idx` on `(owner_id)`: Fast filtering for owner operations.
+- `social_community_visibility_idx` on `(visibility)`: Discovery queries for public communities.
+
+### 4.2 [ADD] `social_communitymembership`
+Manages user membership, roles, and admission status in communities.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `bigint` | PK, Auto Increment | Primary key |
+| `community_id` | `bigint` | FK -> `social_community.id` ON DELETE CASCADE, NOT NULL | Target community |
+| `user_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Member user |
+| `role` | `varchar(16)` | NOT NULL, Default `'member'` | Choices: `'owner'`, `'admin'`, `'member'` |
+| `status` | `varchar(16)` | NOT NULL, Default `'active'` | Choices: `'active'`, `'pending'` (for private communities), `'banned'` |
+| `joined_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp of joining |
+
+**Constraints & Indexes**:
+- UNIQUE `(community_id, user_id)`: **Guarantees a user cannot have duplicate memberships in the same community.**
+- Index on `(user_id, status)`: Fast query for "My Communities".
+- Index on `(community_id, status, role)`: Fast query for member roster and role-based access checks.
 
 ---
 
-## 7. Progressive Additions: Phase 5 — Notifications & Challenges
+## 5. Upcoming Additions: Phase 3 — Challenges & Participation Domain
 
-### 7.1 [ADD] `social_notification`
-In-app activity notifications.
-- `id`: `bigint` PK
-- `recipient_id`: `integer` FK -> `auth_user.id`
-- `actor_id`: `integer` FK -> `auth_user.id`
-- `notification_type`: `varchar(32)` (`like`, `comment`, `follow`, `challenge_invite`, `pr_shoutout`)
-- `post_id`: `bigint` FK -> `social_post.id` (NULL)
-- `comment_id`: `bigint` FK -> `social_comment.id` (NULL)
-- `is_read`: `boolean` Default `false`
-- `created_at`: `timestamptz` Default `now()`
+Challenges are goal-oriented fitness endeavors that drive accountability within communities or across the platform.
 
-### 7.2 [ADD] `social_challenge` & `social_challengeparticipant`
-Community fitness challenges.
-- `social_challenge`: `id`, `creator_id`, `title`, `description`, `challenge_type` (`volume`, `workouts_count`, `streak`), `target_value`, `start_date`, `end_date`, `created_at`.
-- `social_challengeparticipant`: `id`, `challenge_id`, `user_id`, `current_progress`, `completed`, `joined_at`.
+### 5.1 [ADD] `social_challenge`
+Defines the parameters, targets, and timeline of a fitness challenge.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `bigint` | PK, Auto Increment | Primary key |
+| `community_id` | `bigint` | FK -> `social_community.id` ON DELETE CASCADE, NULL | Community scope (NULL = Platform-wide challenge) |
+| `creator_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Challenge originator |
+| `title` | `varchar(128)` | NOT NULL | Title (e.g., `30-Day Workout Challenge`, `10k Steps Daily`) |
+| `description` | `text` | NOT NULL, Default `""` | Rules, details, and incentives |
+| `challenge_type` | `varchar(32)` | NOT NULL | Type: `'workout_count'`, `'volume_kg'`, `'step_count'`, `'consistency_days'`, `'exercise_reps'` |
+| `target_value` | `numeric(12,2)`| NOT NULL | Target goal number (e.g. 30 sessions, 50000 kg, 10000 steps) |
+| `target_unit` | `varchar(32)` | NOT NULL, Default `""` | Unit descriptor (e.g., `'workouts'`, `'kg'`, `'steps'`, `'days'`) |
+| `start_date` | `date` | NOT NULL | Challenge start date |
+| `end_date` | `date` | NOT NULL | Challenge end date |
+| `status` | `varchar(16)` | NOT NULL, Default `'active'` | Choices: `'upcoming'`, `'active'`, `'completed'`, `'cancelled'` |
+| `participants_count` | `integer`| NOT NULL, Default `0` | Denormalized count for listing views |
+| `created_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp |
+| `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Timestamp |
+
+**Indexes**:
+- Index on `(community_id, status)`: Fast retrieval of active community challenges.
+- Index on `(start_date, end_date, status)`: Schedule filtering and state transitions.
+
+### 5.2 [ADD] `social_challengeparticipation`
+Tracks an individual user's participation and progress in a challenge.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `bigint` | PK, Auto Increment | Primary key |
+| `challenge_id` | `bigint` | FK -> `social_challenge.id` ON DELETE CASCADE, NOT NULL | Target challenge |
+| `user_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Participant |
+| `status` | `varchar(16)` | NOT NULL, Default `'active'` | Choices: `'active'`, `'completed'`, `'abandoned'` |
+| `current_progress`| `numeric(12,2)`| NOT NULL, Default `0.00` | Current derived progress |
+| `completed_at` | `timestamptz` | NULL | Timestamp when target was achieved |
+| `joined_at` | `timestamptz` | NOT NULL, Default `now()` | Enrollment timestamp |
+| `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Progress update timestamp |
+
+**Constraints & Indexes**:
+- UNIQUE `(challenge_id, user_id)`: **Guarantees a user cannot have duplicate participation records for the same challenge.**
+- Index on `(user_id, status)`: Fast user dashboard lookup for "My Active Challenges".
+- Index on `(challenge_id, current_progress)`: Fast community challenge leaderboard generation.
 
 ---
 
-## 8. Backward Compatibility Impact Matrix
+## 6. Upcoming Additions: Phase 4 — Streaks & Accountability Domain
+
+Streaks represent continuous fitness habits and consistency over time.
+
+### Core Architectural Principle:
+- **Server-Derived Only**: Streaks are strictly computed by the backend from valid stored activity records (`diary_workoutsession`, logged events).
+- **Client Integrity**: Android clients **never** submit arbitrary counters (e.g. `streak = 30`).
+- **Missing Is Not Zero**: Missing a day may break a streak unless a freeze/grace rule applies, but historical logs are never erased.
+
+### 6.1 [ADD] `social_userstreak`
+Caches the server-verified streak state for high-performance reading on mobile dashboards.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `bigint` | PK, Auto Increment | Primary key |
+| `user_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, UNIQUE, NOT NULL | OneToOne relationship with User |
+| `current_streak_days` | `integer` | NOT NULL, Default `0` | Active verified consecutive days |
+| `longest_streak_days` | `integer` | NOT NULL, Default `0` | All-time highest streak record |
+| `last_activity_date` | `date` | NULL | Date of most recent qualifying fitness activity |
+| `streak_freeze_credits` | `integer` | NOT NULL, Default `0` | Available grace/freeze credits |
+| `updated_at` | `timestamptz` | NOT NULL, Default `now()` | Recalculation timestamp |
+
+---
+
+## 7. Upcoming Additions: Phase 5 & 6 — Community-Wide Aggregations & Notifications
+
+### 7.1 Community Challenge Rollup & Leaderboard
+- Computed dynamically using Django aggregation over `social_challengeparticipation` records for members of `social_community`.
+- No denormalized duplicate tables needed; relies on proper index on `(challenge_id, current_progress DESC)`.
+
+### 7.2 [ADD] `social_notification` (Phase 6)
+Lightweight accountability alerts and notifications.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `bigint` | PK, Auto Increment | Primary key |
+| `recipient_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NOT NULL | Alert recipient |
+| `actor_id` | `integer` | FK -> `auth_user.id` ON DELETE CASCADE, NULL | Triggering user (if any) |
+| `notification_type` | `varchar(32)` | NOT NULL | Type: `'challenge_invite'`, `'challenge_completed'`, `'community_joined'`, `'streak_milestone'`, `'streak_warning'` |
+| `community_id` | `bigint` | FK -> `social_community.id` ON DELETE CASCADE, NULL | Related community (if any) |
+| `challenge_id` | `bigint` | FK -> `social_challenge.id` ON DELETE CASCADE, NULL | Related challenge (if any) |
+| `title` | `varchar(128)` | NOT NULL | Alert title |
+| `message` | `text` | NOT NULL | Alert message body |
+| `is_read` | `boolean` | NOT NULL, Default `false` | Read receipt |
+| `created_at` | `timestamptz` | NOT NULL, Default `now()` | Alert timestamp |
+
+---
+
+## 8. Deferred Features (Not In Scope)
+
+To avoid bloat and maintain a lean, purpose-driven fitness platform, the following traditional social media features are **DEFERRED**:
+- ❌ Feed posts (`social_post`, `social_postmedia`)
+- ❌ Likes (`social_like`)
+- ❌ Comments & threaded conversations (`social_comment`)
+- ❌ Reels & video stories
+- ❌ Direct messages (DMs)
+- ❌ Algorithmic content recommendations
+
+---
+
+## 9. Backward Compatibility Impact Matrix
 
 | Component | Risk Level | Compatibility Protection Mechanism |
 | :--- | :--- | :--- |
