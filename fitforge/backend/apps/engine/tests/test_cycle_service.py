@@ -192,9 +192,7 @@ class TestEnergyAvailabilityFloorBehavioral:
             WorkoutSession.objects.create(
                 user=user,
                 client_uuid=uuid.uuid4(),
-                occurred_at=datetime.datetime.combine(
-                    d, datetime.time(12, 0), tzinfo=datetime.UTC
-                ),
+                occurred_at=datetime.datetime.combine(d, datetime.time(12, 0), tzinfo=datetime.UTC),
                 utc_offset="+00:00",
                 source="manual",
             )
@@ -243,9 +241,7 @@ class TestEnergyAvailabilityFloorBehavioral:
         target = state["plan_delta"]["target_kcal"]
         assert maintenance is not None
         assert target < maintenance - 1
-        assert not any(
-            "energy_availability_floor" in c for c in state["plan_delta"]["clamped_by"]
-        )
+        assert not any("energy_availability_floor" in c for c in state["plan_delta"]["clamped_by"])
 
 
 class TestSymptomsMoveReadinessCeiling:

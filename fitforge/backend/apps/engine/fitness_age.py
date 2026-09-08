@@ -72,9 +72,7 @@ class CardiorespiratoryFitnessResult:
     inputs: dict[str, float | int | str]
 
 
-def bmi_from_height_weight(
-    height_cm: float | None, weight_kg: float | None
-) -> float | None:
+def bmi_from_height_weight(height_cm: float | None, weight_kg: float | None) -> float | None:
     if height_cm is None or weight_kg is None or height_cm <= 0:
         return None
     height_m = height_cm / 100.0
@@ -132,9 +130,7 @@ class FitnessAgeResult:
     norms_citation: str
 
 
-def vo2max_to_fitness_age(
-    vo2max_ml_kg_min: float, sex_at_birth: str
-) -> float | None:
+def vo2max_to_fitness_age(vo2max_ml_kg_min: float, sex_at_birth: str) -> float | None:
     """Piecewise-linear interpolation against Kaminsky et al. 2015's
     50th-percentile-VO2max-by-decade table: finds the age at which the
     average person of this sex has this VO2max.

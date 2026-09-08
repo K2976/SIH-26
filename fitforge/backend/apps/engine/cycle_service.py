@@ -48,9 +48,7 @@ def _cycle_profile(user) -> CycleProfile | None:
     return CycleProfile.objects.filter(user=user).first()
 
 
-def self_reported_cycle_inputs(
-    user, as_of: datetime.date
-) -> tuple[int | None, list[str] | None]:
+def self_reported_cycle_inputs(user, as_of: datetime.date) -> tuple[int | None, list[str] | None]:
     """Today's self-reported energy rating and symptoms, or (None, None) if
     nothing was logged today — missing is not zero (CLAUDE.md rule 7). A
     logged entry with an explicitly empty symptom list is a real "no

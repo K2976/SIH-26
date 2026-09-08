@@ -29,10 +29,10 @@ from apps.engine.types import (
     VolumeProposal,
 )
 
-
 # ---------------------------------------------------------------------------
 # Import-time damping validation
 # ---------------------------------------------------------------------------
+
 
 def validate_damping_factor() -> None:
     """Raise ValueError if DAMPING_FACTOR is >= DAMPING_MAX_EXCLUSIVE.
@@ -57,6 +57,7 @@ validate_damping_factor()
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _min_daily_kcal(sex_at_birth: str | None) -> float:
     """Return the sex-appropriate minimum daily calorie floor."""
     if sex_at_birth == "female":
@@ -69,6 +70,7 @@ def _min_daily_kcal(sex_at_birth: str | None) -> float:
 # ---------------------------------------------------------------------------
 # apply_floors
 # ---------------------------------------------------------------------------
+
 
 def apply_floors(
     energy: EnergyProposal,
@@ -141,9 +143,7 @@ def apply_floors(
         if delta_kcal > MAX_DAILY_KCAL_ADJUSTMENT:
             direction = 1.0 if final_kcal >= state.target_kcal_today else -1.0
             final_kcal = state.target_kcal_today + direction * MAX_DAILY_KCAL_ADJUSTMENT
-            clamped_by.append(
-                f"max_daily_kcal_adjustment (±{MAX_DAILY_KCAL_ADJUSTMENT:.0f} kcal)"
-            )
+            clamped_by.append(f"max_daily_kcal_adjustment (±{MAX_DAILY_KCAL_ADJUSTMENT:.0f} kcal)")
             # Re-apply floor 1 after clamping — the adjustment cap must not
             # push us below the calorie floor.
             if final_kcal < min_kcal:

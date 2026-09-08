@@ -33,10 +33,10 @@ from apps.engine.constants import (
 )
 from apps.engine.types import UserState
 
-
 # ---------------------------------------------------------------------------
 # Hypothesis strategies
 # ---------------------------------------------------------------------------
+
 
 def st_optional_float(min_value: float = 0.0, max_value: float = 10000.0):
     return st.one_of(
@@ -159,6 +159,7 @@ def test_damping_applied_to_carried_drift(state: UserState):
         # not exceed max_adj.  Since we can't extract naive_target directly,
         # we verify by running with zero balance and comparing.
         from dataclasses import replace
+
         zero_balance_state = replace(state, week_balance_kcal=0.0)
         no_adj_energy = energy_budget(zero_balance_state)
         actual_adj = abs(energy.target_kcal - no_adj_energy.target_kcal)
@@ -329,6 +330,7 @@ class TestReadinessBudget:
         assert not hasattr(UserState, "cycle_phase")
         # Double-check: the function signature doesn't accept it either.
         import inspect
+
         sig = inspect.signature(readiness_budget)
         assert "cycle_phase" not in sig.parameters
 
@@ -433,6 +435,7 @@ class TestDampingFactorValidation:
     def test_validation_rejects_full_compensation(self):
         """validate_damping_factor raises when damping is 1.0."""
         from unittest.mock import patch
+
         from apps.engine.floors import validate_damping_factor
 
         with patch("apps.engine.floors.DAMPING_FACTOR", 1.0):
@@ -442,6 +445,7 @@ class TestDampingFactorValidation:
     def test_validation_rejects_above_one(self):
         """validate_damping_factor raises when damping > 1.0."""
         from unittest.mock import patch
+
         from apps.engine.floors import validate_damping_factor
 
         with patch("apps.engine.floors.DAMPING_FACTOR", 1.5):

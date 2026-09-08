@@ -127,16 +127,28 @@ class TestComputeCyclePattern:
     def test_reports_sample_size_and_confidence(self):
         records = [
             CycleDayRecord(
-                cycle_index=1, cycle_day=3, energy_rating=2, symptoms=("cramps",),
-                adherence=0.5, completed_volume_kg=100.0,
+                cycle_index=1,
+                cycle_day=3,
+                energy_rating=2,
+                symptoms=("cramps",),
+                adherence=0.5,
+                completed_volume_kg=100.0,
             ),
             CycleDayRecord(
-                cycle_index=2, cycle_day=3, energy_rating=3, symptoms=("cramps",),
-                adherence=1.0, completed_volume_kg=150.0,
+                cycle_index=2,
+                cycle_day=3,
+                energy_rating=3,
+                symptoms=("cramps",),
+                adherence=1.0,
+                completed_volume_kg=150.0,
             ),
             CycleDayRecord(
-                cycle_index=3, cycle_day=3, energy_rating=None, symptoms=(),
-                adherence=None, completed_volume_kg=None,
+                cycle_index=3,
+                cycle_day=3,
+                energy_rating=None,
+                symptoms=(),
+                adherence=None,
+                completed_volume_kg=None,
             ),
         ]
         rows = compute_cycle_pattern(records)

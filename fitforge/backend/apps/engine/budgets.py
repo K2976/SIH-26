@@ -27,15 +27,12 @@ from apps.engine.constants import (
 )
 from apps.engine.types import EnergyProposal, ReadinessProposal, UserState, VolumeProposal
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
-def measured_maintenance(
-    avg_daily_intake: float, weight_trend_kg_per_week: float
-) -> float:
+def measured_maintenance(avg_daily_intake: float, weight_trend_kg_per_week: float) -> float:
     """Solve maintenance backwards from logged intake and weight trend.
 
     If you eat `intake` kcal/day and your weight changes at `trend` kg/week,
@@ -50,9 +47,7 @@ def measured_maintenance(
     return avg_daily_intake - daily_change_kcal
 
 
-def blended_maintenance(
-    equation: float, measured: float, confidence: float
-) -> float:
+def blended_maintenance(equation: float, measured: float, confidence: float) -> float:
     """Linearly blend equation-derived and measured maintenance.
 
     `confidence` is the weight on the measured value (0 = equation only,
@@ -99,11 +94,15 @@ def energy_budget(state: UserState) -> EnergyProposal:
     reasons: list[str] = []
 
     # --- Determine effective maintenance ---
-    if _sufficiency_gate_passes(state) and state.avg_daily_intake_14d is not None and state.weight_trend_kg_per_week is not None:
-        meas = measured_maintenance(
-            state.avg_daily_intake_14d, state.weight_trend_kg_per_week
+    if (
+        _sufficiency_gate_passes(state)
+        and state.avg_daily_intake_14d is not None
+        and state.weight_trend_kg_per_week is not None
+    ):
+        meas = measured_maintenance(state.avg_daily_intake_14d, state.weight_trend_kg_per_week)
+        confidence = (
+            state.weight_trend_confidence if state.weight_trend_confidence is not None else 0.0
         )
-        confidence = state.weight_trend_confidence if state.weight_trend_confidence is not None else 0.0
         effective_maint = blended_maintenance(equation_maint, meas, confidence)
         reasons.append(
             f"blended maintenance ({confidence:.0%} measured, "
@@ -124,10 +123,14 @@ def energy_budget(state: UserState) -> EnergyProposal:
         daily_delta = state.target_rate_kg_per_week * float(KCAL_PER_KG) / 7.0
         if state.energy_direction == "cut":
             naive_target = effective_maint - daily_delta
-            reasons.append(f"cut @ {state.target_rate_kg_per_week:.2f} kg/wk → −{daily_delta:.0f} kcal/day")
+            reasons.append(
+                f"cut @ {state.target_rate_kg_per_week:.2f} kg/wk → −{daily_delta:.0f} kcal/day"
+            )
         elif state.energy_direction == "gain":
             naive_target = effective_maint + daily_delta
-            reasons.append(f"gain @ {state.target_rate_kg_per_week:.2f} kg/wk → +{daily_delta:.0f} kcal/day")
+            reasons.append(
+                f"gain @ {state.target_rate_kg_per_week:.2f} kg/wk → +{daily_delta:.0f} kcal/day"
+            )
         else:
             naive_target = effective_maint
     else:
@@ -180,7 +183,9 @@ def volume_budget(state: UserState) -> VolumeProposal:
             reason="no planned volume or no remaining days",
         )
 
-    completed = state.week_volume_completed_kg if state.week_volume_completed_kg is not None else 0.0
+    completed = (
+        state.week_volume_completed_kg if state.week_volume_completed_kg is not None else 0.0
+    )
     remaining_volume = max(0.0, state.week_volume_planned_kg - completed)
 
     if remaining_volume <= 0.0:
