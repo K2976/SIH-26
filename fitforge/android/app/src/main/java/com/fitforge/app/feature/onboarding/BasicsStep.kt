@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "LongParameterList")
+
 package com.fitforge.app.feature.onboarding
 
 import androidx.compose.foundation.layout.Arrangement
