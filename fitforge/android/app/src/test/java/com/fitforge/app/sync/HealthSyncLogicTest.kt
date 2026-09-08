@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount")
+
 package com.fitforge.app.sync
 
 import com.fitforge.app.domain.model.HealthConnectAvailability

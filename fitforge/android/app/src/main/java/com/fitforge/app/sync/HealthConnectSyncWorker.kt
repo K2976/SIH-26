@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount")
+
 package com.fitforge.app.sync
 
 import android.content.Context
@@ -92,7 +94,11 @@ class HealthConnectSyncWorker(
                     else -> {
                         // Transient failures (e.g., IO, RemoteException, temporary service disconnect)
                         if (runAttemptCount < MAX_RETRIES) {
-                            Log.w(TAG, "Scheduling retry for transient error (attempt #$runAttemptCount of $MAX_RETRIES)")
+                            Log.w(
+                                TAG,
+                                "Scheduling retry for transient error " +
+                                    "(attempt #$runAttemptCount of $MAX_RETRIES)",
+                            )
                             Result.retry()
                         } else {
                             Log.e(TAG, "HealthConnectSyncWorker exceeded maximum retry attempts ($MAX_RETRIES).")

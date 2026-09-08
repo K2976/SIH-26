@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.data.repository
 
 import com.fitforge.app.core.database.UserStateDao
