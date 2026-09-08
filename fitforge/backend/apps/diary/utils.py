@@ -21,6 +21,19 @@ def parse_tzinfo(tz_string: str) -> datetime.tzinfo:
         
     raise ValueError(f"Invalid timezone or offset string: {tz_string}")
 
+def active_rows(model, user):
+    """Diary rows are never edited in place — corrections supersede
+    (CLAUDE.md). Only rows nothing else points back to via `supersedes` are
+    current. Shared by apps/engine/service.py and apps/engine/cycle_service.py.
+    """
+    superseded_ids = (
+        model.objects.filter(user=user)
+        .exclude(supersedes__isnull=True)
+        .values_list("supersedes_id", flat=True)
+    )
+    return model.objects.filter(user=user).exclude(pk__in=superseded_ids)
+
+
 def resolve_local_day(utc_datetime: datetime.datetime, utc_offset_str: str) -> datetime.date:
     """
     Resolves a UTC datetime to the user's local day based on their UTC offset/timezone.

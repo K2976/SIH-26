@@ -80,6 +80,10 @@ class SleepLog(DiaryEntry):
 
 
 class CycleLog(DiaryEntry):
+    # Recognised `event` values: "period_start" | "period_end" | "spotting".
+    # Left as a plain CharField (no `choices=`) rather than altering an
+    # existing column's constraints — validated at the serializer/service
+    # layer instead. See apps/engine/cycle.py for the values consumed there.
     date = models.DateField()
     event = models.CharField(max_length=32, blank=True)
     flow = models.CharField(max_length=32, blank=True)
@@ -87,3 +91,41 @@ class CycleLog(DiaryEntry):
     energy_rating = models.PositiveSmallIntegerField(
         choices=[(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)], null=True, blank=True
     )
+
+
+class CycleProfile(models.Model):
+    """Cycle-module settings, one row per user. Not a diary entry: it's a
+    settings row (like UserProfile), not an append-only logged event.
+
+    Kept in apps/diary alongside CycleLog since both belong to the cycle
+    module (§10), not in apps/accounts — UserProfile only carries the
+    boolean opt-in (`tracks_cycle`); everything past that opt-in question
+    lives here.
+    """
+
+    class TrackingMode(models.TextChoices):
+        NATURAL = "natural", "Natural"
+        HORMONAL_CONTRACEPTION = "hormonal_contraception", "Hormonal contraception"
+        PREGNANT = "pregnant", "Pregnant"
+        POSTPARTUM = "postpartum", "Postpartum"
+        PERIMENOPAUSE = "perimenopause", "Perimenopause"
+        NOT_CYCLING = "not_cycling", "Not cycling"
+        UNKNOWN = "unknown", "Unknown"
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cycle_profile"
+    )
+    tracking_mode = models.CharField(
+        max_length=32, choices=TrackingMode.choices, default=TrackingMode.UNKNOWN
+    )
+    # Self-reported starting points; refined by observed history once enough
+    # period-start events exist (see apps.engine.cycle.infer_typical_length).
+    typical_length_days = models.PositiveSmallIntegerField(null=True, blank=True)
+    typical_period_days = models.PositiveSmallIntegerField(null=True, blank=True)
+    # Confidence in typical_length_days / typical_period_days as self-reported
+    # values, distinct from the confidence attached to a derived phase or
+    # forecast (those are computed fresh from history each time).
+    confidence = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"CycleProfile<{self.user_id}:{self.tracking_mode}>"

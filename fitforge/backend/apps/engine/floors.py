@@ -13,6 +13,7 @@ from __future__ import annotations
 from apps.engine.constants import (
     DAMPING_FACTOR,
     DAMPING_MAX_EXCLUSIVE,
+    ENERGY_AVAILABILITY_FLAG,
     MAX_DAILY_KCAL_ADJUSTMENT,
     MAX_VOLUME_INCREASE_FACTOR,
     MIN_DAILY_KCAL_DEFAULT,
@@ -149,6 +150,21 @@ def apply_floors(
                 final_kcal = min_kcal
                 if f"min_daily_kcal ({min_kcal:.0f})" not in clamped_by:
                     clamped_by.append(f"min_daily_kcal ({min_kcal:.0f})")
+
+    # -----------------------------------------------------------------------
+    # Floor 4.5: Energy availability — stop escalating the deficit (§10)
+    # -----------------------------------------------------------------------
+    # When cycle_service has flagged a sustained deficit + high training load
+    # + a significantly overdue period (natural tracking only), the engine
+    # must not let the target sit below maintenance — that's what "stops
+    # escalating the deficit" means concretely. This does not diagnose or
+    # force a surplus; it only refuses to let automatic rebalancing push the
+    # target further into deficit than maintenance itself.
+    flag_active = state.energy_availability_flag == ENERGY_AVAILABILITY_FLAG
+    if flag_active and state.maintenance_kcal is not None:
+        if final_kcal < state.maintenance_kcal:
+            clamped_by.append(f"energy_availability_floor ({state.maintenance_kcal:.0f} kcal)")
+            final_kcal = state.maintenance_kcal
 
     # -----------------------------------------------------------------------
     # Floor 5: Damping invariant (assertion-level check)

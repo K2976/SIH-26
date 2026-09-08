@@ -154,3 +154,83 @@ MAX_SAFE_VOLUME_RECOVERY_DAYS = 3
 # PLACEHOLDER — represents a rough ceiling where more symptoms don't
 # meaningfully decrease readiness further (it's already very low).
 READINESS_MAX_SYMPTOM_COUNT = 5
+
+# ---------------------------------------------------------------------------
+# Cycle module (§10) — phase derivation
+# ---------------------------------------------------------------------------
+# Phase is derived only from a user's own period-start history, gated by
+# confidence. Below these thresholds it is None — never a default middle
+# value (CLAUDE.md rule 2).
+
+# Need at least this many logged period starts (i.e. this many completed
+# cycles) before a typical cycle length is inferred at all.
+MIN_PERIOD_STARTS_FOR_TYPICAL_LENGTH = 3
+
+# PLACEHOLDER — cycle-length confidence reaches 1.0 at this many observed
+# intervals, mirroring MIN_WEIGHINGS_FOR_FULL_TREND_CONFIDENCE's role for
+# weight trend. Pending calibration.
+FULL_CONFIDENCE_CYCLES = 4
+
+# Below this confidence, phase is not surfaced even though a typical length
+# exists — a rough guess from 2-3 cycles is not enough to label a phase.
+MIN_CONFIDENCE_FOR_PHASE = 0.5
+
+# Fallback period length when CycleProfile.typical_period_days is unset.
+# PLACEHOLDER — a commonly cited average; replaced by the user's own history
+# via CycleProfile as soon as it exists.
+DEFAULT_PERIOD_DAYS = 5
+
+# The luteal phase (ovulation to next period) is the most consistent part of
+# the cycle across individuals and cycle lengths, unlike the follicular
+# phase which varies. A widely cited approximate constant, not measured.
+LUTEAL_PHASE_DAYS = 14
+
+# Width of the ovulatory window itself, centered on the estimated ovulation
+# day (typical_length - LUTEAL_PHASE_DAYS).
+OVULATORY_WINDOW_DAYS = 2
+
+# If cycle_day runs this many days past typical_length_days without a new
+# period start being logged, the cycle has diverged too far from her history
+# to label a phase confidently — this is exactly the situation the energy
+# availability check (below) is watching for.
+CYCLE_OVERDUE_UNCERTAIN_BUFFER_DAYS = 3
+
+# ---------------------------------------------------------------------------
+# Cycle module — pattern learning (CyclePattern)
+# ---------------------------------------------------------------------------
+# PLACEHOLDER — full confidence in a per-cycle-day pattern (energy, symptom
+# frequency, adherence, volume) at this many contributing cycles.
+CYCLE_PATTERN_FULL_CONFIDENCE_CYCLES = 3
+
+# ---------------------------------------------------------------------------
+# Cycle module — energy availability check
+# ---------------------------------------------------------------------------
+# The most important safety feature in the product (§10). All three
+# conditions must hold: natural tracking, a significantly overdue period,
+# and a sustained deficit alongside high training load. It does not
+# diagnose; it stops the engine from automatically escalating the deficit
+# further and surfaces a flag for the UI to turn into a "talk to a doctor"
+# suggestion.
+
+# PLACEHOLDER — how many days past the predicted period date counts as
+# "significantly overdue". Pending clinical review.
+PERIOD_OVERDUE_DAYS_THRESHOLD = 10
+
+# PLACEHOLDER — consecutive days of logged intake meaningfully below
+# maintenance before a deficit counts as "sustained".
+DEFICIT_STREAK_DAYS_THRESHOLD = 14
+
+# A day only counts toward the deficit streak if logged intake falls this
+# far below maintenance — small day-to-day noise shouldn't count.
+DEFICIT_MARGIN_KCAL = 200.0
+
+# PLACEHOLDER — days since rest at or above this counts as "high training
+# load" for this check. Set below READINESS_DAYS_SINCE_REST_CRITICAL so this
+# safety check can fire before readiness alone would already reflect it.
+HIGH_TRAINING_LOAD_DAYS_SINCE_REST = 5
+
+# The flag value UserState.energy_availability_flag carries when it fires.
+# A key, not a diagnosis: it names no condition and carries no score. The UI
+# is responsible for turning this into a "consider talking to a doctor"
+# suggestion.
+ENERGY_AVAILABILITY_FLAG = "energy_availability_review"
