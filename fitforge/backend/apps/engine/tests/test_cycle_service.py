@@ -1,12 +1,13 @@
 import datetime
 import uuid
+from decimal import Decimal
 
 import pytest
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.accounts.models import UserProfile
-from apps.diary.models import CycleLog, CycleProfile
+from apps.accounts.models import Goal, UserProfile
+from apps.diary.models import CycleLog, CycleProfile, WorkoutSession
 from apps.engine import cycle_service
 from apps.engine.constants import ENERGY_AVAILABILITY_FLAG
 from apps.engine.models import CyclePattern, DailyState
@@ -155,6 +156,96 @@ class TestEnergyAvailabilityFlag:
             user, as_of, CycleProfile.TrackingMode.HORMONAL_CONTRACEPTION, days_since_rest=6
         )
         assert flag is None
+
+
+class TestEnergyAvailabilityFloorBehavioral:
+    """Done-when criterion, load-bearing case: when the flag fires, the
+    engine actually stops escalating the deficit end-to-end — not just that
+    compute_energy_availability_flag() returns the right string in
+    isolation. A flag nobody reads is not a safety feature."""
+
+    def _seed_overdue_natural_history(self, user, as_of):
+        last_start = as_of - datetime.timedelta(days=15 + 28)
+        starts = [last_start - datetime.timedelta(days=28 * i) for i in range(3, -1, -1)]
+        for d in starts:
+            _log_period_start(user, d)
+        CycleProfile.objects.create(user=user, tracking_mode=CycleProfile.TrackingMode.NATURAL)
+
+    def _seed_deficit_streak(self, user, as_of, days):
+        for i in range(1, days + 1):
+            d = as_of - datetime.timedelta(days=i)
+            DailyState.objects.create(
+                user=user,
+                local_date=d,
+                consumed_kcal=1400.0,
+                maintenance_kcal=2000.0,
+                missing_food_days_7d=0,
+                missing_weight_days_14d=0,
+                goal_recently_changed=False,
+                insufficient_data_for_adaptation=False,
+                energy_data_sufficiency="sufficient",
+            )
+
+    def _seed_training_streak(self, user, as_of, days):
+        for i in range(days):
+            d = as_of - datetime.timedelta(days=i)
+            WorkoutSession.objects.create(
+                user=user,
+                client_uuid=uuid.uuid4(),
+                occurred_at=datetime.datetime.combine(
+                    d, datetime.time(12, 0), tzinfo=datetime.UTC
+                ),
+                utc_offset="+00:00",
+                source="manual",
+            )
+
+    def _seed_cut_goal(self, user):
+        Goal.objects.create(
+            user=user,
+            energy_direction="cut",
+            training_focus="general",
+            target_rate_kg_per_week=Decimal("0.40"),
+        )
+
+    def test_floor_stops_the_deficit_from_escalating_when_flag_fires(self, user):
+        as_of = timezone.now().date()
+        self._seed_cut_goal(user)
+        self._seed_training_streak(user, as_of, days=5)
+        self._seed_overdue_natural_history(user, as_of)
+        self._seed_deficit_streak(user, as_of, days=14)
+
+        state = compute_user_state(user, as_of=as_of)
+
+        assert state["cycle"]["energy_availability_flag"] == ENERGY_AVAILABILITY_FLAG
+        maintenance = state["energy"]["maintenance_kcal"]
+        target = state["plan_delta"]["target_kcal"]
+        assert maintenance is not None
+        # The floor must not let the target sit below maintenance once the
+        # flag is active — that IS "stop escalating the deficit."
+        assert target == pytest.approx(maintenance)
+        assert any("energy_availability_floor" in c for c in state["plan_delta"]["clamped_by"])
+
+    def test_same_load_without_the_flag_lets_the_cut_through(self, user):
+        """Identical goal and training load, but a normal (not overdue, no
+        deficit) history — the flag never fires and the cut is allowed to
+        bite. Proves the floor is conditional, not a silent no-op cap."""
+        as_of = timezone.now().date()
+        self._seed_cut_goal(user)
+        self._seed_training_streak(user, as_of, days=5)
+        CycleProfile.objects.create(user=user, tracking_mode=CycleProfile.TrackingMode.NATURAL)
+        for i in range(3, -1, -1):
+            _log_period_start(user, as_of - datetime.timedelta(days=2 + 28 * i))
+
+        state = compute_user_state(user, as_of=as_of)
+
+        assert state["cycle"]["energy_availability_flag"] is None
+        maintenance = state["energy"]["maintenance_kcal"]
+        target = state["plan_delta"]["target_kcal"]
+        assert maintenance is not None
+        assert target < maintenance - 1
+        assert not any(
+            "energy_availability_floor" in c for c in state["plan_delta"]["clamped_by"]
+        )
 
 
 class TestSymptomsMoveReadinessCeiling:
