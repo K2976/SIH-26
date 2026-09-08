@@ -8,10 +8,44 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.time.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
+
+// Mirrors apps/engine/service.py's fitness_age_inputs dict shape exactly —
+// displayed verbatim, never recomputed on-device (CLAUDE.md rule 1).
+@Serializable
+private data class FitnessAgeInputsJsonDto(
+    val mets: Double? = null,
+    @SerialName("vo2max_ml_kg_min") val vo2maxMlKgMin: Double? = null,
+    val inputs: FitnessAgeRawInputsDto? = null,
+    @SerialName("model_citation") val modelCitation: String? = null,
+    @SerialName("norms_citation") val normsCitation: String? = null,
+)
+
+@Serializable
+private data class FitnessAgeRawInputsDto(
+    val age: Int? = null,
+    @SerialName("sex_at_birth") val sexAtBirth: String? = null,
+    val bmi: Double? = null,
+    @SerialName("resting_hr") val restingHr: Int? = null,
+    @SerialName("activity_level") val activityLevel: String? = null,
+)
+
+private fun FitnessAgeInputsJsonDto.toDomain() = FitnessAgeInputsDomain(
+    mets = mets,
+    vo2maxMlKgMin = vo2maxMlKgMin,
+    age = inputs?.age,
+    sexAtBirth = inputs?.sexAtBirth,
+    bmi = inputs?.bmi,
+    restingHr = inputs?.restingHr,
+    activityLevel = inputs?.activityLevel,
+    modelCitation = modelCitation,
+    normsCitation = normsCitation,
+)
 
 data class ProfileDomain(
     val age: Int?,
@@ -66,11 +100,24 @@ data class PlanDeltaDomain(
     val clampedBy: List<String>,
 )
 
+data class FitnessAgeInputsDomain(
+    val mets: Double?,
+    val vo2maxMlKgMin: Double?,
+    val age: Int?,
+    val sexAtBirth: String?,
+    val bmi: Double?,
+    val restingHr: Int?,
+    val activityLevel: String?,
+    val modelCitation: String?,
+    val normsCitation: String?,
+)
+
 data class BodyDomain(
     val latestWeightKg: Double?,
     val weightTrendKgPerWeek: Double?,
     val trendConfidence: Double?,
     val fitnessAge: Double?,
+    val fitnessAgeInputs: FitnessAgeInputsDomain? = null,
 )
 
 data class CycleDomain(
@@ -136,6 +183,14 @@ private fun UserStateEntity.toDomain(): CachedUserState {
     val muscleGroupMap: Map<String, Double>? = trainingVolumeByMuscleGroupJson?.let {
         try {
             Json.decodeFromString<Map<String, Double>>(it)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val fitnessAgeInputs: FitnessAgeInputsDomain? = bodyFitnessAgeInputsJson?.let {
+        try {
+            Json.decodeFromString<FitnessAgeInputsJsonDto>(it).toDomain()
         } catch (_: Exception) {
             null
         }
@@ -211,6 +266,7 @@ private fun UserStateEntity.toDomain(): CachedUserState {
             weightTrendKgPerWeek = bodyWeightTrendKgPerWeek,
             trendConfidence = bodyTrendConfidence,
             fitnessAge = bodyFitnessAge,
+            fitnessAgeInputs = fitnessAgeInputs,
         ),
         cycle = CycleDomain(
             enabled = cycleEnabled,
@@ -232,10 +288,36 @@ private fun UserStateEntity.toDomain(): CachedUserState {
     )
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun UserState.toEntity(computedAt: Instant): UserStateEntity {
     val muscleJson = training.volumeByMuscleGroup?.let { map ->
         try {
             Json.encodeToString(map)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val fitnessAgeInputsMap = body.fitnessAgeInputs as? Map<String, Any?>
+    val fitnessAgeInputsJson = fitnessAgeInputsMap?.let { top ->
+        val rawInputs = top["inputs"] as? Map<String, Any?>
+        val dto = FitnessAgeInputsJsonDto(
+            mets = (top["mets"] as? Number)?.toDouble(),
+            vo2maxMlKgMin = (top["vo2max_ml_kg_min"] as? Number)?.toDouble(),
+            inputs = rawInputs?.let {
+                FitnessAgeRawInputsDto(
+                    age = (it["age"] as? Number)?.toInt(),
+                    sexAtBirth = it["sex_at_birth"] as? String,
+                    bmi = (it["bmi"] as? Number)?.toDouble(),
+                    restingHr = (it["resting_hr"] as? Number)?.toInt(),
+                    activityLevel = it["activity_level"] as? String,
+                )
+            },
+            modelCitation = top["model_citation"] as? String,
+            normsCitation = top["norms_citation"] as? String,
+        )
+        try {
+            Json.encodeToString(dto)
         } catch (_: Exception) {
             null
         }
@@ -297,6 +379,7 @@ private fun UserState.toEntity(computedAt: Instant): UserStateEntity {
         bodyWeightTrendKgPerWeek = body.weightTrendKgPerWeek,
         bodyTrendConfidence = body.trendConfidence,
         bodyFitnessAge = body.fitnessAge,
+        bodyFitnessAgeInputsJson = fitnessAgeInputsJson,
         cycleEnabled = cycle.enabled,
         cycleTrackingMode = cycle.trackingMode,
         cyclePhase = cycle.phase,

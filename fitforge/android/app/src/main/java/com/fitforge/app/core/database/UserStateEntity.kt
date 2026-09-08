@@ -119,6 +119,10 @@ data class UserStateEntity(
     val bodyTrendConfidence: Double?,
     @ColumnInfo(name = "body_fitness_age")
     val bodyFitnessAge: Double?,
+    // Raw JSON blob (mets, vo2max_ml_kg_min, inputs, model_citation,
+    // norms_citation) — displayed verbatim, never recomputed on-device.
+    @ColumnInfo(name = "body_fitness_age_inputs_json")
+    val bodyFitnessAgeInputsJson: String?,
 
     // Cycle
     @ColumnInfo(name = "cycle_enabled")

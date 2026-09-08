@@ -1,5 +1,5 @@
 {
-  "reference_version": 35,
+  "reference_version": 55,
   "exercises": [
     {
       "slug": "barbell-back-squat",
@@ -902,6 +902,168 @@
       "camera_position": null,
       "is_active": true,
       "updated_at_version": 8
+    }
+  ],
+  "training_music_mappings": [
+    {
+      "training_focus": "endurance",
+      "cycle_phase": "follicular",
+      "genre": "Electronic Cardio",
+      "youtube_playlist_id": "TODO_ENDURANCE_FOLLICULAR",
+      "is_active": true,
+      "updated_at_version": 48
+    },
+    {
+      "training_focus": "endurance",
+      "cycle_phase": "luteal",
+      "genre": "Steady Cardio Beats",
+      "youtube_playlist_id": "TODO_ENDURANCE_LUTEAL",
+      "is_active": true,
+      "updated_at_version": 50
+    },
+    {
+      "training_focus": "endurance",
+      "cycle_phase": "menstrual",
+      "genre": "Chill Electronic",
+      "youtube_playlist_id": "TODO_ENDURANCE_MENSTRUAL",
+      "is_active": true,
+      "updated_at_version": 47
+    },
+    {
+      "training_focus": "endurance",
+      "cycle_phase": "ovulatory",
+      "genre": "High-Tempo EDM",
+      "youtube_playlist_id": "TODO_ENDURANCE_OVULATORY",
+      "is_active": true,
+      "updated_at_version": 49
+    },
+    {
+      "training_focus": "endurance",
+      "cycle_phase": null,
+      "genre": "Electronic Cardio",
+      "youtube_playlist_id": "TODO_ENDURANCE_DEFAULT",
+      "is_active": true,
+      "updated_at_version": 46
+    },
+    {
+      "training_focus": "general",
+      "cycle_phase": "follicular",
+      "genre": "Upbeat Pop",
+      "youtube_playlist_id": "TODO_GENERAL_FOLLICULAR",
+      "is_active": true,
+      "updated_at_version": 53
+    },
+    {
+      "training_focus": "general",
+      "cycle_phase": "luteal",
+      "genre": "Feel-Good Pop",
+      "youtube_playlist_id": "TODO_GENERAL_LUTEAL",
+      "is_active": true,
+      "updated_at_version": 55
+    },
+    {
+      "training_focus": "general",
+      "cycle_phase": "menstrual",
+      "genre": "Calm Acoustic Pop",
+      "youtube_playlist_id": "TODO_GENERAL_MENSTRUAL",
+      "is_active": true,
+      "updated_at_version": 52
+    },
+    {
+      "training_focus": "general",
+      "cycle_phase": "ovulatory",
+      "genre": "High-Energy Pop",
+      "youtube_playlist_id": "TODO_GENERAL_OVULATORY",
+      "is_active": true,
+      "updated_at_version": 54
+    },
+    {
+      "training_focus": "general",
+      "cycle_phase": null,
+      "genre": "Upbeat Pop",
+      "youtube_playlist_id": "TODO_GENERAL_DEFAULT",
+      "is_active": true,
+      "updated_at_version": 51
+    },
+    {
+      "training_focus": "hypertrophy",
+      "cycle_phase": "follicular",
+      "genre": "Hip-Hop Gym",
+      "youtube_playlist_id": "TODO_HYPERTROPHY_FOLLICULAR",
+      "is_active": true,
+      "updated_at_version": 43
+    },
+    {
+      "training_focus": "hypertrophy",
+      "cycle_phase": "luteal",
+      "genre": "Steady Hip-Hop",
+      "youtube_playlist_id": "TODO_HYPERTROPHY_LUTEAL",
+      "is_active": true,
+      "updated_at_version": 45
+    },
+    {
+      "training_focus": "hypertrophy",
+      "cycle_phase": "menstrual",
+      "genre": "Mellow Hip-Hop",
+      "youtube_playlist_id": "TODO_HYPERTROPHY_MENSTRUAL",
+      "is_active": true,
+      "updated_at_version": 42
+    },
+    {
+      "training_focus": "hypertrophy",
+      "cycle_phase": "ovulatory",
+      "genre": "Hype Hip-Hop",
+      "youtube_playlist_id": "TODO_HYPERTROPHY_OVULATORY",
+      "is_active": true,
+      "updated_at_version": 44
+    },
+    {
+      "training_focus": "hypertrophy",
+      "cycle_phase": null,
+      "genre": "Hip-Hop Gym",
+      "youtube_playlist_id": "TODO_HYPERTROPHY_DEFAULT",
+      "is_active": true,
+      "updated_at_version": 41
+    },
+    {
+      "training_focus": "strength",
+      "cycle_phase": "follicular",
+      "genre": "Power Rock",
+      "youtube_playlist_id": "TODO_STRENGTH_FOLLICULAR",
+      "is_active": true,
+      "updated_at_version": 38
+    },
+    {
+      "training_focus": "strength",
+      "cycle_phase": "luteal",
+      "genre": "Steady Power Rock",
+      "youtube_playlist_id": "TODO_STRENGTH_LUTEAL",
+      "is_active": true,
+      "updated_at_version": 40
+    },
+    {
+      "training_focus": "strength",
+      "cycle_phase": "menstrual",
+      "genre": "Chill Power",
+      "youtube_playlist_id": "TODO_STRENGTH_MENSTRUAL",
+      "is_active": true,
+      "updated_at_version": 37
+    },
+    {
+      "training_focus": "strength",
+      "cycle_phase": "ovulatory",
+      "genre": "Hype Metal",
+      "youtube_playlist_id": "TODO_STRENGTH_OVULATORY",
+      "is_active": true,
+      "updated_at_version": 39
+    },
+    {
+      "training_focus": "strength",
+      "cycle_phase": null,
+      "genre": "Power Rock",
+      "youtube_playlist_id": "TODO_STRENGTH_DEFAULT",
+      "is_active": true,
+      "updated_at_version": 36
     }
   ]
 }

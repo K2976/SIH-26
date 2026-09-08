@@ -29,6 +29,7 @@ from apps.diary.utils import active_rows as _active
 from apps.diary.utils import resolve_local_day
 from apps.engine import calculator as calc
 from apps.engine import cycle_service
+from apps.engine import fitness_age as fitage
 from apps.engine.adaptive import compute_plan_delta
 from apps.engine.constants import ADHERENCE_WINDOW_DAYS, WEIGHT_TREND_WINDOW_DAYS
 from apps.engine.models import DailyState
@@ -370,14 +371,35 @@ def compute_user_state(user, as_of: datetime.date | None = None) -> dict:
 
     metrics = _compute_daily_metrics(user, as_of)
 
+    age = calc.age_on(as_of, profile.date_of_birth) if profile else None
+    height_cm = (
+        float(profile.height_cm) if profile and profile.height_cm is not None else None
+    )
+    bmi = fitage.bmi_from_height_weight(height_cm, metrics["body_trend"]["latest_weight_kg"])
+    fitness = fitage.estimate_fitness_age(
+        age=age,
+        sex_at_birth=profile.sex_at_birth if profile else None,
+        bmi=bmi,
+        resting_hr=profile.resting_hr if profile else None,
+        activity_level=profile.activity_level if profile else None,
+    )
+    fitness_age_inputs = None
+    if fitness is not None:
+        crf = fitness.cardiorespiratory_fitness
+        fitness_age_inputs = {
+            "mets": crf.mets,
+            "vo2max_ml_kg_min": crf.vo2max_ml_kg_min,
+            "inputs": crf.inputs,
+            "model_citation": crf.citation,
+            "norms_citation": fitness.norms_citation,
+        }
+
     return {
         "as_of": as_of,
         "profile": {
-            "age": calc.age_on(as_of, profile.date_of_birth) if profile else None,
+            "age": age,
             "sex_at_birth": profile.sex_at_birth if profile else None,
-            "height_cm": (
-                float(profile.height_cm) if profile and profile.height_cm is not None else None
-            ),
+            "height_cm": height_cm,
             "unit_preference": profile.unit_preference if profile else None,
             "tracks_cycle": profile.tracks_cycle if profile else None,
             "timezone": profile.timezone if profile else None,
@@ -395,9 +417,8 @@ def compute_user_state(user, as_of: datetime.date | None = None) -> dict:
             "latest_weight_kg": metrics["body_trend"]["latest_weight_kg"],
             "weight_trend_kg_per_week": metrics["body_trend"]["weight_trend_kg_per_week"],
             "trend_confidence": metrics["body_trend"]["trend_confidence"],
-            # No pose/VO2max model built yet (§11) — a future slice's job.
-            "fitness_age": None,
-            "fitness_age_inputs": None,
+            "fitness_age": fitness.fitness_age if fitness else None,
+            "fitness_age_inputs": fitness_age_inputs,
         },
         "cycle": cycle_service.build_cycle_state(
             user, as_of, profile, metrics["cycle_inputs"]["energy_availability_flag"]

@@ -49,6 +49,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fitforge.app.R
 import com.fitforge.app.feature.cycle.QuickCycleLogCard
+import com.fitforge.app.feature.fitnessage.FitnessAgeCard
+import com.fitforge.app.feature.music.WorkoutMusicCard
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,6 +111,11 @@ fun DashboardScreen(
                 // is off, discreet mode is on, or it's dismissed for the session.
                 QuickCycleLogCard(onOpenCycle = onOpenCycle)
 
+                // Deep link to a YouTube playlist matched to today's session
+                // focus (and cycle phase, when available). Renders nothing
+                // until a training focus is known.
+                WorkoutMusicCard()
+
                 // Error banner if refresh fails
                 if (uiState.errorMessage != null) {
                     Surface(
@@ -136,6 +143,11 @@ fun DashboardScreen(
 
                 // 4. TRENDS SECTION
                 TrendsContent(trends = uiState.trends)
+
+                // Fitness age — server-computed non-exercise VO2max estimate.
+                // Renders a "what's needed" message instead of a number when
+                // required profile fields are missing.
+                FitnessAgeCard()
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
