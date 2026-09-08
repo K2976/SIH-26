@@ -1,6 +1,17 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.reference.models import Exercise, TrainingMusicMapping
+
+
+@extend_schema_field({"type": "object"})
+class NullableJSONField(serializers.JSONField):
+    """A bare `JSONField(allow_null=True)` — untyped and nullable, with no
+    $ref or type keyword — makes drf-spectacular emit `{nullable: true}`
+    with nothing else. The openapi-generator Kotlin template can't infer a
+    type for that and falls back to generating NullEnum, a zero-entry enum
+    that's a syntax error on its own and fails the whole module's compile.
+    Forcing `type: object` here doesn't change runtime behavior at all."""
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
@@ -9,6 +20,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
     # endpoint (ExerciseDeltaView is a ListAPIView), so there's no write-side
     # validation to preserve.
     camera_position = serializers.CharField(allow_null=True, required=False)
+    pose_config = NullableJSONField(allow_null=True, required=False)
 
     class Meta:
         model = Exercise

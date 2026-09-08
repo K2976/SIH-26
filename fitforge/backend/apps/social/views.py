@@ -29,6 +29,7 @@ from apps.social.serializers import (
     SocialProfileCreateSerializer,
     SocialProfileSerializer,
     SocialProfileUpdateSerializer,
+    UsernameCheckResponseSerializer,
 )
 
 
@@ -214,8 +215,8 @@ class CheckUsernameView(APIView):
             )
         ],
         responses={
-            200: dict,
-            400: dict,
+            200: UsernameCheckResponseSerializer,
+            400: UsernameCheckResponseSerializer,
         },
     )
     def get(self, request):

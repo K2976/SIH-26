@@ -122,7 +122,7 @@ data class UserStateEntity(
     // Raw JSON blob (mets, vo2max_ml_kg_min, inputs, model_citation,
     // norms_citation) — displayed verbatim, never recomputed on-device.
     @ColumnInfo(name = "body_fitness_age_inputs_json")
-    val bodyFitnessAgeInputsJson: String?,
+    val bodyFitnessAgeInputsJson: String? = null,
 
     // Cycle
     @ColumnInfo(name = "cycle_enabled")

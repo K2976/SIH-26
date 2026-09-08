@@ -116,7 +116,7 @@ class OnboardingViewModel @Inject constructor(
                             isLoading = false,
                             isRerun = profile.onboardingCompletedAt != null,
                             dateOfBirth = profile.dateOfBirth,
-                            sexAtBirth = profile.sexAtBirth?.value,
+                            sexAtBirth = profile.sexAtBirth,
                             heightCm = profile.heightCm?.toPlainString() ?: "",
                             currentWeightKg = profile.currentWeightKg?.toPlainString() ?: "",
                             unitPreference = profile.unitPreference?.value ?: "metric",
@@ -124,7 +124,7 @@ class OnboardingViewModel @Inject constructor(
                             tracksCycle = profile.tracksCycle,
                             waistCm = profile.waistCm?.toPlainString() ?: "",
                             restingHr = profile.restingHr?.toString() ?: "",
-                            activityLevel = profile.activityLevel?.value,
+                            activityLevel = profile.activityLevel,
                             declinedFields = (profile.declinedFields as? List<*>)
                                 ?.filterIsInstance<String>()?.toMutableList() ?: mutableListOf(),
                             energyDirection = goal?.energyDirection?.value,
@@ -231,7 +231,7 @@ class OnboardingViewModel @Inject constructor(
                 profileApi.profilePartialUpdate(
                     PatchedUserProfile(
                         dateOfBirth = state.dateOfBirth,
-                        sexAtBirth = state.sexAtBirth?.let { PatchedUserProfile.SexAtBirth.valueOf(it) },
+                        sexAtBirth = state.sexAtBirth,
                         heightCm = state.heightCm.toBigDecimalOrNull(),
                         currentWeightKg = state.currentWeightKg.toBigDecimalOrNull(),
                         unitPreference = UnitPreferenceEnum.valueOf(state.unitPreference),
@@ -390,7 +390,7 @@ class OnboardingViewModel @Inject constructor(
                     PatchedUserProfile(
                         waistCm = state.waistCm.toBigDecimalOrNull(),
                         restingHr = state.restingHr.toIntOrNull(),
-                        activityLevel = state.activityLevel?.let { PatchedUserProfile.ActivityLevel.valueOf(it) },
+                        activityLevel = state.activityLevel,
                     ),
                 )
                 _uiState.update { it.copy(isSaving = false, currentStep = OnboardingStep.COMPLETION) }

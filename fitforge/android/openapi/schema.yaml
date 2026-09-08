@@ -398,15 +398,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: {}
+                $ref: '#/components/schemas/UsernameCheckResponse'
           description: ''
         '400':
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: {}
+                $ref: '#/components/schemas/UsernameCheckResponse'
           description: ''
   /api/v1/social/communities/:
     get:
@@ -998,6 +996,7 @@ components:
           format: double
           nullable: true
         fitness_age_inputs:
+          type: object
           nullable: true
       required:
       - fitness_age
@@ -1422,6 +1421,7 @@ components:
         is_bodyweight:
           type: boolean
         pose_config:
+          type: object
           nullable: true
         camera_position:
           type: string
@@ -1749,7 +1749,20 @@ components:
       - password
     SocialProfile:
       type: object
-      description: Serializer for reading social profiles.
+      description: |-
+        Serializer for reading social profiles.
+
+        Every usage is `SocialProfileSerializer(instance).data` — never used to
+        validate a write. `bio` and `is_private` have model-level defaults
+        (blank="", False) so ModelSerializer marks them not-required for
+        writes, which drf-spectacular reflects by omitting them from the
+        response schema's `required` list too — even though a read response
+        always includes them. That made the generated Kotlin fields nullable
+        (`String?`, `Boolean?`) when they're actually always present, forcing
+        every consumer to null-check values that can't be null. Declaring the
+        whole serializer read-only fixes the schema to match reality.
+        `profile_image` is genuinely nullable (model field has null=True) and
+        deliberately excluded here.
       properties:
         id:
           type: integer
@@ -1764,12 +1777,14 @@ components:
           maxLength: 64
         bio:
           type: string
+          readOnly: true
         profile_image:
           type: string
           format: uri
           nullable: true
         is_private:
           type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -1779,9 +1794,11 @@ components:
           format: date-time
           readOnly: true
       required:
+      - bio
       - created_at
       - display_name
       - id
+      - is_private
       - updated_at
       - username
     SocialProfileCreate:
@@ -2185,6 +2202,25 @@ components:
       - plan_delta
       - profile
       - training
+    UsernameCheckResponse:
+      type: object
+      description: |-
+        Response shape for CheckUsernameView — declared so drf-spectacular
+        generates a typed model (UsernameCheckResponse) instead of a bare
+        `dict`/`Map<String, Any>` with no accessible fields. Documentation only:
+        the view still builds and returns its own dict; this changes nothing
+        about the actual response body, only what the generated OpenAPI schema
+        (and therefore the Android client) says its shape is.
+      properties:
+        available:
+          type: boolean
+        message:
+          type: string
+        reason:
+          type: string
+      required:
+      - available
+      - message
     VisibilityEnum:
       enum:
       - public
