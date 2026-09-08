@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount", "TooManyFunctions")
+
 package com.fitforge.app.feature.repcounter
 
 import android.content.Context
@@ -186,15 +188,27 @@ class RepCounterViewModel @Inject constructor(
                 representativeAngle(raw)?.let { demoRepAngles += it }
                 if (elapsed >= DEMO_REP_MS) {
                     val rest = pendingRestAngle ?: return restartHoldStill(null)
-                    when (val result = deriveCalibration(exerciseSlug, rest, demoRepAngles, System.currentTimeMillis())) {
+                    val result = deriveCalibration(
+                        exerciseSlug,
+                        rest,
+                        demoRepAngles,
+                        System.currentTimeMillis(),
+                    )
+                    when (result) {
                         is CalibrationResult.Success -> {
                             calibration = result.profile
                             viewModelScope.launch { calibrationDao.upsert(result.profile.toEntity()) }
-                            _uiState.value = RepCounterUiState.Ready(result.profile.restAngleDeg, result.profile.peakAngleDeg)
+                            _uiState.value = RepCounterUiState.Ready(
+                                result.profile.restAngleDeg,
+                                result.profile.peakAngleDeg,
+                            )
                         }
                         is CalibrationResult.InsufficientRange -> {
                             val achieved = result.achievedDeg.roundToInt()
-                            restartHoldStill("Only ${achieved}° of movement detected — repeat the rep, moving through your full range.")
+                            restartHoldStill(
+                                "Only ${achieved}° of movement detected — repeat the rep, " +
+                                    "moving through your full range.",
+                            )
                         }
                     }
                 }
@@ -297,9 +311,19 @@ private fun CompletedRep.toFeedback(config: ExercisePoseConfig) = RepFeedback(
     cameraPosition = config.cameraPosition,
 )
 
-private fun CalibrationProfileEntity.toCalibrationProfile() = CalibrationProfile(exerciseSlug, restAngleDeg, peakAngleDeg, calibratedAtMs)
+private fun CalibrationProfileEntity.toCalibrationProfile() = CalibrationProfile(
+    exerciseSlug,
+    restAngleDeg,
+    peakAngleDeg,
+    calibratedAtMs,
+)
 
-private fun CalibrationProfile.toEntity() = CalibrationProfileEntity(exerciseSlug, restAngleDeg, peakAngleDeg, calibratedAtMs)
+private fun CalibrationProfile.toEntity() = CalibrationProfileEntity(
+    exerciseSlug,
+    restAngleDeg,
+    peakAngleDeg,
+    calibratedAtMs,
+)
 
 private fun missingJointsMessage(missing: Set<PoseLandmark>): String {
     val names = missing.joinToString(", ") { it.name.lowercase().replace('_', ' ') }

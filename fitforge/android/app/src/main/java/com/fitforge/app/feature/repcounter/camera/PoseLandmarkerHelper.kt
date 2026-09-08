@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.fitforge.app.feature.repcounter.camera
 
 import android.content.Context
@@ -67,7 +69,8 @@ class PoseLandmarkerHelper(
     fun close() = landmarker.close()
 }
 
-private fun List<com.google.mediapipe.tasks.components.containers.NormalizedLandmark>.toPoseMap(): Map<PoseLandmark, Landmark> =
+private fun List<com.google.mediapipe.tasks.components.containers.NormalizedLandmark>.toPoseMap():
+    Map<PoseLandmark, Landmark> =
     buildMap {
         for (target in PoseLandmark.entries) {
             val point = getOrNull(target.mediapipeIndex) ?: continue

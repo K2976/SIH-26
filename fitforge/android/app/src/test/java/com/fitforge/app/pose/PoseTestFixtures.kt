@@ -1,3 +1,5 @@
+@file:Suppress("LongParameterList")
+
 package com.fitforge.app.pose
 
 import kotlin.math.cos
@@ -71,7 +73,12 @@ val CURL_CONFIG = ExercisePoseConfig(
 )
 
 /** rest ~standing/arm-extended, peak ~squat depth/full curl — shared by the squat-shaped tests. */
-val SQUAT_CALIBRATION = CalibrationProfile("bodyweight-squat", restAngleDeg = 170.0, peakAngleDeg = 90.0, calibratedAtMs = 0)
+val SQUAT_CALIBRATION = CalibrationProfile(
+    "bodyweight-squat",
+    restAngleDeg = 170.0,
+    peakAngleDeg = 90.0,
+    calibratedAtMs = 0,
+)
 
 /** Linear ramp of representative angle from [fromDeg] to [toDeg] over [durationMs], sampled every [dtMs]. */
 fun rampAngles(fromDeg: Double, toDeg: Double, startMs: Long, durationMs: Long, dtMs: Long = 33): List<AngleSample> {
@@ -106,7 +113,11 @@ fun twoSidedRamp(
 }
 
 /** Runs the real per-frame pipeline: raw landmarks -> angle calc -> smoothing -> state machine. */
-fun runFramePipeline(config: ExercisePoseConfig, calibration: CalibrationProfile, frames: List<PoseFrame>): RepMachineResult {
+fun runFramePipeline(
+    config: ExercisePoseConfig,
+    calibration: CalibrationProfile,
+    frames: List<PoseFrame>,
+): RepMachineResult {
     var previousSmoothed: AngleSample? = null
     var state = RepMachineState()
     val completed = mutableListOf<CompletedRep>()
@@ -132,7 +143,14 @@ fun runFramePipeline(config: ExercisePoseConfig, calibration: CalibrationProfile
 }
 
 /** One down-then-up squat cycle, in landmark form, starting and ending at [restDeg]. */
-fun squatCycleFrames(startMs: Long, downMs: Long = 600, upMs: Long = 600, bottomDeg: Double = 90.0, restDeg: Double = 170.0, dtMs: Long = 33): List<PoseFrame> {
+fun squatCycleFrames(
+    startMs: Long,
+    downMs: Long = 600,
+    upMs: Long = 600,
+    bottomDeg: Double = 90.0,
+    restDeg: Double = 170.0,
+    dtMs: Long = 33,
+): List<PoseFrame> {
     val downSteps = (downMs / dtMs).toInt().coerceAtLeast(1)
     val upSteps = (upMs / dtMs).toInt().coerceAtLeast(1)
     val down = (0..downSteps).map { i ->

@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "MagicNumber", "ReturnCount")
+
 package com.fitforge.app.pose
 
 import kotlin.math.abs
@@ -131,7 +133,14 @@ fun stepRepStateMachine(
 
         Phase.DESCENDING -> when {
             progress > state.peakProgress ->
-                StepResult(state.copy(peakProgress = progress, peakLeftDeg = sample.leftDeg, peakRightDeg = sample.rightDeg), null)
+                StepResult(
+                    state.copy(
+                        peakProgress = progress,
+                        peakLeftDeg = sample.leftDeg,
+                        peakRightDeg = sample.rightDeg,
+                    ),
+                    null,
+                )
 
             progress < state.peakProgress - MOVEMENT_EPS ->
                 StepResult(
@@ -150,7 +159,11 @@ fun stepRepStateMachine(
         Phase.ASCENDING -> when {
             progress < state.troughProgress ->
                 StepResult(
-                    state.copy(troughProgress = progress, troughMs = sample.timestampMs, troughStableSinceMs = sample.timestampMs),
+                    state.copy(
+                        troughProgress = progress,
+                        troughMs = sample.timestampMs,
+                        troughStableSinceMs = sample.timestampMs,
+                    ),
                     null,
                 )
 
@@ -205,7 +218,11 @@ private fun closeRep(state: RepMachineState, config: ExercisePoseConfig, endMs: 
 
         else -> {
             val symmetryDeviationDeg =
-                if (config.cameraPosition != CameraPosition.SIDE && state.peakLeftDeg != null && state.peakRightDeg != null) {
+                if (
+                    config.cameraPosition != CameraPosition.SIDE &&
+                    state.peakLeftDeg != null &&
+                    state.peakRightDeg != null
+                ) {
                     abs(state.peakLeftDeg - state.peakRightDeg)
                 } else {
                     null

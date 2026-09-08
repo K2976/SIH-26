@@ -9,7 +9,12 @@ class CalibrationTest {
     @Test
     fun `deriveCalibration succeeds for a full range-of-motion demo rep`() {
         val demoAngles = (170 downTo 90 step 5).map { it.toDouble() }
-        val result = deriveCalibration("bodyweight-squat", restAngleDeg = 170.0, demoRepAngles = demoAngles, nowMs = 1000)
+        val result = deriveCalibration(
+            "bodyweight-squat",
+            restAngleDeg = 170.0,
+            demoRepAngles = demoAngles,
+            nowMs = 1000,
+        )
         assertTrue(result is CalibrationResult.Success)
         val profile = (result as CalibrationResult.Success).profile
         assertEquals(170.0, profile.restAngleDeg, 0.01)
