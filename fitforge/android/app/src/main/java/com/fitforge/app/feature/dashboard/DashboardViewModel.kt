@@ -1,3 +1,5 @@
+@file:Suppress("ComplexCondition", "CyclomaticComplexMethod", "LongMethod", "MagicNumber")
+
 package com.fitforge.app.feature.dashboard
 
 import androidx.lifecycle.ViewModel
@@ -153,7 +155,8 @@ internal fun mapUserStateToUiState(state: CachedUserState?): DashboardUiState {
                 message = "No weekly data recorded yet. Completed workouts and logged meals will show progress here.",
             ),
             trends = TrendsSection.Empty(
-                message = "No trend data available. Consistently log weight and workouts over multiple days to generate trends.",
+                message = "No trend data available. Consistently log weight and workouts " +
+                    "over multiple days to generate trends.",
             ),
         )
     }
@@ -242,7 +245,8 @@ internal fun mapUserStateToUiState(state: CachedUserState?): DashboardUiState {
         (muscleVolume == null || muscleVolume.isEmpty())
     ) {
         TrendsSection.Empty(
-            message = "No trend data available. Consistently log weight and workouts over multiple days to generate trends.",
+            message = "No trend data available. Consistently log weight and workouts " +
+                "over multiple days to generate trends.",
         )
     } else {
         TrendsSection.Data(

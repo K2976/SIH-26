@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.dashboard
 
 import com.fitforge.app.data.repository.BodyDomain

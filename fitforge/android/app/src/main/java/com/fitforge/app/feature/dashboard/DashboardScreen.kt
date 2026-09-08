@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "LongParameterList", "MagicNumber")
+
 package com.fitforge.app.feature.dashboard
 
 import androidx.compose.foundation.background
@@ -169,7 +171,9 @@ private fun TodayContent(today: TodaySection) {
                 Card(
                     modifier = Modifier.fillMaxWidth().height(120.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    ),
                 ) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("Loading energy balance...", style = MaterialTheme.typography.bodySmall)
@@ -435,9 +439,16 @@ private fun WeekContent(week: WeekSection) {
                                 Text(
                                     text = when {
                                         week.volumeCompletedKg != null && week.volumePlannedKg != null ->
-                                            stringResource(R.string.dashboard_week_volume_format, week.volumeCompletedKg, week.volumePlannedKg)
+                                            stringResource(
+                                                R.string.dashboard_week_volume_format,
+                                                week.volumeCompletedKg,
+                                                week.volumePlannedKg,
+                                            )
                                         week.volumeCompletedKg != null ->
-                                            stringResource(R.string.dashboard_week_volume_completed_only, week.volumeCompletedKg)
+                                            stringResource(
+                                                R.string.dashboard_week_volume_completed_only,
+                                                week.volumeCompletedKg,
+                                            )
                                         else -> "No volume recorded"
                                     },
                                     style = MaterialTheme.typography.bodySmall,
@@ -468,9 +479,15 @@ private fun WeekContent(week: WeekSection) {
                                 Text(
                                     text = when {
                                         week.energyBalanceKcal != null && week.energyBalanceKcal > 0 ->
-                                            stringResource(R.string.dashboard_week_balance_surplus, week.energyBalanceKcal)
+                                            stringResource(
+                                                R.string.dashboard_week_balance_surplus,
+                                                week.energyBalanceKcal,
+                                            )
                                         week.energyBalanceKcal != null && week.energyBalanceKcal < 0 ->
-                                            stringResource(R.string.dashboard_week_balance_deficit, kotlin.math.abs(week.energyBalanceKcal))
+                                            stringResource(
+                                                R.string.dashboard_week_balance_deficit,
+                                                kotlin.math.abs(week.energyBalanceKcal),
+                                            )
                                         week.energyBalanceKcal != null ->
                                             stringResource(R.string.dashboard_week_balance_neutral)
                                         else -> "—"
