@@ -8,11 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fitforge.app.feature.coach.CoachScreen
+import com.fitforge.app.feature.community.CommunityDetailScreen
+import com.fitforge.app.feature.community.CommunityHomeScreen
 import com.fitforge.app.feature.dashboard.DashboardScreen
 import com.fitforge.app.feature.logbook.LogScreen
 import com.fitforge.app.feature.profile.ProfileScreen
 
-/** The logged-in shell: bottom bar plus its four tabs. */
+/** The logged-in shell: bottom bar plus its tabs and sub-routes. */
 @Composable
 fun FitForgeNavHost() {
     val navController = rememberNavController()
@@ -27,8 +29,30 @@ fun FitForgeNavHost() {
         ) {
             composable(FitForgeDestination.DASHBOARD.route) { DashboardScreen() }
             composable(FitForgeDestination.LOG.route) { LogScreen() }
+            composable(FitForgeDestination.COMMUNITIES.route) {
+                CommunityHomeScreen(
+                    onCommunityClick = { communityId ->
+                        navController.navigate("community/$communityId")
+                    },
+                )
+            }
             composable(FitForgeDestination.COACH.route) { CoachScreen() }
-            composable(FitForgeDestination.PROFILE.route) { ProfileScreen() }
+            composable(FitForgeDestination.PROFILE.route) {
+                ProfileScreen(
+                    onCommunityClick = { communityId ->
+                        navController.navigate("community/$communityId")
+                    },
+                )
+            }
+            composable("community/{communityId}") { backStackEntry ->
+                val communityId = backStackEntry.arguments?.getString("communityId")?.toIntOrNull()
+                if (communityId != null) {
+                    CommunityDetailScreen(
+                        communityId = communityId,
+                        onBackClick = { navController.popBackStack() },
+                    )
+                }
+            }
         }
     }
 }

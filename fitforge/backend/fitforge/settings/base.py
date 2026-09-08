@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "apps.diary",
     "apps.engine",
     "apps.coach",
+    "apps.social",
     "apps.api",
 ]
 

@@ -8,9 +8,11 @@ import com.fitforge.app.core.network.TokenAuthenticator
 import com.fitforge.app.core.network.createJsonWithJavaTime
 import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
+import com.fitforge.app.data.remote.generated.apis.CommunityApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import com.fitforge.app.data.remote.generated.apis.ReferenceApi
+import com.fitforge.app.data.remote.generated.apis.SocialApi
 import com.fitforge.app.data.remote.generated.apis.StateApi
 import com.fitforge.app.data.remote.generated.apis.SyncApi
 import com.fitforge.app.data.remote.generated.infrastructure.Serializer
@@ -128,4 +130,14 @@ object NetworkModule {
     @Singleton
     fun provideStateApi(retrofit: Retrofit): StateApi =
         retrofit.create(StateApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSocialApi(retrofit: Retrofit): SocialApi =
+        retrofit.create(SocialApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCommunityApi(retrofit: Retrofit): CommunityApi =
+        retrofit.create(CommunityApi::class.java)
 }

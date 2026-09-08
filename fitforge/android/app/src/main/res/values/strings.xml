@@ -200,4 +200,31 @@
     <string name="dashboard_empty_week">No weekly data recorded yet. Completed workouts and logged meals will show progress here.</string>
     <string name="dashboard_empty_trends">No trend data available. Consistently log weight and workouts over multiple days to generate trends.</string>
     <string name="dashboard_empty_session">No session scheduled for today.</string>
+
+    <!-- Communities -->
+    <string name="nav_communities">Communities</string>
+    <string name="communities_title">Communities</string>
+    <string name="tab_my_communities">My Communities</string>
+    <string name="tab_discover">Discover</string>
+    <string name="search_communities_hint">Search communities…</string>
+    <string name="create_community_title">Create Community</string>
+    <string name="edit_community_title">Edit Community</string>
+    <string name="delete_community_title">Delete Community</string>
+    <string name="community_name_label">Community Name</string>
+    <string name="community_description_label">Description</string>
+    <string name="community_visibility_label">Visibility</string>
+    <string name="visibility_public">Public</string>
+    <string name="visibility_public_desc">Anyone can find and join this community</string>
+    <string name="visibility_private">Private</string>
+    <string name="visibility_private_desc">Hidden from search, invite only</string>
+    <string name="join_community">Join Community</string>
+    <string name="leave_community">Leave Community</string>
+    <string name="leave_community_confirm">Are you sure you want to leave %1$s?</string>
+    <string name="delete_community_confirm">Are you sure you want to delete %1$s? This action cannot be undone.</string>
+    <string name="community_members_header">Members (%1$d)</string>
+    <string name="community_role_owner">Owner</string>
+    <string name="community_role_admin">Admin</string>
+    <string name="community_role_member">Member</string>
+    <string name="empty_my_communities">You haven\'t joined any communities yet.\nDiscover active fitness groups or start your own!</string>
+    <string name="empty_discover_communities">No public communities found.\nBe the first to create one!</string>
 </resources>

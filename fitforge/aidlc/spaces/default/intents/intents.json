@@ -12,5 +12,12 @@
     "dirName": "260905-health-connect",
     "scope": "feature",
     "status": "in-flight"
+  },
+  {
+    "uuid": "01a07b15-24d9-732c-a533-ad0f2bef4676",
+    "slug": "social-media",
+    "dirName": "260907-social-media",
+    "scope": "classic",
+    "status": "in-flight"
   }
 ]
