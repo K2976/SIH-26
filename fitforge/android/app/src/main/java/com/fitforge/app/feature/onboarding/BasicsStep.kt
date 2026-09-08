@@ -36,9 +36,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.fitforge.app.R
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toLocalDateTime
 
 /**
  * Step 1: Date of birth, sex at birth, height, current weight, unit preference.
@@ -130,7 +132,7 @@ fun BasicsStep(
         if (showDatePicker) {
             val datePickerState = rememberDatePickerState(
                 initialSelectedDateMillis = uiState.dateOfBirth?.let {
-                    it.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    it.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
                 },
             )
             DatePickerDialog(
@@ -138,9 +140,9 @@ fun BasicsStep(
                 confirmButton = {
                     TextButton(onClick = {
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val date = Instant.ofEpochMilli(millis)
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
+                            val date = Instant.fromEpochMilliseconds(millis)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date
                             onDateOfBirthChanged(date)
                         }
                         showDatePicker = false

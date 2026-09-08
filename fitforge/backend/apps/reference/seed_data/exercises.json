@@ -51,7 +51,14 @@
       "form_cues": ["heels down", "knees track over toes"],
       "met_value": 3.0,
       "is_bodyweight": true,
-      "_met_source": "Compendium code 02056, 3.0 — \"Body weight resistance exercises (e.g., squat, lunge, push-up, crunch), general\""
+      "_met_source": "Compendium code 02056, 3.0 — \"Body weight resistance exercises (e.g., squat, lunge, push-up, crunch), general\"",
+      "camera_position": "side",
+      "pose_config": {
+        "angle_joint": {"from": "LEFT_HIP", "vertex": "LEFT_KNEE", "to": "LEFT_ANKLE"},
+        "min_rep_seconds": 0.6,
+        "max_rep_seconds": 8.0,
+        "symmetry_tolerance_deg": 12.0
+      }
     },
     {
       "slug": "jump-squat",
@@ -155,7 +162,14 @@
       "form_cues": ["straight line head to heels", "elbows at ~45 degrees"],
       "met_value": 7.5,
       "is_bodyweight": true,
-      "_met_source": "Compendium code 02020, 7.5 — \"Calisthenics (e.g., pushups, sit ups, pull-ups, jumping jacks, burpees, battling ropes), vigorous effort\""
+      "_met_source": "Compendium code 02020, 7.5 — \"Calisthenics (e.g., pushups, sit ups, pull-ups, jumping jacks, burpees, battling ropes), vigorous effort\"",
+      "camera_position": "side",
+      "pose_config": {
+        "angle_joint": {"from": "LEFT_SHOULDER", "vertex": "LEFT_ELBOW", "to": "LEFT_WRIST"},
+        "min_rep_seconds": 0.6,
+        "max_rep_seconds": 8.0,
+        "symmetry_tolerance_deg": 10.0
+      }
     },
     {
       "slug": "overhead-press",
@@ -285,7 +299,14 @@
       "form_cues": ["elbows stay pinned to the sides", "no swinging"],
       "met_value": 3.5,
       "is_bodyweight": false,
-      "_met_source": "Compendium code 02054, 3.5 — \"Resistance (weight) training, multiple exercises, 8-15 reps at varied resistance\" (general catch-all; no curl-specific code)"
+      "_met_source": "Compendium code 02054, 3.5 — \"Resistance (weight) training, multiple exercises, 8-15 reps at varied resistance\" (general catch-all; no curl-specific code)",
+      "camera_position": "front",
+      "pose_config": {
+        "angle_joint": {"from": "LEFT_SHOULDER", "vertex": "LEFT_ELBOW", "to": "LEFT_WRIST"},
+        "min_rep_seconds": 0.5,
+        "max_rep_seconds": 6.0,
+        "symmetry_tolerance_deg": 8.0
+      }
     },
     {
       "slug": "triceps-pushdown",

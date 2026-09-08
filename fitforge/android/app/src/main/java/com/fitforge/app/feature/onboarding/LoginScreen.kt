@@ -23,7 +23,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fitforge.app.BuildConfig
 import com.fitforge.app.R
+
+// Matches the fixed account `manage.py seed_demo_account` creates on the
+// backend. Not a secret — it's the credential behind this very button.
+private const val DEMO_EMAIL = "demo@fitforge.app"
+private const val DEMO_PASSWORD = "FitForgeDemo!2026"
 
 @Composable
 fun LoginScreen(
@@ -86,6 +92,19 @@ fun LoginScreen(
 
         TextButton(onClick = onGoToSignup, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             Text(stringResource(R.string.login_go_to_signup))
+        }
+
+        // BuildConfig.DEBUG is compiled per variant by AGP itself — false in
+        // every release build — so this can't ship by accident the way a
+        // stray runtime flag could.
+        if (BuildConfig.DEBUG) {
+            TextButton(
+                onClick = { viewModel.login(DEMO_EMAIL, DEMO_PASSWORD, onLoginSuccess) },
+                enabled = uiState !is LoginUiState.Loading,
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            ) {
+                Text(stringResource(R.string.login_try_demo))
+            }
         }
     }
 }

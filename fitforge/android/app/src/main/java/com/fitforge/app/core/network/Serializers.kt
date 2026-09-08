@@ -9,6 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+import kotlinx.serialization.modules.plus
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -48,12 +49,14 @@ private val OffsetDateTimeSerializer = object : KSerializer<OffsetDateTime> {
     }
 }
 
-private val JavaTimeSerializersModule = SerializersModule {
+private val javaTimeSerializersModule = SerializersModule {
     contextual(LocalDate::class, LocalDateSerializer)
     contextual(OffsetDateTime::class, OffsetDateTimeSerializer)
 }
 
-fun createJsonWithJavaTime(): Json = Json {
+fun createJsonWithJavaTime(
+    additionalSerializersModule: SerializersModule = SerializersModule {},
+): Json = Json {
     ignoreUnknownKeys = true
-    serializersModule = JavaTimeSerializersModule
+    serializersModule = javaTimeSerializersModule + additionalSerializersModule
 }

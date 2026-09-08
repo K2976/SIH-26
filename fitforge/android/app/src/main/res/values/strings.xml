@@ -8,9 +8,52 @@
     <string name="nav_profile">Profile</string>
 
     <string name="dashboard_placeholder">Dashboard</string>
-    <string name="log_placeholder">Log</string>
     <string name="coach_placeholder">Coach</string>
     <string name="profile_placeholder">Profile</string>
+
+    <!-- Logbook — home -->
+    <string name="log_start_workout">Start workout</string>
+    <string name="log_history_title">History</string>
+    <string name="log_history_empty">No workouts logged yet.</string>
+    <string name="log_session_row">%1$s — %2$d min</string>
+
+    <!-- Logbook — active session -->
+    <string name="log_finish_session">Finish workout</string>
+    <string name="log_add_exercise">Add exercise</string>
+    <string name="log_elapsed_label">Elapsed: %1$s min</string>
+    <string name="log_volume_label">Volume: %1$.1f kg</string>
+    <string name="log_volume_label_lb">Volume: %1$.1f lb</string>
+    <string name="log_burn_label">Est. burn: %1$.0f kcal</string>
+    <string name="log_burn_unavailable">Est. burn unavailable — no bodyweight on file</string>
+    <string name="log_set_row">Set %1$d: %2$d × %3$.1f kg</string>
+    <string name="log_set_row_lb">Set %1$d: %2$d × %3$.1f lb</string>
+    <string name="log_set_row_bodyweight">Set %1$d: %2$d reps</string>
+
+    <!-- Logbook — exercise picker -->
+    <string name="log_picker_title">Pick an exercise</string>
+    <string name="log_picker_search_hint">Search exercises</string>
+    <string name="log_picker_empty">No exercises found.</string>
+
+    <!-- Logbook — add set -->
+    <string name="log_reps_label">Reps</string>
+    <string name="log_weight_label">Weight (kg)</string>
+    <string name="log_weight_label_lb">Weight (lb)</string>
+    <string name="log_warmup_label">Warm-up set</string>
+    <string name="log_log_set">Log set</string>
+    <string name="log_rest_timer_label">Rest: %1$d:%2$02d</string>
+    <string name="log_skip_rest">Skip rest</string>
+    <string name="log_done_exercise">Done with this exercise</string>
+    <string name="log_use_camera">Count reps with camera</string>
+
+    <!-- Logbook — session detail -->
+    <string name="log_session_detail_title">Workout</string>
+
+    <!-- Logbook — exercise history -->
+    <string name="log_exercise_history_title">%1$s</string>
+    <string name="log_pr_label">Personal record: %1$.1f kg</string>
+    <string name="log_pr_label_lb">Personal record: %1$.1f lb</string>
+    <string name="log_pr_none">No personal record yet</string>
+    <string name="log_exercise_history_empty">No sets logged for this exercise yet.</string>
 
     <string name="update_required_title">Update required</string>
     <string name="update_required_body">A new version of FitForge is required to continue. Please update the app from the Play Store.</string>
@@ -22,6 +65,7 @@
     <string name="login_button">Log in</string>
     <string name="login_error">Couldn\'t log in. Check your email and password and try again.</string>
     <string name="login_go_to_signup">Don\'t have an account? Sign up</string>
+    <string name="login_try_demo">Try demo</string>
 
     <string name="signup_title">Create account</string>
     <string name="signup_button">Sign up</string>
@@ -100,4 +144,60 @@
     <string name="onboarding_completion_title">You\'re all set</string>
     <string name="onboarding_completion_body">Your targets are live immediately. They\'ll become more accurate as you log meals, workouts, and weight.</string>
     <string name="onboarding_get_started">Get started</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_section_today">Today</string>
+    <string name="dashboard_section_plan_delta">Adaptive Plan</string>
+    <string name="dashboard_section_week">This Week</string>
+    <string name="dashboard_section_trends">Trends</string>
+
+    <string name="dashboard_target">Target</string>
+    <string name="dashboard_consumed">Consumed</string>
+    <string name="dashboard_burned">Burned</string>
+    <string name="dashboard_remaining">Remaining</string>
+    <string name="dashboard_over">Over</string>
+    <string name="dashboard_kcal_value">%1$.0f kcal</string>
+    <string name="dashboard_kcal_unit">kcal</string>
+
+    <string name="dashboard_source_equation">Estimate (formula)</string>
+    <string name="dashboard_source_blended">Blended (measured)</string>
+    <string name="dashboard_confidence_low">Low confidence</string>
+    <string name="dashboard_confidence_high">High confidence</string>
+    <string name="dashboard_partial_badge">Partial</string>
+
+    <string name="dashboard_session_title">Today\'s Workout</string>
+    <string name="dashboard_session_status_pending">Pending</string>
+    <string name="dashboard_session_status_completed">Completed</string>
+    <string name="dashboard_session_status_skipped">Skipped</string>
+
+    <string name="dashboard_plan_delta_active_title">Engine Adjustments</string>
+    <string name="dashboard_plan_delta_clamped_label">Safety limits applied:</string>
+
+    <string name="dashboard_week_adherence">Adherence</string>
+    <string name="dashboard_week_adherence_format">%1$d%%</string>
+    <string name="dashboard_week_volume">Training Volume</string>
+    <string name="dashboard_week_volume_format">%1$.0f / %2$.0f kg</string>
+    <string name="dashboard_week_volume_completed_only">%1$.0f kg completed</string>
+    <string name="dashboard_week_balance">Energy Balance</string>
+    <string name="dashboard_week_balance_surplus">+%1$.0f kcal</string>
+    <string name="dashboard_week_balance_deficit">−%1$.0f kcal</string>
+    <string name="dashboard_week_balance_neutral">Even</string>
+
+    <string name="dashboard_trend_weight">Weight Trend</string>
+    <string name="dashboard_trend_weight_rate">%1$+.2f kg/wk</string>
+    <string name="dashboard_trend_confidence">%1$.0f%% confidence</string>
+    <string name="dashboard_trend_muscle_volume">Volume by Muscle Group</string>
+    <string name="dashboard_trend_latest_weight">Latest: %1$.1f kg</string>
+
+    <string name="dashboard_synced_just_now">Synced just now</string>
+    <string name="dashboard_synced_ago">%1$d min ago</string>
+    <string name="dashboard_synced_hours_ago">%1$d hr ago</string>
+    <string name="dashboard_offline_cached">Offline — showing cached data</string>
+
+    <string name="dashboard_empty_today_title">No energy targets yet</string>
+    <string name="dashboard_empty_today_desc">Set a goal in your profile and log meals to see your daily calorie and burn targets.</string>
+    <string name="dashboard_empty_plan_delta">No active adjustments. Targets are running on your baseline plan.</string>
+    <string name="dashboard_empty_week">No weekly data recorded yet. Completed workouts and logged meals will show progress here.</string>
+    <string name="dashboard_empty_trends">No trend data available. Consistently log weight and workouts over multiple days to generate trends.</string>
+    <string name="dashboard_empty_session">No session scheduled for today.</string>
 </resources>

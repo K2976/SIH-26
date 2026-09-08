@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import com.fitforge.app.feature.onboarding.LoginScreen
 import com.fitforge.app.feature.onboarding.OnboardingScreen
 import com.fitforge.app.feature.onboarding.SignupScreen
 import com.fitforge.app.feature.onboarding.UpdateRequiredScreen
+import kotlinx.coroutines.launch
 
 /** Root of the composable tree: version gate, then login, then onboarding (if needed), then the bottom-tab shell. */
 @Composable
@@ -39,7 +41,17 @@ fun FitForgeApp(viewModel: AppStartupViewModel = hiltViewModel()) {
                 var isLoggedIn by remember { mutableStateOf(current.isLoggedIn) }
                 var showSignup by remember { mutableStateOf(false) }
                 var needsOnboarding by remember { mutableStateOf(current.needsOnboarding) }
+                // A fresh login can hit an account that finished onboarding
+                // long ago (e.g. the demo account) just as easily as a brand
+                // new one — re-check the server profile rather than assuming.
+                var checkingOnboarding by remember { mutableStateOf(false) }
+                val scope = rememberCoroutineScope()
                 when {
+                    checkingOnboarding -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
                     !isLoggedIn && showSignup -> SignupScreen(
                         onSignupSuccess = {
                             isLoggedIn = true
@@ -50,10 +62,11 @@ fun FitForgeApp(viewModel: AppStartupViewModel = hiltViewModel()) {
                     !isLoggedIn -> LoginScreen(
                         onLoginSuccess = {
                             isLoggedIn = true
-                            // On login, we need to check onboarding status.
-                            // AppStartupViewModel already fetched it for existing sessions.
-                            // For fresh logins, assume onboarding needed since the
-                            // OnboardingViewModel loads the profile and handles re-runs.
+                            checkingOnboarding = true
+                            scope.launch {
+                                needsOnboarding = viewModel.checkOnboardingNeeded()
+                                checkingOnboarding = false
+                            }
                         },
                         onGoToSignup = { showSignup = true },
                     )
