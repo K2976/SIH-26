@@ -25,7 +25,7 @@ class NetworkModuleJsonTest {
         val encoded = json.encodeToString(
             PatchedUserProfile(
                 dateOfBirth = LocalDate(1995, 6, 15),
-                sexAtBirth = PatchedUserProfile.SexAtBirth.male,
+                sexAtBirth = "male",
                 heightCm = BigDecimal("178.5"),
                 currentWeightKg = BigDecimal("82.3"),
                 unitPreference = UnitPreferenceEnum.metric,

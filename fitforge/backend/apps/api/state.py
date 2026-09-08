@@ -1,10 +1,22 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.engine.service import compute_user_state
+
+
+@extend_schema_field({"type": "object"})
+class NullableJSONField(serializers.JSONField):
+    """A bare `JSONField(allow_null=True)` — untyped and nullable, with no
+    $ref or type keyword — makes drf-spectacular emit `{nullable: true}`
+    with nothing else. The openapi-generator Kotlin template can't infer a
+    type for that and falls back to generating NullEnum, a zero-entry enum
+    that's a syntax error on its own and fails the whole module's compile
+    (same root cause as the ChoiceField fix in reference/serializers.py and
+    accounts/serializers.py — just untyped instead of enum-typed). Forcing
+    `type: object` here doesn't change runtime behavior at all."""
 
 
 class ProfileStateSerializer(serializers.Serializer):
@@ -58,7 +70,7 @@ class BodyStateSerializer(serializers.Serializer):
     weight_trend_kg_per_week = serializers.FloatField(allow_null=True)
     trend_confidence = serializers.FloatField(allow_null=True)
     fitness_age = serializers.FloatField(allow_null=True)
-    fitness_age_inputs = serializers.JSONField(allow_null=True)
+    fitness_age_inputs = NullableJSONField(allow_null=True)
 
 
 class LearnedPatternStateSerializer(serializers.Serializer):

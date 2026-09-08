@@ -2,9 +2,9 @@ package com.fitforge.app.data.repository
 
 import android.util.Log
 import com.fitforge.app.data.remote.generated.apis.SocialApi
+import com.fitforge.app.data.remote.generated.models.PatchedSocialProfileUpdate
 import com.fitforge.app.data.remote.generated.models.SocialProfile
 import com.fitforge.app.data.remote.generated.models.SocialProfileCreate
-import com.fitforge.app.data.remote.generated.models.SocialProfileUpdate
 import com.fitforge.app.data.remote.generated.models.UsernameCheckResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -56,7 +56,7 @@ class SocialRepository @Inject constructor(
                 bio = bio.trim(),
                 isPrivate = isPrivate,
             )
-            val response = socialApi.socialMyProfileCreate(request)
+            val response = socialApi.socialProfileCreate(request)
             val body = response.body()
             if (response.isSuccessful && body != null) {
                 Result.success(body)
@@ -80,13 +80,13 @@ class SocialRepository @Inject constructor(
         isPrivate: Boolean? = null,
     ): Result<SocialProfile> = withContext(Dispatchers.IO) {
         try {
-            val request = SocialProfileUpdate(
+            val request = PatchedSocialProfileUpdate(
                 username = username?.trim()?.removePrefix("@"),
                 displayName = displayName?.trim(),
                 bio = bio?.trim(),
                 isPrivate = isPrivate,
             )
-            val response = socialApi.socialMyProfilePartialUpdate(request)
+            val response = socialApi.socialProfilePartialUpdate(request)
             val body = response.body()
             if (response.isSuccessful && body != null) {
                 Result.success(body)
@@ -106,7 +106,7 @@ class SocialRepository @Inject constructor(
     suspend fun getProfileByUsername(username: String): Result<SocialProfile> = withContext(Dispatchers.IO) {
         try {
             val cleanHandle = username.trim().removePrefix("@")
-            val response = socialApi.socialUserProfileRetrieve(cleanHandle)
+            val response = socialApi.socialPublicProfileRetrieve(cleanHandle)
             val body = response.body()
             if (response.isSuccessful && body != null) {
                 Result.success(body)
@@ -129,7 +129,7 @@ class SocialRepository @Inject constructor(
             if (cleanQuery.isEmpty()) {
                 return@withContext Result.success(emptyList())
             }
-            val response = socialApi.socialSearchUsers(cleanQuery)
+            val response = socialApi.socialSearchList(cleanQuery)
             if (response.isSuccessful) {
                 Result.success(response.body() ?: emptyList())
             } else {
@@ -148,7 +148,7 @@ class SocialRepository @Inject constructor(
     suspend fun checkUsername(username: String): Result<UsernameCheckResponse> = withContext(Dispatchers.IO) {
         try {
             val cleanHandle = username.trim().removePrefix("@")
-            val response = socialApi.socialCheckUsername(cleanHandle)
+            val response = socialApi.socialCheckUsernameRetrieve(cleanHandle)
             val body = response.body()
             if (response.isSuccessful && body != null) {
                 Result.success(body)

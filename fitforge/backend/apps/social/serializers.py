@@ -16,7 +16,19 @@ from apps.social.models import (
 
 
 class SocialProfileSerializer(serializers.ModelSerializer):
-    """Serializer for reading social profiles."""
+    """Serializer for reading social profiles.
+
+    Every usage is `SocialProfileSerializer(instance).data` — never used to
+    validate a write. `bio` and `is_private` have model-level defaults
+    (blank="", False) so ModelSerializer marks them not-required for
+    writes, which drf-spectacular reflects by omitting them from the
+    response schema's `required` list too — even though a read response
+    always includes them. That made the generated Kotlin fields nullable
+    (`String?`, `Boolean?`) when they're actually always present, forcing
+    every consumer to null-check values that can't be null. Declaring the
+    whole serializer read-only fixes the schema to match reality.
+    `profile_image` is genuinely nullable (model field has null=True) and
+    deliberately excluded here."""
 
     class Meta:
         model = SocialProfile
@@ -30,7 +42,7 @@ class SocialProfileSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "bio", "is_private", "created_at", "updated_at"]
 
 
 class SocialProfileCreateSerializer(serializers.ModelSerializer):
@@ -112,6 +124,19 @@ class UsernameCheckSerializer(serializers.Serializer):
     """Serializer for checking username availability."""
 
     username = serializers.CharField(max_length=32, min_length=3)
+
+
+class UsernameCheckResponseSerializer(serializers.Serializer):
+    """Response shape for CheckUsernameView — declared so drf-spectacular
+    generates a typed model (UsernameCheckResponse) instead of a bare
+    `dict`/`Map<String, Any>` with no accessible fields. Documentation only:
+    the view still builds and returns its own dict; this changes nothing
+    about the actual response body, only what the generated OpenAPI schema
+    (and therefore the Android client) says its shape is."""
+
+    available = serializers.BooleanField()
+    message = serializers.CharField()
+    reason = serializers.CharField(required=False)
 
 
 class CommunityMemberUserSerializer(serializers.Serializer):

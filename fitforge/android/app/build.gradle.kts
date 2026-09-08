@@ -111,6 +111,25 @@ tasks.named<GenerateTask>("openApiGenerate") {
     generateModelTests.set(false)
     generateApiDocumentation.set(false)
     generateModelDocumentation.set(false)
+
+    // openapi-generator 7.14.0's Kotlin template unconditionally emits
+    // NullEnum.kt as a zero-entry enum whenever the spec has ANY nullable
+    // field, regardless of whether anything actually needs it — and a
+    // zero-entry enum is itself invalid Kotlin syntax, which fails the
+    // whole module's compile. NullEnum is never referenced by any other
+    // generated file (verified: `grep -rl NullEnum` finds only the file
+    // itself), so deleting it removes dead, broken code and nothing else.
+    // No newer generator version exists yet to fix this upstream — this is
+    // a targeted workaround for a confirmed generator bug, not a schema or
+    // behavior change. Revisit when openapi-generator ships a fix.
+    doLast {
+        val nullEnumFile = file(
+            "$openApiGeneratedDir/src/main/kotlin/com/fitforge/app/data/remote/generated/models/NullEnum.kt"
+        )
+        if (nullEnumFile.exists()) {
+            nullEnumFile.delete()
+        }
+    }
 }
 
 // Both the Kotlin compiler and KSP (Hilt/Room) consume the generated
