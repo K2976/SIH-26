@@ -11,6 +11,7 @@ import com.fitforge.app.data.remote.generated.models.CycleExport
 import com.fitforge.app.data.remote.generated.models.PatchedCycleProfile
 import com.fitforge.app.data.remote.generated.models.TrackingModeEnum
 import com.fitforge.app.sync.SyncWorker
+import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
@@ -64,7 +65,7 @@ class CycleRepository @Inject constructor(
         val mode = TrackingModeEnum.valueOf(trackingMode)
         val response = cycleApi.cycleProfilePartialUpdate(PatchedCycleProfile(trackingMode = mode))
         if (response.isSuccessful) Result.success(Unit) else Result.failure(Exception("HTTP ${response.code()}"))
-    } catch (e: Exception) {
+    } catch (e: IOException) {
         Result.failure(e)
     }
 
@@ -76,7 +77,7 @@ class CycleRepository @Inject constructor(
         } else {
             Result.failure(Exception("HTTP ${response.code()}"))
         }
-    } catch (e: Exception) {
+    } catch (e: IOException) {
         Result.failure(e)
     }
 
@@ -89,7 +90,7 @@ class CycleRepository @Inject constructor(
         } else {
             Result.failure(Exception("HTTP ${response.code()}"))
         }
-    } catch (e: Exception) {
+    } catch (e: IOException) {
         Result.failure(e)
     }
 
