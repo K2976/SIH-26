@@ -94,6 +94,7 @@ class CycleDataView(APIView):
         }
         return Response(data)
 
+    @extend_schema(responses={204: None})
     def delete(self, request):
         CycleLog.objects.filter(user=request.user).delete()
         CyclePattern.objects.filter(user=request.user).delete()

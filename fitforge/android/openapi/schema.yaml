@@ -107,6 +107,116 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenPair'
           description: ''
+  /api/v1/cycle/data/:
+    get:
+      operationId: cycle_data_retrieve
+      description: |-
+        GET: full export of every cycle-module row the user owns.
+        DELETE: full, irreversible delete of every cycle-module row.
+
+        Both requirements from §10: "Full export and full delete are
+        requirements." Nothing here is partial — every CycleLog row (including
+        ones superseded by a correction) is included/removed, since a
+        superseded row is still cycle data sitting on the server.
+      tags:
+      - cycle
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleExport'
+          description: ''
+    delete:
+      operationId: cycle_data_destroy
+      description: |-
+        GET: full export of every cycle-module row the user owns.
+        DELETE: full, irreversible delete of every cycle-module row.
+
+        Both requirements from §10: "Full export and full delete are
+        requirements." Nothing here is partial — every CycleLog row (including
+        ones superseded by a correction) is included/removed, since a
+        superseded row is still cycle data sitting on the server.
+      tags:
+      - cycle
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/cycle/profile/:
+    get:
+      operationId: cycle_profile_retrieve
+      description: |-
+        Tracking mode and self-reported cycle-length settings. Never inferred
+        — set only by a direct question in onboarding/settings (§10).
+      tags:
+      - cycle
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleProfile'
+          description: ''
+    put:
+      operationId: cycle_profile_update
+      description: |-
+        Tracking mode and self-reported cycle-length settings. Never inferred
+        — set only by a direct question in onboarding/settings (§10).
+      tags:
+      - cycle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CycleProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CycleProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CycleProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleProfile'
+          description: ''
+    patch:
+      operationId: cycle_profile_partial_update
+      description: |-
+        Tracking mode and self-reported cycle-length settings. Never inferred
+        — set only by a direct question in onboarding/settings (§10).
+      tags:
+      - cycle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCycleProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCycleProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCycleProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleProfile'
+          description: ''
   /api/v1/goal/:
     get:
       operationId: goal_retrieve
@@ -861,6 +971,22 @@ components:
         tempo_ms:
           type: integer
           nullable: true
+        date:
+          type: string
+          format: date
+        event:
+          type: string
+        flow:
+          type: string
+        symptoms:
+          type: array
+          items:
+            type: string
+        energy_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
       required:
       - client_uuid
       - occurred_at
@@ -1519,6 +1645,172 @@ components:
       type: string
       enum:
       - 'null'
+    CycleExport:
+      type: object
+      properties:
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/CycleProfile'
+          nullable: true
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CycleLogExport'
+        learned_pattern:
+          type: array
+          items:
+            $ref: '#/components/schemas/CyclePatternExport'
+      required:
+      - learned_pattern
+      - logs
+      - profile
+    CycleLogExport:
+      type: object
+      properties:
+        client_uuid:
+          type: string
+          format: uuid
+        occurred_at:
+          type: string
+          format: date-time
+        utc_offset:
+          type: string
+          maxLength: 6
+        source:
+          type: string
+          maxLength: 32
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date
+        event:
+          type: string
+          maxLength: 32
+        flow:
+          type: string
+          maxLength: 32
+        symptoms: {}
+        energy_rating:
+          nullable: true
+          minimum: 0
+          maximum: 32767
+          oneOf:
+          - $ref: '#/components/schemas/EnergyRatingEnum'
+          - $ref: '#/components/schemas/NullEnum'
+      required:
+      - client_uuid
+      - created_at
+      - date
+      - occurred_at
+      - source
+      - utc_offset
+    CyclePatternExport:
+      type: object
+      properties:
+        cycle_day:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        computed_at:
+          type: string
+          format: date-time
+          readOnly: true
+        avg_energy_rating:
+          type: number
+          format: double
+          nullable: true
+        symptom_frequency: {}
+        avg_adherence:
+          type: number
+          format: double
+          nullable: true
+        avg_completed_volume_kg:
+          type: number
+          format: double
+          nullable: true
+        sample_cycles:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        confidence:
+          type: number
+          format: double
+      required:
+      - computed_at
+      - cycle_day
+    CycleProfile:
+      type: object
+      properties:
+        tracking_mode:
+          $ref: '#/components/schemas/TrackingModeEnum'
+        typical_length_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        typical_period_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        confidence:
+          type: number
+          format: double
+          nullable: true
+    PatchedCycleProfile:
+      type: object
+      properties:
+        tracking_mode:
+          $ref: '#/components/schemas/TrackingModeEnum'
+        typical_length_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        typical_period_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        confidence:
+          type: number
+          format: double
+          nullable: true
+    EnergyRatingEnum:
+      enum:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      type: integer
+      description: |-
+        * `1` - 1
+        * `2` - 2
+        * `3` - 3
+        * `4` - 4
+        * `5` - 5
+    TrackingModeEnum:
+      enum:
+      - natural
+      - hormonal_contraception
+      - pregnant
+      - postpartum
+      - perimenopause
+      - not_cycling
+      - unknown
+      type: string
+      description: |-
+        * `natural` - Natural
+        * `hormonal_contraception` - Hormonal contraception
+        * `pregnant` - Pregnant
+        * `postpartum` - Postpartum
+        * `perimenopause` - Perimenopause
+        * `not_cycling` - Not cycling
+        * `unknown` - Unknown
   securitySchemes:
     jwtAuth:
       type: http
