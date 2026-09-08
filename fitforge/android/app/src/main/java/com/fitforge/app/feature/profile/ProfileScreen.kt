@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.fitforge.app.feature.profile
 
 import androidx.compose.foundation.layout.Column
@@ -70,4 +72,3 @@ fun ProfileScreen(
         }
     }
 }
-

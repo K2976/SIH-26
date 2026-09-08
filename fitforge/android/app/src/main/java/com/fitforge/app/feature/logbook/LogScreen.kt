@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.logbook
 
 import androidx.compose.runtime.Composable

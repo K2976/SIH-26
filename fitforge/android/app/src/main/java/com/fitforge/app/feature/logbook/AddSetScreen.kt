@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "MagicNumber")
+
 package com.fitforge.app.feature.logbook
 
 import androidx.compose.foundation.layout.Column
@@ -107,7 +109,12 @@ fun AddSetScreen(
 private fun SetLogRow(set: SetLogEntity, isImperial: Boolean) {
     val text = if (set.weightKg != null) {
         if (isImperial) {
-            stringResource(R.string.log_set_row_lb, set.setIndex, set.reps, com.fitforge.app.core.units.kgToLb(set.weightKg))
+            stringResource(
+                R.string.log_set_row_lb,
+                set.setIndex,
+                set.reps,
+                com.fitforge.app.core.units.kgToLb(set.weightKg),
+            )
         } else {
             stringResource(R.string.log_set_row, set.setIndex, set.reps, set.weightKg)
         }
