@@ -104,7 +104,6 @@ def auth_client_c(user_c):
     return c
 
 
-
 class TestCommunityModels:
     def test_community_creation_and_str(self, user_a):
         community = Community.objects.create(
@@ -202,10 +201,14 @@ class TestCommunityListCreateAPI:
         assert "Bravo Group" not in names_a
 
     def test_search_communities(self, auth_client, user_a):
-        c1 = Community.objects.create(name="CrossFit Warriors", description="High intensity", owner=user_a)
+        c1 = Community.objects.create(
+            name="CrossFit Warriors", description="High intensity", owner=user_a
+        )
         CommunityMembership.objects.create(community=c1, user=user_a, role=CommunityRole.OWNER)
 
-        c2 = Community.objects.create(name="Calisthenics Park", description="Bodyweight only", owner=user_a)
+        c2 = Community.objects.create(
+            name="Calisthenics Park", description="Bodyweight only", owner=user_a
+        )
         CommunityMembership.objects.create(community=c2, user=user_a, role=CommunityRole.OWNER)
 
         resp = auth_client.get("/api/v1/social/communities/?search=crossfit")
@@ -360,7 +363,9 @@ class TestCommunityMembersAPI:
         assert "email" not in first_member["user"]
         assert "password" not in first_member["user"]
 
-    def test_list_members_private_community_non_member_forbidden(self, auth_client_c, user_a, user_b):
+    def test_list_members_private_community_non_member_forbidden(
+        self, auth_client_c, user_a, user_b
+    ):
         c = Community.objects.create(
             name="Secret Club",
             owner=user_a,

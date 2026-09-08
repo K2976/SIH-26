@@ -14,7 +14,6 @@ from apps.social.models import (
 )
 
 
-
 class SocialProfileSerializer(serializers.ModelSerializer):
     """Serializer for reading social profiles.
 
@@ -255,7 +254,6 @@ class CommunityDetailSerializer(serializers.ModelSerializer):
         return self.get_current_user_role(obj) is not None
 
 
-
 class CommunityCreateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=128, min_length=2)
     description = serializers.CharField(required=False, allow_blank=True, default="")
@@ -294,4 +292,3 @@ class CommunityUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = ["name", "description", "visibility"]
-

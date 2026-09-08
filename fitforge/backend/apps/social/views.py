@@ -16,9 +16,7 @@ from apps.social.models import (
     SocialProfile,
 )
 from apps.social.permissions import (
-    CanViewCommunityDetail,
     IsCommunityAdminOrOwner,
-    IsCommunityOwner,
 )
 from apps.social.serializers import (
     CommunityCreateSerializer,
@@ -31,7 +29,6 @@ from apps.social.serializers import (
     SocialProfileUpdateSerializer,
     UsernameCheckResponseSerializer,
 )
-
 
 
 class MySocialProfileView(APIView):
@@ -171,7 +168,6 @@ class SocialProfileDetailView(APIView):
         )
 
 
-
 class SocialSearchView(APIView):
     """Search for users by username or display name."""
 
@@ -277,7 +273,9 @@ class CommunityListCreateView(APIView):
                 name="filter",
                 type=str,
                 location=OpenApiParameter.QUERY,
-                description="Filter options: 'my' (joined communities) or 'discover' (public communities)",
+                description=(
+                    "Filter options: 'my' (joined communities) or 'discover' (public communities)"
+                ),
                 default="discover",
             ),
             OpenApiParameter(
@@ -299,9 +297,7 @@ class CommunityListCreateView(APIView):
             qs = Community.objects.filter(visibility=CommunityVisibility.PUBLIC)
 
         if search_query:
-            qs = qs.filter(
-                Q(name__icontains=search_query) | Q(description__icontains=search_query)
-            )
+            qs = qs.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
 
         qs = qs.annotate(members_count=Count("memberships", distinct=True)).order_by("-created_at")
         serializer = CommunityListSerializer(qs, many=True, context={"request": request})
@@ -355,7 +351,12 @@ class CommunityDetailView(APIView):
             is_member = community.memberships.filter(user=request.user).exists()
             if not is_member:
                 return Response(
-                    {"detail": "This is a private community. Membership is required to view full details."},
+                    {
+                        "detail": (
+                            "This is a private community. Membership is required "
+                            "to view full details."
+                        )
+                    },
                     status=status.HTTP_403_FORBIDDEN,
                 )
         return Response(CommunityDetailSerializer(community, context={"request": request}).data)
@@ -390,7 +391,9 @@ class CommunityDetailView(APIView):
         updated_with_count = Community.objects.annotate(
             members_count=Count("memberships", distinct=True)
         ).get(pk=updated.pk)
-        return Response(CommunityDetailSerializer(updated_with_count, context={"request": request}).data)
+        return Response(
+            CommunityDetailSerializer(updated_with_count, context={"request": request}).data
+        )
 
     @extend_schema(
         tags=["community"],
@@ -445,10 +448,16 @@ class CommunityMembersView(APIView):
             is_member = community.memberships.filter(user=request.user).exists()
             if not is_member:
                 return Response(
-                    {"detail": "This is a private community. Membership is required to view members."},
+                    {
+                        "detail": (
+                            "This is a private community. Membership is required to view members."
+                        )
+                    },
                     status=status.HTTP_403_FORBIDDEN,
                 )
-        members = community.memberships.select_related("user", "user__social_profile").order_by("joined_at")
+        members = community.memberships.select_related("user", "user__social_profile").order_by(
+            "joined_at"
+        )
         return Response(CommunityMemberSerializer(members, many=True).data)
 
 
@@ -471,7 +480,9 @@ class CommunityJoinView(APIView):
     def post(self, request, pk):
         community = get_object_or_404(Community, pk=pk)
 
-        existing = CommunityMembership.objects.filter(community=community, user=request.user).first()
+        existing = CommunityMembership.objects.filter(
+            community=community, user=request.user
+        ).first()
         if existing:
             return Response(
                 {"detail": "You are already a member of this community."},
@@ -513,7 +524,9 @@ class CommunityLeaveView(APIView):
     def post(self, request, pk):
 
         community = get_object_or_404(Community, pk=pk)
-        membership = CommunityMembership.objects.filter(community=community, user=request.user).first()
+        membership = CommunityMembership.objects.filter(
+            community=community, user=request.user
+        ).first()
 
         if not membership:
             return Response(
@@ -544,4 +557,3 @@ class CommunityLeaveView(APIView):
             {"detail": "Successfully left the community."},
             status=status.HTTP_200_OK,
         )
-
