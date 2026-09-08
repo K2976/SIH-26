@@ -33,6 +33,14 @@ class CycleProfileView(generics.RetrieveUpdateAPIView):
 
 
 class CycleLogExportSerializer(serializers.ModelSerializer):
+    # Declared explicitly (not left to ModelSerializer's auto-introspection)
+    # so drf-spectacular emits a plain integer, not an integer-valued enum —
+    # the openapi-generator Kotlin template mis-renders `@SerialName(value
+    # = 1)` for non-string enum members, which doesn't compile.
+    energy_rating = serializers.IntegerField(
+        required=False, allow_null=True, min_value=1, max_value=5
+    )
+
     class Meta:
         model = CycleLog
         fields = [

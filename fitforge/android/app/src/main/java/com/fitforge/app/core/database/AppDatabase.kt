@@ -12,8 +12,9 @@ import androidx.room.TypeConverters
         SetLogEntity::class,
         UserStateEntity::class,
         CalibrationProfileEntity::class,
+        CycleLogEntity::class,
     ],
-    version = 3,
+    version = 5,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -23,4 +24,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun setLogDao(): SetLogDao
     abstract fun userStateDao(): UserStateDao
     abstract fun calibrationProfileDao(): CalibrationProfileDao
+    abstract fun cycleLogDao(): CycleLogDao
 }

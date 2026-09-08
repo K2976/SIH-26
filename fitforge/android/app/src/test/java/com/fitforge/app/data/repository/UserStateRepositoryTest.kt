@@ -190,6 +190,8 @@ class UserStateRepositoryTest {
             cycleConfidence = null,
             cycleDaysUntilPredictedPeriod = null,
             cycleEnergyAvailabilityFlag = null,
+            cycleLearnedPatternSampleCycles = null,
+            cycleLearnedPatternConfidence = null,
             flagsMissingFoodDays7d = 0,
             flagsMissingWeightDays14d = 0,
             flagsGoalRecentlyChanged = false,

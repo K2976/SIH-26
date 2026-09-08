@@ -1193,6 +1193,8 @@ components:
           type: integer
           nullable: true
         learned_pattern:
+          allOf:
+          - $ref: '#/components/schemas/LearnedPatternState'
           nullable: true
         energy_availability_flag:
           type: string
@@ -1206,6 +1208,23 @@ components:
       - learned_pattern
       - phase
       - tracking_mode
+    LearnedPatternState:
+      type: object
+      description: |-
+        Summary only — sample size and confidence, per §10 ("surface it with
+        sample size and confidence attached"). The full per-cycle-day breakdown
+        is CyclePatternExportSerializer, reachable via GET /api/v1/cycle/data/.
+        Deliberately not a JSONField: a typed schema here means a typed,
+        directly-usable Kotlin model instead of an untyped JSON blob.
+      properties:
+        sample_cycles:
+          type: integer
+        confidence:
+          type: number
+          format: double
+      required:
+      - confidence
+      - sample_cycles
     EnergyState:
       type: object
       properties:
@@ -1694,12 +1713,10 @@ components:
           maxLength: 32
         symptoms: {}
         energy_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
           nullable: true
-          minimum: 0
-          maximum: 32767
-          oneOf:
-          - $ref: '#/components/schemas/EnergyRatingEnum'
-          - $ref: '#/components/schemas/NullEnum'
       required:
       - client_uuid
       - created_at
@@ -1779,20 +1796,6 @@ components:
           type: number
           format: double
           nullable: true
-    EnergyRatingEnum:
-      enum:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      type: integer
-      description: |-
-        * `1` - 1
-        * `2` - 2
-        * `3` - 3
-        * `4` - 4
-        * `5` - 5
     TrackingModeEnum:
       enum:
       - natural

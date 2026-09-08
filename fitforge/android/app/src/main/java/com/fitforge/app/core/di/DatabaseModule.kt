@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.work.WorkManager
 import com.fitforge.app.core.database.AppDatabase
 import com.fitforge.app.core.database.CalibrationProfileDao
+import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.ExerciseDao
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.UserStateDao
@@ -41,6 +42,9 @@ object DatabaseModule {
 
     @Provides
     fun provideCalibrationProfileDao(db: AppDatabase): CalibrationProfileDao = db.calibrationProfileDao()
+
+    @Provides
+    fun provideCycleLogDao(db: AppDatabase): CycleLogDao = db.cycleLogDao()
 
     @Provides
     @Singleton

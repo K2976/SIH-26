@@ -9,6 +9,7 @@ import com.fitforge.app.core.network.createJsonWithJavaTime
 import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
 import com.fitforge.app.data.remote.generated.apis.CommunityApi
+import com.fitforge.app.data.remote.generated.apis.CycleApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
 import com.fitforge.app.data.remote.generated.apis.ProfileApi
 import com.fitforge.app.data.remote.generated.apis.ReferenceApi
@@ -130,6 +131,11 @@ object NetworkModule {
     @Singleton
     fun provideStateApi(retrofit: Retrofit): StateApi =
         retrofit.create(StateApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCycleApi(retrofit: Retrofit): CycleApi =
+        retrofit.create(CycleApi::class.java)
 
     @Provides
     @Singleton

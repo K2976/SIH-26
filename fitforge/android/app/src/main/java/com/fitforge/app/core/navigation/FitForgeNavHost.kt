@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.fitforge.app.feature.coach.CoachScreen
 import com.fitforge.app.feature.community.CommunityDetailScreen
 import com.fitforge.app.feature.community.CommunityHomeScreen
+import com.fitforge.app.feature.cycle.CycleScreen
 import com.fitforge.app.feature.dashboard.DashboardScreen
 import com.fitforge.app.feature.logbook.LogScreen
 import com.fitforge.app.feature.profile.ProfileScreen
@@ -27,7 +28,9 @@ fun FitForgeNavHost() {
             startDestination = FitForgeDestination.DASHBOARD.route,
             modifier = Modifier.padding(innerPadding),
         ) {
-            composable(FitForgeDestination.DASHBOARD.route) { DashboardScreen() }
+            composable(FitForgeDestination.DASHBOARD.route) {
+                DashboardScreen(onOpenCycle = { navController.navigate("cycle") })
+            }
             composable(FitForgeDestination.LOG.route) { LogScreen() }
             composable(FitForgeDestination.COMMUNITIES.route) {
                 CommunityHomeScreen(
@@ -44,6 +47,7 @@ fun FitForgeNavHost() {
                     },
                 )
             }
+            composable("cycle") { CycleScreen() }
             composable("community/{communityId}") { backStackEntry ->
                 val communityId = backStackEntry.arguments?.getString("communityId")?.toIntOrNull()
                 if (communityId != null) {

@@ -2,6 +2,7 @@ package com.fitforge.app.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -21,6 +22,7 @@ class UserPreferencesDataStore @Inject constructor(
         val UNIT_PREFERENCE = stringPreferencesKey("unit_preference")
         val REFERENCE_VERSION = intPreferencesKey("reference_version")
         val BODYWEIGHT_KG = doublePreferencesKey("bodyweight_kg")
+        val CYCLE_DISCREET_MODE = booleanPreferencesKey("cycle_discreet_mode")
     }
 
     val accessToken: Flow<String?> = dataStore.data.map { it[Keys.ACCESS_TOKEN] }
@@ -29,6 +31,8 @@ class UserPreferencesDataStore @Inject constructor(
     val referenceVersion: Flow<Int> = dataStore.data.map { it[Keys.REFERENCE_VERSION] ?: 0 }
     /** Last-known bodyweight from the profile — cached locally so live burn estimates work offline. */
     val bodyweightKg: Flow<Double?> = dataStore.data.map { it[Keys.BODYWEIGHT_KG] }
+    /** Hides the cycle module from the home screen entirely — some users share a phone (§10). */
+    val cycleDiscreetMode: Flow<Boolean> = dataStore.data.map { it[Keys.CYCLE_DISCREET_MODE] ?: false }
 
     suspend fun currentAccessToken(): String? = dataStore.data.first()[Keys.ACCESS_TOKEN]
 
@@ -58,5 +62,9 @@ class UserPreferencesDataStore @Inject constructor(
 
     suspend fun setBodyweightKg(value: Double) {
         dataStore.edit { prefs -> prefs[Keys.BODYWEIGHT_KG] = value }
+    }
+
+    suspend fun setCycleDiscreetMode(value: Boolean) {
+        dataStore.edit { prefs -> prefs[Keys.CYCLE_DISCREET_MODE] = value }
     }
 }
