@@ -4,8 +4,8 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from apps.reference.models import Exercise, ReferenceVersion
-from apps.reference.serializers import ExerciseSerializer
+from apps.reference.models import Exercise, ReferenceVersion, TrainingMusicMapping
+from apps.reference.serializers import ExerciseSerializer, TrainingMusicMappingSerializer
 
 # Where the Android app's offline-first seed bundle lives, per
 # PROJECT_GUIDE.md §13: "A seed bundle ships in assets/ as JSON, generated
@@ -29,9 +29,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         exercises = Exercise.objects.filter(is_active=True).order_by("slug")
+        music_mappings = TrainingMusicMapping.objects.filter(is_active=True).order_by(
+            "training_focus", "cycle_phase"
+        )
         bundle = {
             "reference_version": ReferenceVersion.current(),
             "exercises": ExerciseSerializer(exercises, many=True).data,
+            "training_music_mappings": TrainingMusicMappingSerializer(
+                music_mappings, many=True
+            ).data,
         }
 
         output_path = Path(options["output"])
@@ -39,5 +45,8 @@ class Command(BaseCommand):
         output_path.write_text(json.dumps(bundle, indent=2))
 
         self.stdout.write(
-            self.style.SUCCESS(f"Exported {exercises.count()} exercises to {output_path}")
+            self.style.SUCCESS(
+                f"Exported {exercises.count()} exercises and {music_mappings.count()} "
+                f"music mappings to {output_path}"
+            )
         )

@@ -92,3 +92,58 @@ class Exercise(models.Model):
 
     def localized_instructions(self, locale: str = "en"):
         return self.localized("instructions", locale)
+
+
+class TrainingMusicMapping(models.Model):
+    """(training_focus, cycle_phase) -> curated genre + YouTube playlist.
+
+    A row with cycle_phase=None is the focus-only fallback, used when phase
+    isn't available (not natural tracking, or insufficient cycle history —
+    see apps/engine/cycle.py). Deep-linking only: no YouTube API, no OAuth,
+    no quota. The client reads UserState for training_focus/phase and looks
+    the playlist up locally — it never calls this app's tables directly
+    (CLAUDE.md rule 5), only through the same reference-sync path Exercise
+    uses.
+    """
+
+    # Mirrors apps.accounts.models.Goal.TrainingFocus. Duplicated rather than
+    # imported: reference/ has zero cross-app dependencies today, and this is
+    # a lookup key, not a foreign key to a Goal row.
+    class TrainingFocus(models.TextChoices):
+        STRENGTH = "strength", "Strength"
+        HYPERTROPHY = "hypertrophy", "Hypertrophy"
+        ENDURANCE = "endurance", "Endurance"
+        GENERAL = "general", "General"
+
+    # Mirrors the phase labels apps.engine.cycle.derive_phase returns.
+    class CyclePhase(models.TextChoices):
+        MENSTRUAL = "menstrual", "Menstrual"
+        FOLLICULAR = "follicular", "Follicular"
+        OVULATORY = "ovulatory", "Ovulatory"
+        LUTEAL = "luteal", "Luteal"
+
+    training_focus = models.CharField(max_length=16, choices=TrainingFocus.choices)
+    # null=True: the focus-only fallback row. Distinct from any phase value.
+    cycle_phase = models.CharField(  # noqa: DJ001
+        max_length=16, choices=CyclePhase.choices, null=True, blank=True
+    )
+    genre = models.CharField(max_length=64)
+    youtube_playlist_id = models.CharField(max_length=64)
+
+    is_active = models.BooleanField(default=True)
+    updated_at_version = models.PositiveIntegerField(default=0, db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["training_focus", "cycle_phase"],
+                name="unique_training_focus_cycle_phase",
+            )
+        ]
+
+    def __str__(self):
+        return f"TrainingMusicMapping<{self.training_focus}/{self.cycle_phase}:{self.genre}>"
+
+    def save(self, *args, **kwargs):
+        self.updated_at_version = ReferenceVersion.bump()
+        super().save(*args, **kwargs)

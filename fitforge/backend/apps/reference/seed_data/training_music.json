@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "note": "Genre pairings are a product/curation choice, not a research claim. youtube_playlist_id values below are PLACEHOLDERS (TODO_*) — they are not real YouTube playlist IDs. Replace each with an actual curated public YouTube playlist ID before shipping; the deep-link mechanism works with any valid playlist ID, real or placeholder.",
+    "cycle_phase_null_rows": "The focus-only fallback used when phase isn't available (not natural tracking, insufficient cycle history, or an overdue cycle — see apps/engine/cycle.py's derive_phase)."
+  },
+  "training_music_mappings": [
+    { "training_focus": "strength", "cycle_phase": null, "genre": "Power Rock", "youtube_playlist_id": "TODO_STRENGTH_DEFAULT" },
+    { "training_focus": "strength", "cycle_phase": "menstrual", "genre": "Chill Power", "youtube_playlist_id": "TODO_STRENGTH_MENSTRUAL" },
+    { "training_focus": "strength", "cycle_phase": "follicular", "genre": "Power Rock", "youtube_playlist_id": "TODO_STRENGTH_FOLLICULAR" },
+    { "training_focus": "strength", "cycle_phase": "ovulatory", "genre": "Hype Metal", "youtube_playlist_id": "TODO_STRENGTH_OVULATORY" },
+    { "training_focus": "strength", "cycle_phase": "luteal", "genre": "Steady Power Rock", "youtube_playlist_id": "TODO_STRENGTH_LUTEAL" },
+
+    { "training_focus": "hypertrophy", "cycle_phase": null, "genre": "Hip-Hop Gym", "youtube_playlist_id": "TODO_HYPERTROPHY_DEFAULT" },
+    { "training_focus": "hypertrophy", "cycle_phase": "menstrual", "genre": "Mellow Hip-Hop", "youtube_playlist_id": "TODO_HYPERTROPHY_MENSTRUAL" },
+    { "training_focus": "hypertrophy", "cycle_phase": "follicular", "genre": "Hip-Hop Gym", "youtube_playlist_id": "TODO_HYPERTROPHY_FOLLICULAR" },
+    { "training_focus": "hypertrophy", "cycle_phase": "ovulatory", "genre": "Hype Hip-Hop", "youtube_playlist_id": "TODO_HYPERTROPHY_OVULATORY" },
+    { "training_focus": "hypertrophy", "cycle_phase": "luteal", "genre": "Steady Hip-Hop", "youtube_playlist_id": "TODO_HYPERTROPHY_LUTEAL" },
+
+    { "training_focus": "endurance", "cycle_phase": null, "genre": "Electronic Cardio", "youtube_playlist_id": "TODO_ENDURANCE_DEFAULT" },
+    { "training_focus": "endurance", "cycle_phase": "menstrual", "genre": "Chill Electronic", "youtube_playlist_id": "TODO_ENDURANCE_MENSTRUAL" },
+    { "training_focus": "endurance", "cycle_phase": "follicular", "genre": "Electronic Cardio", "youtube_playlist_id": "TODO_ENDURANCE_FOLLICULAR" },
+    { "training_focus": "endurance", "cycle_phase": "ovulatory", "genre": "High-Tempo EDM", "youtube_playlist_id": "TODO_ENDURANCE_OVULATORY" },
+    { "training_focus": "endurance", "cycle_phase": "luteal", "genre": "Steady Cardio Beats", "youtube_playlist_id": "TODO_ENDURANCE_LUTEAL" },
+
+    { "training_focus": "general", "cycle_phase": null, "genre": "Upbeat Pop", "youtube_playlist_id": "TODO_GENERAL_DEFAULT" },
+    { "training_focus": "general", "cycle_phase": "menstrual", "genre": "Calm Acoustic Pop", "youtube_playlist_id": "TODO_GENERAL_MENSTRUAL" },
+    { "training_focus": "general", "cycle_phase": "follicular", "genre": "Upbeat Pop", "youtube_playlist_id": "TODO_GENERAL_FOLLICULAR" },
+    { "training_focus": "general", "cycle_phase": "ovulatory", "genre": "High-Energy Pop", "youtube_playlist_id": "TODO_GENERAL_OVULATORY" },
+    { "training_focus": "general", "cycle_phase": "luteal", "genre": "Feel-Good Pop", "youtube_playlist_id": "TODO_GENERAL_LUTEAL" }
+  ]
+}

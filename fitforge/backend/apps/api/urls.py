@@ -6,7 +6,7 @@ from apps.api.cycle import CycleDataView, CycleProfileView
 from apps.api.state import StateView
 from apps.api.sync import SyncView
 from apps.api.views import AppConfigView
-from apps.reference.views import ExerciseDeltaView, ManifestView
+from apps.reference.views import ExerciseDeltaView, ManifestView, TrainingMusicMappingDeltaView
 
 urlpatterns = [
     path("auth/signup/", SignupView.as_view(), name="signup"),
@@ -21,6 +21,11 @@ urlpatterns = [
     path("app-config/", AppConfigView.as_view(), name="app-config"),
     path("reference/manifest/", ManifestView.as_view(), name="reference-manifest"),
     path("reference/exercises/", ExerciseDeltaView.as_view(), name="reference-exercises"),
+    path(
+        "reference/music/",
+        TrainingMusicMappingDeltaView.as_view(),
+        name="reference-music",
+    ),
     path("social/", include("apps.social.urls")),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
