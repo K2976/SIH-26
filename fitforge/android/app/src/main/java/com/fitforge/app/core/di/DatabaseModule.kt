@@ -8,6 +8,7 @@ import com.fitforge.app.core.database.CalibrationProfileDao
 import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.ExerciseDao
 import com.fitforge.app.core.database.SetLogDao
+import com.fitforge.app.core.database.TrainingMusicMappingDao
 import com.fitforge.app.core.database.UserStateDao
 import com.fitforge.app.core.database.WorkoutSessionDao
 import dagger.Module
@@ -45,6 +46,10 @@ object DatabaseModule {
 
     @Provides
     fun provideCycleLogDao(db: AppDatabase): CycleLogDao = db.cycleLogDao()
+
+    @Provides
+    fun provideTrainingMusicMappingDao(db: AppDatabase): TrainingMusicMappingDao =
+        db.trainingMusicMappingDao()
 
     @Provides
     @Singleton

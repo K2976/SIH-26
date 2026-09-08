@@ -4,8 +4,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.reference.models import Exercise, ReferenceVersion
-from apps.reference.serializers import ExerciseSerializer, ManifestSerializer
+from apps.reference.models import Exercise, ReferenceVersion, TrainingMusicMapping
+from apps.reference.serializers import (
+    ExerciseSerializer,
+    ManifestSerializer,
+    TrainingMusicMappingSerializer,
+)
 
 
 class ManifestView(APIView):
@@ -16,7 +20,10 @@ class ManifestView(APIView):
         return Response(
             {
                 "reference_version": ReferenceVersion.current(),
-                "table_counts": {"exercises": Exercise.objects.count()},
+                "table_counts": {
+                    "exercises": Exercise.objects.count(),
+                    "training_music_mappings": TrainingMusicMapping.objects.count(),
+                },
             }
         )
 
@@ -45,3 +52,31 @@ class ExerciseDeltaView(generics.ListAPIView):
         except ValueError as exc:
             raise ValidationError({"since": "Must be an integer."}) from exc
         return Exercise.objects.filter(updated_at_version__gt=since).order_by("updated_at_version")
+
+
+class TrainingMusicMappingDeltaView(generics.ListAPIView):
+    serializer_class = TrainingMusicMappingSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "since",
+                int,
+                description="Return rows changed after this reference_version. Default 0.",
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        raw_since = self.request.query_params.get("since", "0")
+        try:
+            since = int(raw_since)
+        except ValueError as exc:
+            raise ValidationError({"since": "Must be an integer."}) from exc
+        return TrainingMusicMapping.objects.filter(updated_at_version__gt=since).order_by(
+            "updated_at_version"
+        )

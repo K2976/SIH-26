@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -7,6 +9,16 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apps.accounts.models import Goal, UserProfile, create_goal
 
 User = get_user_model()
+
+
+@extend_schema_field(OpenApiTypes.STR)
+class NullableChoiceField(serializers.ChoiceField):
+    """A ChoiceField that's also allow_null=True describes itself to
+    drf-spectacular as an enum-or-null oneOf union, which the Android
+    Kotlin client generator can't parse (emits an empty wrapper class with
+    no accessible value — the same failure mode as Exercise.camera_position
+    in apps/reference/serializers.py). This keeps full choice validation at
+    save time; only the *schema* is simplified to a plain nullable string."""
 
 
 class SignupSerializer(serializers.Serializer):
@@ -58,6 +70,12 @@ class TokenPairSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     field_states = serializers.SerializerMethodField()
+    sex_at_birth = NullableChoiceField(
+        choices=UserProfile.SexAtBirth.choices, allow_null=True, required=False
+    )
+    activity_level = NullableChoiceField(
+        choices=UserProfile.ActivityLevel.choices, allow_null=True, required=False
+    )
 
     class Meta:
         model = UserProfile

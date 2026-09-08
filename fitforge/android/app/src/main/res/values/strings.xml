@@ -283,4 +283,5 @@
     <string name="cycle_delete_failure">Couldn\'t delete cycle data: %1$s</string>
     <string name="cycle_delete_cancel">Cancel</string>
     <string name="cycle_delete_confirm_button">Delete everything</string>
+    <string name="music_open_youtube">Open in YouTube</string>
 </resources>

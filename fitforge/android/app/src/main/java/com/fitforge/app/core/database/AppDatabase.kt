@@ -13,8 +13,9 @@ import androidx.room.TypeConverters
         UserStateEntity::class,
         CalibrationProfileEntity::class,
         CycleLogEntity::class,
+        TrainingMusicMappingEntity::class,
     ],
-    version = 5,
+    version = 7,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -25,4 +26,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userStateDao(): UserStateDao
     abstract fun calibrationProfileDao(): CalibrationProfileDao
     abstract fun cycleLogDao(): CycleLogDao
+    abstract fun trainingMusicMappingDao(): TrainingMusicMappingDao
 }

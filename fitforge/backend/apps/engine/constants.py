@@ -54,6 +54,58 @@ INSUFFICIENT_MAX_MISSING_FOOD_DAYS_7D = 3
 INSUFFICIENT_MAX_MISSING_WEIGHT_DAYS_14D = 10
 
 # ---------------------------------------------------------------------------
+# Cardiorespiratory fitness (non-exercise VO2max estimate) — §11
+# ---------------------------------------------------------------------------
+# Jurca R, Jackson AS, LaMonte MJ, et al. Assessing Cardiorespiratory
+# Fitness Without Performing Exercise Testing. Am J Prev Med.
+# 2005;29(3):185-193. Table 5, NASA-cohort model — the lowest-SEE of the
+# paper's three cohort models and the one its own clinical worksheet
+# (Figure 1) is built from. Coefficients copied verbatim; never tuned.
+# Output is METs (1 MET = 3.5 mL O2 . kg body mass^-1 . min^-1).
+JURCA_NASA_INTERCEPT = 18.07
+JURCA_NASA_MALE_COEF = 2.77  # sex term: male=1, female=0
+JURCA_NASA_AGE_COEF = -0.10  # per year
+JURCA_NASA_BMI_COEF = -0.17  # per kg/m^2
+JURCA_NASA_RESTING_HR_COEF = -0.03  # per beat/min
+# Self-reported physical activity (SR-PA), dummy-coded against SR-PA-0
+# (inactive) as the reference category (contributes 0). See the paper's
+# Table 1 for what each level describes.
+JURCA_NASA_SR_PA_COEFS = {
+    0: 0.0,
+    1: 0.32,
+    2: 1.06,
+    3: 1.76,
+    4: 3.03,
+}
+MET_TO_ML_KG_MIN = 3.5
+
+# UserProfile.activity_level is the 5-level TDEE multiplier scale used by
+# maintenance_kcal above (ACTIVITY_MULTIPLIERS) — a different instrument
+# from Jurca's SR-PA scale, but both are 5 ordered levels. This ordinal
+# mapping is an adaptation disclosed to the user, not part of the
+# published model.
+ACTIVITY_LEVEL_TO_SR_PA = {
+    "sedentary": 0,
+    "lightly_active": 1,
+    "moderately_active": 2,
+    "very_active": 3,
+    "extra_active": 4,
+}
+
+# Kaminsky LA, Arena R, Myers J. Reference Standards for Cardiorespiratory
+# Fitness Measured With Cardiopulmonary Exercise Testing: Data From the
+# Fitness Registry and the Importance of Exercise National Database
+# (FRIEND). Mayo Clin Proc. 2015;90(11):1515-1523, Table 3. 50th-percentile
+# VO2max (mL O2 . kg^-1 . min^-1) by sex and age-decade, US population —
+# chosen over the (Norwegian) Loe et al. 2013 norms because it's the
+# population Jurca's ACLS cohort (its largest) is drawn from. Keyed by each
+# decade's midpoint for piecewise-linear interpolation in fitness_age.py.
+FRIEND_50TH_PERCENTILE_VO2MAX_BY_AGE_MIDPOINT = {
+    "male": {24.5: 48.0, 34.5: 42.4, 44.5: 37.8, 54.5: 32.6, 64.5: 28.2, 74.5: 24.4},
+    "female": {24.5: 37.6, 34.5: 30.2, 44.5: 26.7, 54.5: 23.4, 64.5: 20.0, 74.5: 18.3},
+}
+
+# ---------------------------------------------------------------------------
 # Adaptive engine — blended maintenance sufficiency gate
 # ---------------------------------------------------------------------------
 # Minimum data in the rolling 14-day window before the measured-maintenance
