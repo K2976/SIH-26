@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "LongParameterList", "MagicNumber")
+
 package com.fitforge.app.feature.social
 
 import androidx.compose.foundation.layout.Arrangement

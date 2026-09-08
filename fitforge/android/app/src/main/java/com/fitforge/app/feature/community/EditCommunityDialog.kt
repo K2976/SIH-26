@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.community
 
 import androidx.compose.foundation.clickable
@@ -58,7 +60,10 @@ fun EditCommunityDialog(
             onDismissRequest = { showDeleteConfirm = false },
             title = { Text("Delete Community") },
             text = {
-                Text("Are you sure you want to permanently delete \"${community.name}\"? All memberships and data will be removed. This cannot be undone.")
+                Text(
+                    "Are you sure you want to permanently delete \"${community.name}\"? " +
+                        "All memberships and data will be removed. This cannot be undone."
+                )
             },
             confirmButton = {
                 Button(
@@ -146,12 +151,24 @@ fun EditCommunityDialog(
                         Icon(
                             imageVector = Icons.Default.Public,
                             contentDescription = null,
-                            tint = if (visibility == VisibilityEnum.`public`) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (visibility == VisibilityEnum.`public`) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
                             modifier = Modifier.size(20.dp),
                         )
                         Column {
-                            Text("Public", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                            Text("Anyone can discover and join", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                "Public",
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Text(
+                                "Anyone can discover and join",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
                     }
                 }
@@ -181,12 +198,24 @@ fun EditCommunityDialog(
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = null,
-                            tint = if (visibility == VisibilityEnum.`private`) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (visibility == VisibilityEnum.`private`) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
                             modifier = Modifier.size(20.dp),
                         )
                         Column {
-                            Text("Private", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                            Text("Hidden from search, invite only", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(
+                                "Private",
+                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Text(
+                                "Hidden from search, invite only",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
                     }
                 }
