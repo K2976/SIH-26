@@ -135,6 +135,10 @@ data class UserStateEntity(
     val cycleDaysUntilPredictedPeriod: Int?,
     @ColumnInfo(name = "cycle_energy_availability_flag")
     val cycleEnergyAvailabilityFlag: String?,
+    @ColumnInfo(name = "cycle_learned_pattern_sample_cycles")
+    val cycleLearnedPatternSampleCycles: Int?,
+    @ColumnInfo(name = "cycle_learned_pattern_confidence")
+    val cycleLearnedPatternConfidence: Double?,
 
     // Flags
     @ColumnInfo(name = "flags_missing_food_days_7d")

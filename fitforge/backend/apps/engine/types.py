@@ -54,6 +54,16 @@ class UserState:
     self_reported_energy: int | None = None  # 1..5
     self_reported_symptoms: list[str] | None = None
 
+    # --- Cycle module (§10) — energy availability check only. ---
+    # Phase is deliberately NOT a field here: it is display/forecast/pattern
+    # data, never an engine input. See apps/engine/budgets.py's
+    # readiness_budget docstring and apps/engine/cycle.py.
+    # Set by apps/engine/cycle_service.py before compute_plan_delta() runs.
+    # Non-None means: natural tracking, period significantly overdue, and a
+    # sustained deficit under high training load — see constants.py. floors.py
+    # uses this to stop escalating the deficit further; it never diagnoses.
+    energy_availability_flag: str | None = None
+
     # --- Calorie trailing average (for max-adjustment floor) ---
     trailing_7d_kcal_avg: float | None = None
 

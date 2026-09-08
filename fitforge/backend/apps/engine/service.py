@@ -16,26 +16,25 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.accounts.models import Goal
-from apps.diary.models import MealItem, MealLog, PlannedSession, SetLog, WeightLog, WorkoutSession
+from apps.diary.models import (
+    CycleProfile,
+    MealItem,
+    MealLog,
+    PlannedSession,
+    SetLog,
+    WeightLog,
+    WorkoutSession,
+)
+from apps.diary.utils import active_rows as _active
 from apps.diary.utils import resolve_local_day
 from apps.engine import calculator as calc
+from apps.engine import cycle_service
 from apps.engine.adaptive import compute_plan_delta
 from apps.engine.constants import ADHERENCE_WINDOW_DAYS, WEIGHT_TREND_WINDOW_DAYS
 from apps.engine.models import DailyState
 from apps.engine.types import UserState
 
 _DIARY_ENTRY_MODELS = (WorkoutSession, MealLog, WeightLog, PlannedSession)
-
-
-def _active(model, user):
-    """Diary rows are never edited in place — corrections supersede (CLAUDE.md).
-    Only rows nothing else points back to via `supersedes` are current."""
-    superseded_ids = (
-        model.objects.filter(user=user)
-        .exclude(supersedes__isnull=True)
-        .values_list("supersedes_id", flat=True)
-    )
-    return model.objects.filter(user=user).exclude(pk__in=superseded_ids)
 
 
 def _local_date(occurred_at, utc_offset) -> datetime.date:
@@ -250,6 +249,27 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
     ]
     trailing_7d_kcal_avg = sum(trailing_kcal_vals) / len(trailing_kcal_vals) if trailing_kcal_vals else None
 
+    # --- Cycle module (§10) inputs ---
+    # Only touched when the user has opted in (tracks_cycle) — the module is
+    # inert otherwise, never inferred. Symptoms/energy feed Budget 3 directly;
+    # tracking_mode and the energy-availability flag are computed here (once)
+    # so build_cycle_state() can reuse the flag without recomputing it.
+    cycle_tracking_mode = None
+    self_reported_energy = None
+    self_reported_symptoms = None
+    energy_availability_flag = None
+    if profile and profile.tracks_cycle:
+        cycle_profile = cycle_service._cycle_profile(user)
+        cycle_tracking_mode = (
+            cycle_profile.tracking_mode if cycle_profile else CycleProfile.TrackingMode.UNKNOWN
+        )
+        self_reported_energy, self_reported_symptoms = cycle_service.self_reported_cycle_inputs(
+            user, as_of
+        )
+        energy_availability_flag = cycle_service.compute_energy_availability_flag(
+            user, as_of, cycle_tracking_mode, rest.value
+        )
+
     plan_delta = None
     readiness_ceiling_today = None
     if maintenance.kcal is not None or vol_planned.value is not None:
@@ -280,6 +300,9 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
             trailing_7d_kcal_avg=trailing_7d_kcal_avg,
             sex_at_birth=profile.sex_at_birth if profile else None,
             avg_daily_intake_14d=avg_daily_intake_14d,
+            self_reported_energy=self_reported_energy,
+            self_reported_symptoms=self_reported_symptoms,
+            energy_availability_flag=energy_availability_flag,
         )
         delta = compute_plan_delta(engine_state)
         readiness_ceiling_today = delta.changes.get("readiness_ceiling")
@@ -331,6 +354,10 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
             "insufficient_data_for_adaptation": insufficient,
         },
         "plan_delta": plan_delta,
+        "cycle_inputs": {
+            "tracking_mode": cycle_tracking_mode,
+            "energy_availability_flag": energy_availability_flag,
+        },
     }
 
 
@@ -372,18 +399,9 @@ def compute_user_state(user, as_of: datetime.date | None = None) -> dict:
             "fitness_age": None,
             "fitness_age_inputs": None,
         },
-        # Cycle logic (§10) is a separate, not-yet-built slice. `phase` stays
-        # null rather than defaulting to a guessed middle value (CLAUDE.md).
-        "cycle": {
-            "enabled": bool(profile.tracks_cycle) if profile else False,
-            "tracking_mode": None,
-            "phase": None,
-            "cycle_day": None,
-            "confidence": None,
-            "days_until_predicted_period": None,
-            "learned_pattern": None,
-            "energy_availability_flag": None,
-        },
+        "cycle": cycle_service.build_cycle_state(
+            user, as_of, profile, metrics["cycle_inputs"]["energy_availability_flag"]
+        ),
         "flags": metrics["flags"],
     }
 

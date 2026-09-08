@@ -61,6 +61,17 @@ class BodyStateSerializer(serializers.Serializer):
     fitness_age_inputs = serializers.JSONField(allow_null=True)
 
 
+class LearnedPatternStateSerializer(serializers.Serializer):
+    """Summary only — sample size and confidence, per §10 ("surface it with
+    sample size and confidence attached"). The full per-cycle-day breakdown
+    is CyclePatternExportSerializer, reachable via GET /api/v1/cycle/data/.
+    Deliberately not a JSONField: a typed schema here means a typed,
+    directly-usable Kotlin model instead of an untyped JSON blob."""
+
+    sample_cycles = serializers.IntegerField()
+    confidence = serializers.FloatField()
+
+
 class CycleStateSerializer(serializers.Serializer):
     enabled = serializers.BooleanField()
     tracking_mode = serializers.CharField(allow_null=True)
@@ -68,7 +79,7 @@ class CycleStateSerializer(serializers.Serializer):
     cycle_day = serializers.IntegerField(allow_null=True)
     confidence = serializers.FloatField(allow_null=True)
     days_until_predicted_period = serializers.IntegerField(allow_null=True)
-    learned_pattern = serializers.JSONField(allow_null=True)
+    learned_pattern = LearnedPatternStateSerializer(allow_null=True)
     energy_availability_flag = serializers.CharField(allow_null=True)
 
 

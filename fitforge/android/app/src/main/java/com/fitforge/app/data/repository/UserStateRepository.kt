@@ -81,6 +81,10 @@ data class CycleDomain(
     val confidence: Double?,
     val daysUntilPredictedPeriod: Int?,
     val energyAvailabilityFlag: String?,
+    /** Null until enough of her own cycles have been logged — see §10's
+     * pattern-learning requirement: never shown without sample size + confidence. */
+    val learnedPatternSampleCycles: Int?,
+    val learnedPatternConfidence: Double?,
 )
 
 data class FlagsDomain(
@@ -216,6 +220,8 @@ private fun UserStateEntity.toDomain(): CachedUserState {
             confidence = cycleConfidence,
             daysUntilPredictedPeriod = cycleDaysUntilPredictedPeriod,
             energyAvailabilityFlag = cycleEnergyAvailabilityFlag,
+            learnedPatternSampleCycles = cycleLearnedPatternSampleCycles,
+            learnedPatternConfidence = cycleLearnedPatternConfidence,
         ),
         flags = FlagsDomain(
             missingFoodDays7d = flagsMissingFoodDays7d,
@@ -298,6 +304,8 @@ private fun UserState.toEntity(computedAt: Instant): UserStateEntity {
         cycleConfidence = cycle.confidence,
         cycleDaysUntilPredictedPeriod = cycle.daysUntilPredictedPeriod,
         cycleEnergyAvailabilityFlag = cycle.energyAvailabilityFlag,
+        cycleLearnedPatternSampleCycles = cycle.learnedPattern?.sampleCycles,
+        cycleLearnedPatternConfidence = cycle.learnedPattern?.confidence,
         flagsMissingFoodDays7d = flags.missingFoodDays7d,
         flagsMissingWeightDays14d = flags.missingWeightDays14d,
         flagsGoalRecentlyChanged = flags.goalRecentlyChanged,

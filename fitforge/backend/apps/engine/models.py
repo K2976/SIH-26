@@ -57,3 +57,44 @@ class DailyState(models.Model):
 
     def __str__(self):
         return f"DailyState<{self.user_id}:{self.local_date}>"
+
+
+class CyclePattern(models.Model):
+    """Cache of one cycle-day's learned pattern, one row per user per
+    cycle-day (day 1 = a logged period start). Recomputed nightly from
+    CycleLog + DailyState history by apps.engine.cycle_service — always
+    reproducible, never hand-edited. Mirrors DailyState's role for §10.
+
+    This is display/forecast/pattern-analysis data only. Nothing here feeds
+    a budget — see apps/engine/budgets.py's readiness_budget, which reads
+    self_reported_energy / self_reported_symptoms directly off UserState,
+    never this table.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cycle_patterns"
+    )
+    cycle_day = models.PositiveSmallIntegerField()
+    computed_at = models.DateTimeField(auto_now=True)
+
+    avg_energy_rating = models.FloatField(null=True, blank=True)
+    symptom_frequency = models.JSONField(default=dict, blank=True)
+    avg_adherence = models.FloatField(null=True, blank=True)
+    avg_completed_volume_kg = models.FloatField(null=True, blank=True)
+
+    # How many distinct cycles contributed a data point to this cycle-day,
+    # and the resulting confidence (scaled by sample_cycles, capped at 1.0).
+    # Surfaced in the UI alongside every pattern claim (CLAUDE.md rule 2).
+    sample_cycles = models.PositiveSmallIntegerField(default=0)
+    confidence = models.FloatField(default=0.0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "cycle_day"], name="unique_cycle_pattern_per_day"
+            )
+        ]
+        indexes = [models.Index(fields=["user", "cycle_day"])]
+
+    def __str__(self):
+        return f"CyclePattern<{self.user_id}:day{self.cycle_day}>"

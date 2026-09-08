@@ -100,6 +100,8 @@ class DashboardViewModelTest {
                 confidence = null,
                 daysUntilPredictedPeriod = null,
                 energyAvailabilityFlag = null,
+                learnedPatternSampleCycles = null,
+                learnedPatternConfidence = null,
             ),
             flags = FlagsDomain(
                 missingFoodDays7d = 7,
@@ -184,6 +186,8 @@ class DashboardViewModelTest {
                 confidence = null,
                 daysUntilPredictedPeriod = null,
                 energyAvailabilityFlag = null,
+                learnedPatternSampleCycles = null,
+                learnedPatternConfidence = null,
             ),
             flags = FlagsDomain(
                 missingFoodDays7d = 1,

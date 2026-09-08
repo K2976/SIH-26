@@ -33,6 +33,15 @@ class SyncEventSerializer(serializers.Serializer):
     rom_achieved = serializers.CharField(required=False, allow_null=True)
     tempo_ms = serializers.IntegerField(required=False, allow_null=True)
 
+    # cycle_log
+    date = serializers.DateField(required=False)
+    event = serializers.CharField(required=False, allow_blank=True)
+    flow = serializers.CharField(required=False, allow_blank=True)
+    symptoms = serializers.ListField(child=serializers.CharField(), required=False, default=list)
+    energy_rating = serializers.IntegerField(
+        required=False, allow_null=True, min_value=1, max_value=5
+    )
+
 
 class SyncRequestSerializer(serializers.Serializer):
     events = SyncEventSerializer(many=True)

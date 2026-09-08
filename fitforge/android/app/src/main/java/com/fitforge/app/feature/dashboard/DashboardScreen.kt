@@ -48,12 +48,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fitforge.app.R
+import com.fitforge.app.feature.cycle.QuickCycleLogCard
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
+    onOpenCycle: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -102,6 +104,10 @@ fun DashboardScreen(
                     lastSyncedAt = uiState.lastSyncedAt,
                     isRefreshing = uiState.isRefreshing,
                 )
+
+                // One-tap daily cycle check-in — renders nothing when tracking
+                // is off, discreet mode is on, or it's dismissed for the session.
+                QuickCycleLogCard(onOpenCycle = onOpenCycle)
 
                 // Error banner if refresh fails
                 if (uiState.errorMessage != null) {

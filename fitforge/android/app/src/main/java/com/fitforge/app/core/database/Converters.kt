@@ -2,6 +2,9 @@ package com.fitforge.app.core.database
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class Converters {
     @TypeConverter
@@ -15,4 +18,17 @@ class Converters {
 
     @TypeConverter
     fun stringToSyncStatus(value: String?): SyncStatus? = value?.let(SyncStatus::valueOf)
+
+    @TypeConverter
+    fun localDateToIso(value: LocalDate?): String? = value?.toString()
+
+    @TypeConverter
+    fun isoToLocalDate(value: String?): LocalDate? = value?.let(LocalDate::parse)
+
+    @TypeConverter
+    fun stringListToJson(value: List<String>?): String? = value?.let { Json.encodeToString(it) }
+
+    @TypeConverter
+    fun jsonToStringList(value: String?): List<String>? =
+        value?.let { Json.decodeFromString(it) }
 }
