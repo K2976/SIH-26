@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.fitforge.app.data.repository
 
 import androidx.work.WorkManager

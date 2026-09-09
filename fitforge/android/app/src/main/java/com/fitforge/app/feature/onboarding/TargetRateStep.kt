@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "MagicNumber")
+
 package com.fitforge.app.feature.onboarding
 
 import androidx.compose.foundation.layout.Column

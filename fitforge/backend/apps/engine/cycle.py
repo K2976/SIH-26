@@ -227,9 +227,11 @@ def compute_cycle_pattern(records: Sequence[CycleDayRecord]) -> list[CyclePatter
         for r in day_records:
             for symptom in r.symptoms:
                 symptom_cycles[symptom].add(r.cycle_index)
-        symptom_frequency = {
-            symptom: len(idxs) / sample_cycles for symptom, idxs in symptom_cycles.items()
-        } if sample_cycles else {}
+        symptom_frequency = (
+            {symptom: len(idxs) / sample_cycles for symptom, idxs in symptom_cycles.items()}
+            if sample_cycles
+            else {}
+        )
 
         adherences = [r.adherence for r in day_records if r.adherence is not None]
         avg_adherence = statistics.fmean(adherences) if adherences else None

@@ -101,7 +101,9 @@ class SocialProfileViewModel @Inject constructor(
             currentUsername != null && clean.equals(currentUsername.removePrefix("@"), ignoreCase = true) -> {
                 _usernameCheckState.value = UsernameCheckUiState.Available("Your current username")
             }
-            clean.length < MIN_HANDLE_LENGTH || clean.length > MAX_HANDLE_LENGTH || !clean.matches(USERNAME_REGEX_PATTERN) -> {
+            clean.length < MIN_HANDLE_LENGTH ||
+                clean.length > MAX_HANDLE_LENGTH ||
+                !clean.matches(USERNAME_REGEX_PATTERN) -> {
                 _usernameCheckState.value = UsernameCheckUiState.Invalid(
                     "Must be 3-32 characters (letters, numbers, underscores only)"
                 )

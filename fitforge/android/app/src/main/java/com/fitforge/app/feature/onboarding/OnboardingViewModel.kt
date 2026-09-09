@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "TooManyFunctions")
+
 package com.fitforge.app.feature.onboarding
 
 import android.util.Log

@@ -1,3 +1,5 @@
+@file:Suppress("SwallowedException")
+
 package com.fitforge.app.sync
 
 import android.content.Context

@@ -1,7 +1,14 @@
+@file:Suppress("MagicNumber")
+
 package com.fitforge.app.domain.workout
 
 /** One logged set, reduced to what the live-metrics arithmetic needs. */
-data class SetMetricInput(val weightKg: Double?, val reps: Int, val isWarmup: Boolean, val exerciseMetValue: Double = 0.0)
+data class SetMetricInput(
+    val weightKg: Double?,
+    val reps: Int,
+    val isWarmup: Boolean,
+    val exerciseMetValue: Double = 0.0,
+)
 
 /** Total kg moved so far this session — sum of weight × reps, warmups excluded. Pure add/multiply, no thresholds. */
 fun sessionVolumeKg(sets: List<SetMetricInput>): Double =

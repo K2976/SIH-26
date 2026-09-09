@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "LongParameterList", "MagicNumber", "UnusedParameter")
+
 package com.fitforge.app.feature.dashboard
 
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -95,7 +97,11 @@ fun SyncTimestampHeader(
             Icon(
                 imageVector = if (lastSyncedAt != null) Icons.Default.CloudDone else Icons.Default.CloudOff,
                 contentDescription = null,
-                tint = if (lastSyncedAt != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                tint = if (lastSyncedAt != null) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.outline
+                },
                 modifier = Modifier.size(16.dp),
             )
             Text(
@@ -195,7 +201,11 @@ fun CalorieProgressRing(
                     color = if (isOverTarget) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = if (isOverTarget) stringResource(R.string.dashboard_over) else stringResource(R.string.dashboard_remaining),
+                    text = if (isOverTarget) {
+                        stringResource(R.string.dashboard_over)
+                    } else {
+                        stringResource(R.string.dashboard_remaining)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -609,9 +619,17 @@ fun WeightTrendSparkline(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Icon(
-                                imageVector = if (trendKgPerWeek >= 0) Icons.AutoMirrored.Filled.TrendingUp else Icons.AutoMirrored.Filled.TrendingDown,
+                                imageVector = if (trendKgPerWeek >= 0) {
+                                    Icons.AutoMirrored.Filled.TrendingUp
+                                } else {
+                                    Icons.AutoMirrored.Filled.TrendingDown
+                                },
                                 contentDescription = null,
-                                tint = if (trendKgPerWeek >= 0) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary,
+                                tint = if (trendKgPerWeek >= 0) {
+                                    MaterialTheme.colorScheme.tertiary
+                                } else {
+                                    MaterialTheme.colorScheme.primary
+                                },
                                 modifier = Modifier.size(18.dp),
                             )
                             Text(
@@ -627,7 +645,11 @@ fun WeightTrendSparkline(
                         Text(
                             text = stringResource(R.string.dashboard_trend_confidence, confPct.toDouble()),
                             style = MaterialTheme.typography.labelSmall,
-                            color = if (confidence < 0.5) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                            color = if (confidence < 0.5) {
+                                MaterialTheme.colorScheme.error
+                            } else {
+                                MaterialTheme.colorScheme.primary
+                            },
                         )
                     }
                 }

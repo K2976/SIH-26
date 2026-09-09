@@ -83,7 +83,12 @@ class RepStateMachineTest {
 
     @Test
     fun `left-right symmetry deviation is measured from the front but not from the side`() {
-        val curlCalibration = CalibrationProfile("dumbbell-bicep-curl", restAngleDeg = 170.0, peakAngleDeg = 45.0, calibratedAtMs = 0)
+        val curlCalibration = CalibrationProfile(
+            "dumbbell-bicep-curl",
+            restAngleDeg = 170.0,
+            peakAngleDeg = 45.0,
+            calibratedAtMs = 0,
+        )
         val samples = twoSidedRamp(170.0, 40.0, 170.0, 55.0, startMs = 0, durationMs = 500) +
             twoSidedRamp(40.0, 170.0, 55.0, 170.0, startMs = 500, durationMs = 500)
 

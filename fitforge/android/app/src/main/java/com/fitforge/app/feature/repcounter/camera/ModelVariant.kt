@@ -1,6 +1,9 @@
 package com.fitforge.app.feature.repcounter.camera
 
-/** The three bundled pose_landmarker models — see docs/DECISIONS.md for the FPS/accuracy tradeoff measured per variant. */
+/**
+ * The three bundled pose_landmarker models — see docs/DECISIONS.md for the
+ * FPS/accuracy tradeoff measured per variant.
+ */
 enum class ModelVariant(val assetPath: String, val label: String) {
     LITE("models/pose_landmarker_lite.task", "Lite"),
     FULL("models/pose_landmarker_full.task", "Full"),

@@ -6,7 +6,10 @@ import com.fitforge.app.pose.RejectionReason
 
 enum class DemoRepPhase { HOLD_STILL, PERFORMING }
 
-/** Per-rep feedback shown live during a set — depth/lockout/symmetry only, per the scoring rules. No form score, ever. */
+/**
+ * Per-rep feedback shown live during a set — depth/lockout/symmetry only,
+ * per the scoring rules. No form score, ever.
+ */
 data class RepFeedback(
     val depthReached: Boolean,
     val lockoutReached: Boolean,

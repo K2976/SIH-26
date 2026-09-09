@@ -27,7 +27,9 @@ class SyncEventSerializer(serializers.Serializer):
     exercise = serializers.SlugField(required=False)
     set_index = serializers.IntegerField(required=False)
     reps = serializers.IntegerField(required=False)
-    weight_kg = serializers.DecimalField(max_digits=6, decimal_places=2, required=False, allow_null=True)
+    weight_kg = serializers.DecimalField(
+        max_digits=6, decimal_places=2, required=False, allow_null=True
+    )
     rpe = serializers.DecimalField(max_digits=3, decimal_places=1, required=False, allow_null=True)
     is_warmup = serializers.BooleanField(required=False, default=False)
     rom_achieved = serializers.CharField(required=False, allow_null=True)

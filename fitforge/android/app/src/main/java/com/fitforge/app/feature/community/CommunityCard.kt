@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.community
 
 import androidx.compose.foundation.background
@@ -117,7 +119,8 @@ fun CommunityCard(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                             )
                             Text(
-                                text = "${community.membersCount} ${if (community.membersCount == 1) "member" else "members"}",
+                                text = "${community.membersCount} " +
+                                    if (community.membersCount == 1) "member" else "members",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )

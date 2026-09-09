@@ -1,5 +1,3 @@
-import uuid
-
 from django.conf import settings
 from django.db import models
 
@@ -20,7 +18,7 @@ class DiaryEntry(models.Model):
         unique_together = (("user", "client_uuid"),)
 
 
-class PlannedSession(DiaryEntry):
+class PlannedSession(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     class Status(models.TextChoices):
         PENDING = "pending", "Pending"
         COMPLETED = "completed", "Completed"
@@ -33,13 +31,15 @@ class PlannedSession(DiaryEntry):
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.PENDING)
 
 
-class WorkoutSession(DiaryEntry):
-    planned_session = models.ForeignKey(PlannedSession, null=True, blank=True, on_delete=models.SET_NULL)
+class WorkoutSession(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
+    planned_session = models.ForeignKey(
+        PlannedSession, null=True, blank=True, on_delete=models.SET_NULL
+    )
     duration_minutes = models.PositiveIntegerField(null=True, blank=True)
     notes = models.TextField(blank=True)
 
 
-class SetLog(DiaryEntry):
+class SetLog(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     session = models.ForeignKey(WorkoutSession, on_delete=models.CASCADE, related_name="sets")
     exercise = models.ForeignKey(Exercise, to_field="slug", on_delete=models.PROTECT)
     set_index = models.PositiveIntegerField()
@@ -47,15 +47,16 @@ class SetLog(DiaryEntry):
     weight_kg = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     rpe = models.DecimalField(max_digits=3, decimal_places=1, null=True, blank=True)
     is_warmup = models.BooleanField(default=False)
-    rom_achieved = models.CharField(max_length=32, null=True, blank=True)
+    # Retain nullability for the existing database/API contract.
+    rom_achieved = models.CharField(max_length=32, null=True, blank=True)  # noqa: DJ001
     tempo_ms = models.PositiveIntegerField(null=True, blank=True)
 
 
-class MealLog(DiaryEntry):
+class MealLog(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     pass
 
 
-class MealItem(DiaryEntry):
+class MealItem(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     log = models.ForeignKey(MealLog, on_delete=models.CASCADE, related_name="items")
     # Natural key for food, slug. We might not have a Food model yet, just store slug.
     food_slug = models.CharField(max_length=64)
@@ -67,11 +68,11 @@ class MealItem(DiaryEntry):
     fat_g = models.DecimalField(max_digits=8, decimal_places=2)
 
 
-class WeightLog(DiaryEntry):
+class WeightLog(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     weight_kg = models.DecimalField(max_digits=5, decimal_places=2)
 
 
-class SleepLog(DiaryEntry):
+class SleepLog(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     bedtime = models.DateTimeField()
     wake = models.DateTimeField()
     quality = models.PositiveSmallIntegerField(
@@ -79,7 +80,7 @@ class SleepLog(DiaryEntry):
     )
 
 
-class CycleLog(DiaryEntry):
+class CycleLog(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     # Recognised `event` values: "period_start" | "period_end" | "spotting".
     # Left as a plain CharField (no `choices=`) rather than altering an
     # existing column's constraints — validated at the serializer/service

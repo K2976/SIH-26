@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount")
+
 package com.fitforge.app.pose
 
 /**

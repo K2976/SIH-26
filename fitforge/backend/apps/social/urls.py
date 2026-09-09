@@ -27,4 +27,3 @@ urlpatterns = [
     path("communities/<int:pk>/join/", CommunityJoinView.as_view(), name="community-join"),
     path("communities/<int:pk>/leave/", CommunityLeaveView.as_view(), name="community-leave"),
 ]
-

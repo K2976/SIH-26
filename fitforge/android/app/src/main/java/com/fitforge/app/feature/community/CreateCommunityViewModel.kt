@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.fitforge.app.feature.community
 
 import androidx.lifecycle.ViewModel

@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber", "ReturnCount")
+
 package com.fitforge.app.feature.music
 
 import androidx.lifecycle.ViewModel

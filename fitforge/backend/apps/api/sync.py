@@ -44,16 +44,13 @@ class SyncView(APIView):
         if not isinstance(events, list):
             return Response({"error": "events must be a list"}, status=400)
 
-        results = {
-            "success_count": 0,
-            "errors": []
-        }
+        results = {"success_count": 0, "errors": []}
         touched_local_dates = set()
 
         now = timezone.now()
         max_future = now + datetime.timedelta(days=1)
         # Implausibly far past, e.g. before 1990
-        min_past = datetime.datetime(1990, 1, 1, tzinfo=datetime.timezone.utc)
+        min_past = datetime.datetime(1990, 1, 1, tzinfo=datetime.UTC)
 
         for i, event in enumerate(events):
             try:
@@ -62,19 +59,21 @@ class SyncView(APIView):
                     raise ValueError(f"Unknown or missing type: {event_type}")
 
                 ModelClass = MODEL_MAP[event_type]
-                
+
                 client_uuid = event.get("client_uuid")
                 if not client_uuid:
                     raise ValueError("client_uuid is required")
-                
+
                 occurred_at_str = event.get("occurred_at")
                 if not occurred_at_str:
                     raise ValueError("occurred_at is required")
-                    
+
                 try:
-                    occurred_at = datetime.datetime.fromisoformat(occurred_at_str.replace('Z', '+00:00'))
+                    occurred_at = datetime.datetime.fromisoformat(
+                        occurred_at_str.replace("Z", "+00:00")
+                    )
                 except ValueError:
-                    raise ValueError("invalid occurred_at format")
+                    raise ValueError("invalid occurred_at format") from None
 
                 if occurred_at > max_future:
                     raise ValueError("occurred_at cannot be more than one day in the future")
@@ -88,11 +87,13 @@ class SyncView(APIView):
                 supersedes = None
                 if supersedes_uuid:
                     try:
-                        supersedes = ModelClass.objects.get(client_uuid=supersedes_uuid, user=request.user)
+                        supersedes = ModelClass.objects.get(
+                            client_uuid=supersedes_uuid, user=request.user
+                        )
                     except ModelClass.DoesNotExist:
                         # Allow setting to null if not found, or error?
                         # Usually better to error so the client knows their supersedes is invalid.
-                        raise ValueError(f"supersedes target {supersedes_uuid} not found")
+                        raise ValueError(f"supersedes target {supersedes_uuid} not found") from None
 
                 # Extract model-specific fields
                 defaults = {
@@ -101,7 +102,7 @@ class SyncView(APIView):
                     "source": source,
                     "supersedes": supersedes,
                 }
-                
+
                 if event_type == "planned_session":
                     defaults["date"] = event.get("date")
                     defaults["focus"] = event.get("focus", "")
@@ -111,9 +112,11 @@ class SyncView(APIView):
                     planned_session_uuid = event.get("planned_session")
                     if planned_session_uuid:
                         try:
-                            defaults["planned_session"] = PlannedSession.objects.get(client_uuid=planned_session_uuid, user=request.user)
+                            defaults["planned_session"] = PlannedSession.objects.get(
+                                client_uuid=planned_session_uuid, user=request.user
+                            )
                         except PlannedSession.DoesNotExist:
-                            raise ValueError("planned_session target not found")
+                            raise ValueError("planned_session target not found") from None
                     defaults["duration_minutes"] = event.get("duration_minutes")
                     defaults["notes"] = event.get("notes", "")
                 elif event_type == "set_log":
@@ -121,15 +124,18 @@ class SyncView(APIView):
                     if not session_uuid:
                         raise ValueError("session is required for set_log")
                     try:
-                        defaults["session"] = WorkoutSession.objects.get(client_uuid=session_uuid, user=request.user)
+                        defaults["session"] = WorkoutSession.objects.get(
+                            client_uuid=session_uuid, user=request.user
+                        )
                     except WorkoutSession.DoesNotExist:
-                        raise ValueError("session target not found")
-                    
+                        raise ValueError("session target not found") from None
+
                     exercise_slug = event.get("exercise")
                     if not exercise_slug:
                         raise ValueError("exercise slug is required")
-                    defaults["exercise_id"] = exercise_slug # to_field="slug" on ForeignKey uses exercise_id column to store slug
-                    
+                    # ForeignKey uses the slug in the exercise_id column.
+                    defaults["exercise_id"] = exercise_slug
+
                     defaults["set_index"] = event.get("set_index")
                     defaults["reps"] = event.get("reps")
                     defaults["weight_kg"] = event.get("weight_kg")
@@ -142,10 +148,12 @@ class SyncView(APIView):
                     if not log_uuid:
                         raise ValueError("log is required for meal_item")
                     try:
-                        defaults["log"] = MealLog.objects.get(client_uuid=log_uuid, user=request.user)
+                        defaults["log"] = MealLog.objects.get(
+                            client_uuid=log_uuid, user=request.user
+                        )
                     except MealLog.DoesNotExist:
-                        raise ValueError("log target not found")
-                    
+                        raise ValueError("log target not found") from None
+
                     defaults["food_slug"] = event.get("food_slug", "")
                     defaults["quantity"] = event.get("quantity")
                     defaults["calories"] = event.get("calories")
@@ -167,18 +175,14 @@ class SyncView(APIView):
 
                 # Idempotent save
                 obj, created = ModelClass.objects.update_or_create(
-                    user=request.user,
-                    client_uuid=client_uuid,
-                    defaults=defaults
+                    user=request.user, client_uuid=client_uuid, defaults=defaults
                 )
                 touched_local_dates.add(resolve_local_day(occurred_at, utc_offset))
                 results["success_count"] += 1
             except Exception as e:
-                results["errors"].append({
-                    "index": i,
-                    "client_uuid": event.get("client_uuid"),
-                    "error": str(e)
-                })
+                results["errors"].append(
+                    {"index": i, "client_uuid": event.get("client_uuid"), "error": str(e)}
+                )
 
         # DailyState is a cache: keep it in step with whatever just landed,
         # rather than waiting for the nightly rebuild to catch up.

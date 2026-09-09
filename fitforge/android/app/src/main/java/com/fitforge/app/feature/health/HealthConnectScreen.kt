@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "LongParameterList", "MagicNumber")
+
 package com.fitforge.app.feature.health
 
 import android.content.Intent
@@ -80,7 +82,8 @@ fun HealthConnectScreen(
         )
 
         Text(
-            text = "Connect FitForge with Android Health Connect to automatically sync daily steps, workouts, heart rate, and wearable data.",
+            text = "Connect FitForge with Android Health Connect to automatically sync daily " +
+                "steps, workouts, heart rate, and wearable data.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -157,7 +160,8 @@ fun HealthConnectScreen(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Tap 'Connect Health Data' above to grant permissions so FitForge can display your wearable and phone metrics.",
+                        text = "Tap 'Connect Health Data' above to grant permissions so FitForge " +
+                            "can display your wearable and phone metrics.",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -192,7 +196,11 @@ private fun StatusCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = when (availability) {
-                        HealthConnectAvailability.Available -> if (hasAllPermissions) Icons.Default.CheckCircle else Icons.Default.HealthAndSafety
+                        HealthConnectAvailability.Available -> if (hasAllPermissions) {
+                            Icons.Default.CheckCircle
+                        } else {
+                            Icons.Default.HealthAndSafety
+                        }
                         HealthConnectAvailability.NotInstalled -> Icons.Default.Warning
                         HealthConnectAvailability.NotSupported -> Icons.Default.Warning
                     },
@@ -203,7 +211,11 @@ private fun StatusCard(
                 Column {
                     Text(
                         text = when (availability) {
-                            HealthConnectAvailability.Available -> if (hasAllPermissions) "Connected" else "Permissions Partial ($grantedCount/$totalCount)"
+                            HealthConnectAvailability.Available -> if (hasAllPermissions) {
+                                "Connected"
+                            } else {
+                                "Permissions Partial ($grantedCount/$totalCount)"
+                            }
                             HealthConnectAvailability.NotInstalled -> "Health Connect Not Installed"
                             HealthConnectAvailability.NotSupported -> "Health Connect Not Supported"
                         },
@@ -212,11 +224,18 @@ private fun StatusCard(
                     Text(
                         text = when (availability) {
                             HealthConnectAvailability.Available -> if (hasAllPermissions) {
-                                val syncText = lastSyncedAt?.let { "\nLast sync: ${it.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm"))}" } ?: ""
+                                val syncText = lastSyncedAt?.let {
+                                    val formattedTime = it.atZone(ZoneId.systemDefault()).format(
+                                        DateTimeFormatter.ofPattern("HH:mm"),
+                                    )
+                                    "\nLast sync: $formattedTime"
+                                } ?: ""
                                 "FitForge has access to all requested health data.$syncText"
                             } else "Grant permissions to import metrics from your wearable or phone."
-                            HealthConnectAvailability.NotInstalled -> "Please download Health Connect from the Google Play Store."
-                            HealthConnectAvailability.NotSupported -> "This Android device does not support Health Connect."
+                            HealthConnectAvailability.NotInstalled ->
+                                "Please download Health Connect from the Google Play Store."
+                            HealthConnectAvailability.NotSupported ->
+                                "This Android device does not support Health Connect."
                         },
                         style = MaterialTheme.typography.bodySmall,
                     )
@@ -269,7 +288,10 @@ private fun ActivityCard(data: HealthDataSummary?) {
         items = listOf(
             "Daily Steps" to (data?.steps?.let { "$it steps" } ?: "No data"),
             "Distance" to (data?.distanceMeters?.let { String.format(Locale.US, "%.2f km", it / 1000.0) } ?: "No data"),
-            "Active Calories" to (data?.activeCaloriesKcal?.let { String.format(Locale.US, "%.0f kcal", it) } ?: "No data"),
+            "Active Calories" to (
+                data?.activeCaloriesKcal?.let { String.format(Locale.US, "%.0f kcal", it) }
+                    ?: "No data"
+            ),
             "Total Energy" to (data?.totalCaloriesKcal?.let { String.format(Locale.US, "%.0f kcal", it) } ?: "No data"),
         ),
     )
@@ -320,8 +342,15 @@ private fun BodyVitalsCard(data: HealthDataSummary?) {
             "Weight" to (data?.weightKg?.let { String.format(Locale.US, "%.1f kg", it) } ?: "No data"),
             "Height" to (data?.heightMeters?.let { String.format(Locale.US, "%.0f cm", it * 100) } ?: "No data"),
             "Body Fat" to (data?.bodyFatPercentage?.let { String.format(Locale.US, "%.1f %%", it) } ?: "No data"),
-            "Blood Oxygen (SpO2)" to (data?.oxygenSaturationPercentage?.let { String.format(Locale.US, "%.0f %%", it) } ?: "No data"),
-            "Respiratory Rate" to (data?.respiratoryRateBpm?.let { String.format(Locale.US, "%.0f rpm", it) } ?: "No data"),
+            "Blood Oxygen (SpO2)" to (
+                data?.oxygenSaturationPercentage?.let {
+                    String.format(Locale.US, "%.0f %%", it)
+                } ?: "No data"
+            ),
+            "Respiratory Rate" to (
+                data?.respiratoryRateBpm?.let { String.format(Locale.US, "%.0f rpm", it) }
+                    ?: "No data"
+            ),
         ),
     )
 }

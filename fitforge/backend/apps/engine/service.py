@@ -46,12 +46,7 @@ def _diary_edge_date(user, *, latest: bool) -> datetime.date | None:
     edge = None
     for model in _DIARY_ENTRY_MODELS:
         order = "-occurred_at" if latest else "occurred_at"
-        row = (
-            _active(model, user)
-            .order_by(order)
-            .values("occurred_at", "utc_offset")
-            .first()
-        )
+        row = _active(model, user).order_by(order).values("occurred_at", "utc_offset").first()
         if row is None:
             continue
         d = _local_date(row["occurred_at"], row["utc_offset"])
@@ -207,9 +202,7 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
 
     missing_food = calc.missing_food_days_7d(frozenset(calories_by_day), as_of)
     missing_weight = calc.missing_weight_days_14d(frozenset(weights_by_day), as_of)
-    recently_changed = calc.goal_recently_changed(
-        goal.started_at.date() if goal else None, as_of
-    )
+    recently_changed = calc.goal_recently_changed(goal.started_at.date() if goal else None, as_of)
     insufficient = calc.insufficient_data_for_adaptation(missing_food, missing_weight)
     sufficiency = calc.energy_data_sufficiency(missing_food, maintenance.kcal is not None)
 
@@ -226,14 +219,17 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
 
     # Planned sessions in week
     week_planned = [s for s in planned_records if week_start <= s.local_date <= week_end]
-    remaining_sessions = sum(1 for s in week_planned if s.local_date >= as_of and s.status == "pending")
-    skipped_sessions = sum(1 for s in week_planned if s.local_date <= as_of and s.status == "skipped")
+    remaining_sessions = sum(
+        1 for s in week_planned if s.local_date >= as_of and s.status == "pending"
+    )
+    skipped_sessions = sum(
+        1 for s in week_planned if s.local_date <= as_of and s.status == "skipped"
+    )
     days_remaining_in_week = max(0, (week_end - as_of).days + 1)
 
     # Trailing 7-day average volume
     trailing_volume_sets = [
-        s for s in set_records
-        if as_of - datetime.timedelta(days=7) <= s.local_date < as_of
+        s for s in set_records if as_of - datetime.timedelta(days=7) <= s.local_date < as_of
     ]
     if trailing_volume_sets:
         trailing_vols = [calc._set_volume_kg(s) for s in trailing_volume_sets]
@@ -248,7 +244,9 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
         for i in range(1, 8)
         if (as_of - datetime.timedelta(days=i)) in calories_by_day
     ]
-    trailing_7d_kcal_avg = sum(trailing_kcal_vals) / len(trailing_kcal_vals) if trailing_kcal_vals else None
+    trailing_7d_kcal_avg = (
+        sum(trailing_kcal_vals) / len(trailing_kcal_vals) if trailing_kcal_vals else None
+    )
 
     # --- Cycle module (§10) inputs ---
     # Only touched when the user has opted in (tracks_cycle) — the module is
@@ -282,7 +280,9 @@ def _compute_daily_metrics(user, as_of: datetime.date) -> dict:
             consumed_kcal_today=consumed.value,
             week_balance_kcal=balance.value,
             energy_direction=goal.energy_direction if goal else None,
-            target_rate_kg_per_week=float(goal.target_rate_kg_per_week) if goal and goal.target_rate_kg_per_week is not None else None,
+            target_rate_kg_per_week=float(goal.target_rate_kg_per_week)
+            if goal and goal.target_rate_kg_per_week is not None
+            else None,
             weight_trend_kg_per_week=trend.kg_per_week,
             weight_trend_confidence=trend.confidence,
             latest_weight_kg=bodyweight_today,
@@ -372,9 +372,7 @@ def compute_user_state(user, as_of: datetime.date | None = None) -> dict:
     metrics = _compute_daily_metrics(user, as_of)
 
     age = calc.age_on(as_of, profile.date_of_birth) if profile else None
-    height_cm = (
-        float(profile.height_cm) if profile and profile.height_cm is not None else None
-    )
+    height_cm = float(profile.height_cm) if profile and profile.height_cm is not None else None
     bmi = fitage.bmi_from_height_weight(height_cm, metrics["body_trend"]["latest_weight_kg"])
     fitness = fitage.estimate_fitness_age(
         age=age,

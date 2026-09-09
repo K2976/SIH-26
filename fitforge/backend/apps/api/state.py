@@ -54,9 +54,7 @@ class TrainingStateSerializer(serializers.Serializer):
     week_volume_planned_partial = serializers.BooleanField()
     week_volume_completed = serializers.FloatField(allow_null=True)
     week_volume_completed_partial = serializers.BooleanField()
-    volume_by_muscle_group = serializers.DictField(
-        child=serializers.FloatField(), allow_null=True
-    )
+    volume_by_muscle_group = serializers.DictField(child=serializers.FloatField(), allow_null=True)
     volume_by_muscle_group_partial = serializers.BooleanField()
     adherence_7d = serializers.FloatField(allow_null=True)
     adherence_7d_partial = serializers.BooleanField()

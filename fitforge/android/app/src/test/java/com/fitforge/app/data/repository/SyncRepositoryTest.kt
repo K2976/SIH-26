@@ -94,7 +94,12 @@ class SyncRepositoryTest {
             weightKg = 100.0,
         )
         val api = RecordingSyncApi(SyncResponse(successCount = 2, errors = emptyList()))
-        val repository = SyncRepository(FakeSessionDao(listOf(session)), FakeSetLogDao(listOf(set)), FakeCycleLogDao(), api)
+        val repository = SyncRepository(
+            FakeSessionDao(listOf(session)),
+            FakeSetLogDao(listOf(set)),
+            FakeCycleLogDao(),
+            api,
+        )
 
         val success = repository.syncPending()
 

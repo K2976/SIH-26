@@ -40,8 +40,15 @@ class PoseLandmarkerBenchmarkTest {
         val mpImage = BitmapImageBuilder(bitmap).build()
 
         val report = StringBuilder()
-        report.appendLine("Pose landmarker benchmark — device: ${android.os.Build.MODEL} (${android.os.Build.HARDWARE}), Android ${android.os.Build.VERSION.RELEASE}")
-        report.appendLine("Sample image: pose_benchmark_sample.jpg (${bitmap.width}x${bitmap.height}), CPU delegate, ${TIMED_ITERATIONS} timed iterations after ${WARMUP_ITERATIONS} warmup")
+        report.appendLine(
+            "Pose landmarker benchmark — device: ${android.os.Build.MODEL} " +
+                "(${android.os.Build.HARDWARE}), Android ${android.os.Build.VERSION.RELEASE}"
+        )
+        report.appendLine(
+            "Sample image: pose_benchmark_sample.jpg " +
+                "(${bitmap.width}x${bitmap.height}), CPU delegate, " +
+                "$TIMED_ITERATIONS timed iterations after $WARMUP_ITERATIONS warmup"
+        )
         report.appendLine()
 
         for (variant in ModelVariant.entries) {

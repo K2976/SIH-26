@@ -17,9 +17,7 @@ SED = "sedentary"
 class TestBmiFromHeightWeight:
     def test_known_value(self):
         # 80kg at 180cm -> 24.69...
-        assert fitness_age.bmi_from_height_weight(180, 80) == pytest.approx(
-            80 / 1.8**2
-        )
+        assert fitness_age.bmi_from_height_weight(180, 80) == pytest.approx(80 / 1.8**2)
 
     def test_missing_inputs_are_none(self):
         assert fitness_age.bmi_from_height_weight(None, 80) is None

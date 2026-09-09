@@ -1,3 +1,5 @@
+@file:Suppress("LongParameterList", "MagicNumber", "TooManyFunctions")
+
 package com.fitforge.app.data.repository
 
 import com.fitforge.app.core.database.BaseDiaryColumns
@@ -120,7 +122,17 @@ class WorkoutRepository @Inject constructor(
     ) {
         val nextIndex = setLogDao.getMaxSetIndex(sessionUuid) + 1
         setLogDao.insert(
-            buildSetLogEntity(sessionUuid, exerciseSlug, nextIndex, reps, weightKg, isWarmup, source, romAchieved, tempoMs),
+            buildSetLogEntity(
+                sessionUuid,
+                exerciseSlug,
+                nextIndex,
+                reps,
+                weightKg,
+                isWarmup,
+                source,
+                romAchieved,
+                tempoMs,
+            ),
         )
         SyncWorker.enqueue(workManager)
     }

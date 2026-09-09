@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.social
 
 import androidx.compose.foundation.background

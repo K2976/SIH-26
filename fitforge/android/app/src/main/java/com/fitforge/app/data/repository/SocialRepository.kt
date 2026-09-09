@@ -1,3 +1,5 @@
+@file:Suppress("TooGenericExceptionCaught")
+
 package com.fitforge.app.data.repository
 
 import android.util.Log

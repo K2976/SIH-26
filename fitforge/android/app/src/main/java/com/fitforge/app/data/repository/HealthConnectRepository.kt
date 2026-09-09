@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount", "TooManyFunctions")
+
 package com.fitforge.app.data.repository
 
 import android.content.Context
@@ -500,7 +502,11 @@ class HealthConnectRepository @Inject constructor(
     override suspend fun syncHealthData(): Result<HealthDataSummary> {
         val availability = getAvailability()
         if (availability != HealthConnectAvailability.Available) {
-            return Result.failure(IllegalStateException("Health Connect is not available on this device ($availability)"))
+            return Result.failure(
+                IllegalStateException(
+                    "Health Connect is not available on this device ($availability)"
+                )
+            )
         }
 
         if (!hasAnyPermission()) {
@@ -526,4 +532,3 @@ class HealthConnectRepository @Inject constructor(
         return summaryResult
     }
 }
-

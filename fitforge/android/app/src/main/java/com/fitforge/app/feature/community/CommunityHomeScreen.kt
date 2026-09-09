@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "LongParameterList")
+
 package com.fitforge.app.feature.community
 
 import androidx.compose.foundation.background
@@ -193,7 +195,8 @@ fun CommunityHomeScreen(
                         emptyContent = {
                             EmptyCommunitiesView(
                                 title = "No Communities Yet",
-                                subtitle = "Join fitness groups to track progress together, stay accountable, and crush your goals.",
+                                subtitle = "Join fitness groups to track progress together, " +
+                                    "stay accountable, and crush your goals.",
                                 primaryActionText = "Discover Groups",
                                 onPrimaryAction = { viewModel.selectTab(1) },
                                 secondaryActionText = "Create Community",
@@ -209,9 +212,14 @@ fun CommunityHomeScreen(
                         onRetry = { viewModel.loadDiscoverCommunities(searchQuery) },
                         emptyContent = {
                             EmptyCommunitiesView(
-                                title = if (searchQuery.isNotBlank()) "No Matching Communities" else "No Public Communities",
+                                title = if (searchQuery.isNotBlank()) {
+                                    "No Matching Communities"
+                                } else {
+                                    "No Public Communities"
+                                },
                                 subtitle = if (searchQuery.isNotBlank()) {
-                                    "No public communities matched \"$searchQuery\". Try a different search or create one!"
+                                    "No public communities matched \"$searchQuery\". " +
+                                        "Try a different search or create one!"
                                 } else {
                                     "Be the first to create a public fitness community for your gym, team, or college!"
                                 },

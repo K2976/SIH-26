@@ -1,3 +1,5 @@
+@file:Suppress("TooGenericExceptionCaught")
+
 package com.fitforge.app.data.repository
 
 import android.util.Log
@@ -41,7 +43,9 @@ class CommunityRepository @Inject constructor(
     /**
      * Discover public communities, optionally filtered by keyword search.
      */
-    suspend fun getDiscoverCommunities(search: String? = null): Result<List<CommunityList>> = withContext(Dispatchers.IO) {
+    suspend fun getDiscoverCommunities(
+        search: String? = null,
+    ): Result<List<CommunityList>> = withContext(Dispatchers.IO) {
         try {
             val cleanQuery = search?.trim()?.takeIf { it.isNotEmpty() }
             val response = communityApi.socialCommunitiesList(filter = "discover", search = cleanQuery)
@@ -85,7 +89,8 @@ class CommunityRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(response.body() ?: emptyList())
             } else {
-                val error = response.errorBody()?.string() ?: "Failed to fetch members for community #$id: ${response.code()}"
+                val error = response.errorBody()?.string()
+                    ?: "Failed to fetch members for community #$id: ${response.code()}"
                 Result.failure(IOException(error))
             }
         } catch (e: Exception) {

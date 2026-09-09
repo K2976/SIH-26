@@ -115,4 +115,3 @@ class CommunityMembership(models.Model):
 
     def __str__(self):
         return f"{self.user} in {self.community.name} ({self.role})"
-

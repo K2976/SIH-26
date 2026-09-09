@@ -55,8 +55,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"seed_training_music: {created} created, {updated} updated, "
-                f"{unchanged} unchanged"
+                f"seed_training_music: {created} created, {updated} updated, {unchanged} unchanged"
             )
         )
         if placeholder:

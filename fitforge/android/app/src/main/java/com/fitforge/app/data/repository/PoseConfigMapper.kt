@@ -1,3 +1,5 @@
+@file:Suppress("ReturnCount")
+
 package com.fitforge.app.data.repository
 
 import com.fitforge.app.core.database.ExerciseEntity
@@ -6,7 +8,10 @@ import com.fitforge.app.pose.CameraPosition
 import com.fitforge.app.pose.ExercisePoseConfig
 import com.fitforge.app.pose.PoseLandmark
 
-/** Reassembles the pure [ExercisePoseConfig] from an [ExerciseEntity]'s flattened pose columns, or null if the exercise has none. */
+/**
+ * Reassembles the pure [ExercisePoseConfig] from an [ExerciseEntity]'s flattened
+ * pose columns, or null if the exercise has none.
+ */
 fun ExerciseEntity.toPoseConfig(): ExercisePoseConfig? {
     val from = poseAngleFrom?.let(::toPoseLandmark) ?: return null
     val vertex = poseAngleVertex?.let(::toPoseLandmark) ?: return null

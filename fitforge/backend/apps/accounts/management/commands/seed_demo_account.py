@@ -56,48 +56,90 @@ _WEIGHT_WEEKLY_LOSS_KG = Decimal("0.5")
 # (weekday, [(exercise_slug, n_sets, reps, start_kg | None, weekly_progress_kg)])
 # start_kg=None marks a genuinely bodyweight exercise (Exercise.is_bodyweight).
 _PROGRAM = [
-    (0, [  # Monday — push
-        ("barbell-bench-press", 4, 8, Decimal("40.0"), Decimal("1.25")),
-        ("overhead-press", 3, 8, Decimal("25.0"), Decimal("1.0")),
-        ("push-up", 3, 12, None, None),
-        ("triceps-pushdown", 3, 12, Decimal("20.0"), Decimal("0.5")),
-    ]),
-    (1, [  # Tuesday — pull
-        ("barbell-row", 4, 8, Decimal("35.0"), Decimal("1.25")),
-        ("lat-pulldown", 3, 10, Decimal("30.0"), Decimal("1.0")),
-        ("pull-up", 3, 6, None, None),
-        ("dumbbell-bicep-curl", 3, 10, Decimal("8.0"), Decimal("0.25")),
-    ]),
-    (3, [  # Thursday — legs
-        ("barbell-back-squat", 4, 6, Decimal("45.0"), Decimal("1.5")),
-        ("barbell-deadlift", 3, 5, Decimal("55.0"), Decimal("1.5")),
-        ("leg-extension", 3, 12, Decimal("25.0"), Decimal("0.5")),
-        ("standing-calf-raise", 3, 15, Decimal("15.0"), Decimal("0.5")),
-    ]),
-    (5, [  # Saturday — full body / conditioning
-        ("kettlebell-swing", 3, 15, Decimal("16.0"), Decimal("0.0")),
-        ("mountain-climber", 3, 20, None, None),
-        ("burpee", 3, 12, None, None),
-    ]),
+    (
+        0,
+        [  # Monday — push
+            ("barbell-bench-press", 4, 8, Decimal("40.0"), Decimal("1.25")),
+            ("overhead-press", 3, 8, Decimal("25.0"), Decimal("1.0")),
+            ("push-up", 3, 12, None, None),
+            ("triceps-pushdown", 3, 12, Decimal("20.0"), Decimal("0.5")),
+        ],
+    ),
+    (
+        1,
+        [  # Tuesday — pull
+            ("barbell-row", 4, 8, Decimal("35.0"), Decimal("1.25")),
+            ("lat-pulldown", 3, 10, Decimal("30.0"), Decimal("1.0")),
+            ("pull-up", 3, 6, None, None),
+            ("dumbbell-bicep-curl", 3, 10, Decimal("8.0"), Decimal("0.25")),
+        ],
+    ),
+    (
+        3,
+        [  # Thursday — legs
+            ("barbell-back-squat", 4, 6, Decimal("45.0"), Decimal("1.5")),
+            ("barbell-deadlift", 3, 5, Decimal("55.0"), Decimal("1.5")),
+            ("leg-extension", 3, 12, Decimal("25.0"), Decimal("0.5")),
+            ("standing-calf-raise", 3, 15, Decimal("15.0"), Decimal("0.5")),
+        ],
+    ),
+    (
+        5,
+        [  # Saturday — full body / conditioning
+            ("kettlebell-swing", 3, 15, Decimal("16.0"), Decimal("0.0")),
+            ("mountain-climber", 3, 20, None, None),
+            ("burpee", 3, 12, None, None),
+        ],
+    ),
 ]
 
 # (hour, [(food_slug, qty, kcal, protein_g, carbs_g, fat_g)] x3 variants)
 _MEALS = [
-    (8, [
-        ("oatmeal-berries", Decimal(1), Decimal(380), Decimal(14), Decimal(62), Decimal(8)),
-        ("greek-yogurt-granola", Decimal(1), Decimal(340), Decimal(24), Decimal(40), Decimal(9)),
-        ("veggie-egg-scramble", Decimal(1), Decimal(360), Decimal(28), Decimal(18), Decimal(20)),
-    ]),
-    (13, [
-        ("chicken-rice-bowl", Decimal(1), Decimal(560), Decimal(42), Decimal(65), Decimal(12)),
-        ("salmon-quinoa-salad", Decimal(1), Decimal(540), Decimal(38), Decimal(48), Decimal(18)),
-        ("turkey-wrap", Decimal(1), Decimal(500), Decimal(34), Decimal(52), Decimal(14)),
-    ]),
-    (19, [
-        ("salmon-veggies", Decimal(1), Decimal(520), Decimal(40), Decimal(28), Decimal(22)),
-        ("lean-beef-stirfry", Decimal(1), Decimal(580), Decimal(44), Decimal(46), Decimal(20)),
-        ("tofu-veggie-curry", Decimal(1), Decimal(480), Decimal(26), Decimal(50), Decimal(18)),
-    ]),
+    (
+        8,
+        [
+            ("oatmeal-berries", Decimal(1), Decimal(380), Decimal(14), Decimal(62), Decimal(8)),
+            (
+                "greek-yogurt-granola",
+                Decimal(1),
+                Decimal(340),
+                Decimal(24),
+                Decimal(40),
+                Decimal(9),
+            ),
+            (
+                "veggie-egg-scramble",
+                Decimal(1),
+                Decimal(360),
+                Decimal(28),
+                Decimal(18),
+                Decimal(20),
+            ),
+        ],
+    ),
+    (
+        13,
+        [
+            ("chicken-rice-bowl", Decimal(1), Decimal(560), Decimal(42), Decimal(65), Decimal(12)),
+            (
+                "salmon-quinoa-salad",
+                Decimal(1),
+                Decimal(540),
+                Decimal(38),
+                Decimal(48),
+                Decimal(18),
+            ),
+            ("turkey-wrap", Decimal(1), Decimal(500), Decimal(34), Decimal(52), Decimal(14)),
+        ],
+    ),
+    (
+        19,
+        [
+            ("salmon-veggies", Decimal(1), Decimal(520), Decimal(40), Decimal(28), Decimal(22)),
+            ("lean-beef-stirfry", Decimal(1), Decimal(580), Decimal(44), Decimal(46), Decimal(20)),
+            ("tofu-veggie-curry", Decimal(1), Decimal(480), Decimal(26), Decimal(50), Decimal(18)),
+        ],
+    ),
 ]
 
 _CYCLE_LENGTH_DAYS = 28
@@ -127,8 +169,12 @@ def _seed_workouts(user, history_start, as_of) -> set[datetime.date]:
             continue
         week_index = offset // 7
         session = WorkoutSession(
-            user=user, client_uuid=uuid.uuid4(), occurred_at=_dt(local_date, 7),
-            utc_offset=UTC_OFFSET, source="manual", duration_minutes=55,
+            user=user,
+            client_uuid=uuid.uuid4(),
+            occurred_at=_dt(local_date, 7),
+            utc_offset=UTC_OFFSET,
+            source="manual",
+            duration_minutes=55,
         )
         sets_for_session = []
         for exercise_slug, n_sets, reps, start_kg, weekly_progress in program:
@@ -141,8 +187,11 @@ def _seed_workouts(user, history_start, as_of) -> set[datetime.date]:
                     weight_kg = work_weight
                 sets_for_session.append(
                     dict(
-                        exercise_id=exercise_slug, set_index=set_index, reps=reps,
-                        weight_kg=weight_kg, is_warmup=is_warmup,
+                        exercise_id=exercise_slug,
+                        set_index=set_index,
+                        reps=reps,
+                        weight_kg=weight_kg,
+                        is_warmup=is_warmup,
                     )
                 )
         sessions.append(session)
@@ -153,8 +202,13 @@ def _seed_workouts(user, history_start, as_of) -> set[datetime.date]:
 
     set_logs = [
         SetLog(
-            user=user, client_uuid=uuid.uuid4(), occurred_at=session.occurred_at,
-            utc_offset=UTC_OFFSET, source="manual", session=session, **kwargs,
+            user=user,
+            client_uuid=uuid.uuid4(),
+            occurred_at=session.occurred_at,
+            utc_offset=UTC_OFFSET,
+            source="manual",
+            session=session,
+            **kwargs,
         )
         for session, sets_for_session in session_sets
         for kwargs in sets_for_session
@@ -174,8 +228,11 @@ def _seed_meals(user, history_start, as_of) -> set[datetime.date]:
         if days_ago != 0 and days_ago % 7 == 3:
             continue  # a realistic missed-logging day; never skips "today"
         log = MealLog(
-            user=user, client_uuid=uuid.uuid4(), occurred_at=_dt(local_date, 8),
-            utc_offset=UTC_OFFSET, source="manual",
+            user=user,
+            client_uuid=uuid.uuid4(),
+            occurred_at=_dt(local_date, 8),
+            utc_offset=UTC_OFFSET,
+            source="manual",
         )
         variant = local_date.toordinal() % 3
         items_for_log = []
@@ -183,8 +240,13 @@ def _seed_meals(user, history_start, as_of) -> set[datetime.date]:
             food_slug, quantity, calories, protein_g, carbs_g, fat_g = options[variant]
             items_for_log.append(
                 dict(
-                    occurred_at=_dt(local_date, hour), food_slug=food_slug, quantity=quantity,
-                    calories=calories, protein_g=protein_g, carbs_g=carbs_g, fat_g=fat_g,
+                    occurred_at=_dt(local_date, hour),
+                    food_slug=food_slug,
+                    quantity=quantity,
+                    calories=calories,
+                    protein_g=protein_g,
+                    carbs_g=carbs_g,
+                    fat_g=fat_g,
                 )
             )
         logs.append(log)
@@ -195,8 +257,12 @@ def _seed_meals(user, history_start, as_of) -> set[datetime.date]:
 
     meal_items = [
         MealItem(
-            user=user, client_uuid=uuid.uuid4(), utc_offset=UTC_OFFSET, source="manual",
-            log=log, **kwargs,
+            user=user,
+            client_uuid=uuid.uuid4(),
+            utc_offset=UTC_OFFSET,
+            source="manual",
+            log=log,
+            **kwargs,
         )
         for log, items_for_log in log_items
         for kwargs in items_for_log
@@ -216,8 +282,12 @@ def _seed_weights(user, history_start, as_of) -> set[datetime.date]:
             continue  # a realistic missed-logging day; never skips "today"
         weight_logs.append(
             WeightLog(
-                user=user, client_uuid=uuid.uuid4(), occurred_at=_dt(local_date, 7),
-                utc_offset=UTC_OFFSET, source="manual", weight_kg=_weight_kg_for_offset(offset),
+                user=user,
+                client_uuid=uuid.uuid4(),
+                occurred_at=_dt(local_date, 7),
+                utc_offset=UTC_OFFSET,
+                source="manual",
+                weight_kg=_weight_kg_for_offset(offset),
             )
         )
         touched.add(local_date)
@@ -238,9 +308,14 @@ def _seed_cycle(user, history_start, as_of) -> set[datetime.date]:
             local_date = history_start + datetime.timedelta(days=period_offset)
             cycle_logs.append(
                 CycleLog(
-                    user=user, client_uuid=uuid.uuid4(), occurred_at=_dt(local_date, 9),
-                    utc_offset=UTC_OFFSET, source="manual", date=local_date,
-                    event="period_start" if day_in_period == 0 else "", flow=flow,
+                    user=user,
+                    client_uuid=uuid.uuid4(),
+                    occurred_at=_dt(local_date, 9),
+                    utc_offset=UTC_OFFSET,
+                    source="manual",
+                    date=local_date,
+                    event="period_start" if day_in_period == 0 else "",
+                    flow=flow,
                     symptoms=["cramps", "fatigue"] if day_in_period < 2 else [],
                     energy_rating=2 if day_in_period < 2 else 3,
                 )
@@ -251,9 +326,16 @@ def _seed_cycle(user, history_start, as_of) -> set[datetime.date]:
             local_date = history_start + datetime.timedelta(days=ovulation_offset)
             cycle_logs.append(
                 CycleLog(
-                    user=user, client_uuid=uuid.uuid4(), occurred_at=_dt(local_date, 9),
-                    utc_offset=UTC_OFFSET, source="manual", date=local_date,
-                    event="", flow="", symptoms=["mild_cramping"], energy_rating=4,
+                    user=user,
+                    client_uuid=uuid.uuid4(),
+                    occurred_at=_dt(local_date, 9),
+                    utc_offset=UTC_OFFSET,
+                    source="manual",
+                    date=local_date,
+                    event="",
+                    flow="",
+                    symptoms=["mild_cramping"],
+                    energy_rating=4,
                 )
             )
             touched.add(local_date)

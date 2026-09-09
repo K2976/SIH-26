@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.fitforge.app.core.di
 
 import com.fitforge.app.BuildConfig

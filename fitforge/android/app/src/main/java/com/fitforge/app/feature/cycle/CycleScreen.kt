@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "MagicNumber")
+
 package com.fitforge.app.feature.cycle
 
 import android.content.Intent
@@ -88,7 +90,12 @@ fun CycleScreen(viewModel: CycleScreenViewModel = hiltViewModel()) {
 
             ForecastSection(uiState)
             PatternSection(uiState)
-            CalendarSection(uiState = uiState, onLogStart = viewModel::logPeriodStart, onLogEnd = viewModel::logPeriodEnd, onLogSpotting = viewModel::logSpotting)
+            CalendarSection(
+                uiState = uiState,
+                onLogStart = viewModel::logPeriodStart,
+                onLogEnd = viewModel::logPeriodEnd,
+                onLogSpotting = viewModel::logSpotting,
+            )
             TrackingModeSection(selected = uiState.trackingMode, onSelect = viewModel::setTrackingMode)
             DiscreetModeSection(enabled = uiState.discreetMode, onToggle = viewModel::setDiscreetMode)
 
@@ -228,14 +235,20 @@ private fun TrackingModeSection(selected: String?, onSelect: (String) -> Unit) {
 
 @Composable
 private fun DiscreetModeSection(enabled: Boolean, onToggle: (Boolean) -> Unit) {
-    Card(shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.cycle_discreet_mode_title), style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+                Text(
+                    stringResource(R.string.cycle_discreet_mode_title),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                )
                 Text(stringResource(R.string.cycle_discreet_mode_desc), style = MaterialTheme.typography.bodySmall)
             }
             Switch(checked = enabled, onCheckedChange = onToggle)

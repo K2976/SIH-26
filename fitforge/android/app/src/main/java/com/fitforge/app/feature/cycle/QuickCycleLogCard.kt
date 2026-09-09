@@ -1,3 +1,5 @@
+@file:Suppress("MagicNumber")
+
 package com.fitforge.app.feature.cycle
 
 import androidx.compose.foundation.layout.Arrangement

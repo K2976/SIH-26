@@ -1,3 +1,5 @@
+@file:Suppress("UnusedParameter")
+
 package com.fitforge.app.feature.logbook
 
 import androidx.compose.foundation.clickable
@@ -93,7 +95,10 @@ private fun ActiveSessionCard(
                 Text(stringResource(R.string.log_elapsed_label, metrics.elapsedMinutes))
                 Text(
                     if (unitPreference == "imperial") {
-                        stringResource(R.string.log_volume_label_lb, com.fitforge.app.core.units.kgToLb(metrics.volumeKg))
+                        stringResource(
+                            R.string.log_volume_label_lb,
+                            com.fitforge.app.core.units.kgToLb(metrics.volumeKg),
+                        )
                     } else {
                         stringResource(R.string.log_volume_label, metrics.volumeKg)
                     },

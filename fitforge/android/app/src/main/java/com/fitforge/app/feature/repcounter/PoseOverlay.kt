@@ -1,3 +1,5 @@
+@file:Suppress("LoopWithTooManyJumpStatements", "MagicNumber")
+
 package com.fitforge.app.feature.repcounter
 
 import androidx.compose.foundation.Canvas

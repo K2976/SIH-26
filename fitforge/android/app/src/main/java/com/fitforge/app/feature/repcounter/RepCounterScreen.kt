@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "MagicNumber")
+
 package com.fitforge.app.feature.repcounter
 
 import android.Manifest
@@ -59,7 +61,14 @@ fun RepCounterScreen(
         }
 
         Surface(color = Color.Black.copy(alpha = 0.55f), modifier = Modifier.fillMaxSize()) {
-            RepCounterControls(viewModel, onDone, hasCameraPermission, onRequestPermission = { permissionLauncher.launch(Manifest.permission.CAMERA) })
+            RepCounterControls(
+                viewModel,
+                onDone,
+                hasCameraPermission,
+                onRequestPermission = {
+                    permissionLauncher.launch(Manifest.permission.CAMERA)
+                },
+            )
         }
     }
 }
@@ -120,7 +129,11 @@ private fun RepCounterControls(
         verticalArrangement = androidx.compose.foundation.layout.Arrangement.Bottom,
     ) {
         if (!hasCameraPermission) {
-            Text("Camera access is required to count reps.", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                "Camera access is required to count reps.",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyLarge,
+            )
             Button(onClick = onRequestPermission, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                 Text("Grant camera permission")
             }
@@ -138,10 +151,15 @@ private fun RepCounterControls(
             }
 
             is RepCounterUiState.PositionGuide -> {
-                Text(positionGuideText(state.cameraPosition), color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    positionGuideText(state.cameraPosition),
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
                 if (!state.hasCachedCalibration) {
                     Text(
-                        "First time with this exercise: after we confirm we can see you, you'll do one slow demo rep so we can learn your range of motion.",
+                        "First time with this exercise: after we confirm we can see you, " +
+                            "you'll do one slow demo rep so we can learn your range of motion.",
                         color = Color.White,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp),
@@ -200,7 +218,10 @@ private fun RepCounterControls(
                 ) {
                     Text("Save set")
                 }
-                OutlinedButton(onClick = viewModel::discardSet, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                OutlinedButton(
+                    onClick = viewModel::discardSet,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                ) {
                     Text("Discard")
                 }
             }
