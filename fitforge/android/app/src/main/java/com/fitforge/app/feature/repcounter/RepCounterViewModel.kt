@@ -41,6 +41,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -90,6 +92,11 @@ class RepCounterViewModel @Inject constructor(
     private var previousSmoothed: AngleSample? = null
     private var machineState = RepMachineState()
     private val completedReps = mutableListOf<CompletedRep>()
+
+    // Training-data capture for the future classifier (Prompt C) — every frame and every
+    // rep outcome of the current set, additive to completedReps above, never read from.
+    private val recordedFrames = mutableListOf<RecordedLandmarkFrame>()
+    private val recordedRepLabels = mutableListOf<RecordedRepLabel>()
 
     init {
         viewModelScope.launch {
@@ -273,11 +280,14 @@ class RepCounterViewModel @Inject constructor(
         previousSmoothed = null
         machineState = RepMachineState()
         completedReps.clear()
+        recordedFrames.clear()
+        recordedRepLabels.clear()
         _uiState.value = RepCounterUiState.Counting(repCount = 0)
     }
 
     private fun handleCounting(frame: PoseFrame, config: ExercisePoseConfig) {
         val cal = resolveCalibration(calibration, exerciseSlug, System.currentTimeMillis()) ?: return
+        recordedFrames += frame.toRecordedFrame()
         val raw = computeAngleSample(frame, config)
         val smoothed = smoothAngleSample(previousSmoothed, raw)
         previousSmoothed = smoothed
@@ -286,9 +296,11 @@ class RepCounterViewModel @Inject constructor(
         when (val event = result.event) {
             is RepEvent.Completed -> {
                 completedReps += event.rep
+                recordedRepLabels += event.rep.toRecordedRepLabel(config.symmetryToleranceDeg)
                 _uiState.value = RepCounterUiState.Counting(completedReps.size, event.rep.toFeedback(config))
             }
             is RepEvent.Rejected -> {
+                recordedRepLabels += event.rep.toRecordedRepLabel()
                 val current = _uiState.value as? RepCounterUiState.Counting ?: return
                 _uiState.value = current.copy(
                     lastFeedback = RepFeedback(
@@ -309,8 +321,16 @@ class RepCounterViewModel @Inject constructor(
     fun finishSet() {
         val config = poseConfig ?: return
         val cal = resolveCalibration(calibration, exerciseSlug, System.currentTimeMillis()) ?: return
-        (finalizeRepStateMachine(machineState, config) as? RepEvent.Completed)?.let { completedReps += it.rep }
+        when (val last = finalizeRepStateMachine(machineState, config)) {
+            is RepEvent.Completed -> {
+                completedReps += last.rep
+                recordedRepLabels += last.rep.toRecordedRepLabel(config.symmetryToleranceDeg)
+            }
+            is RepEvent.Rejected -> recordedRepLabels += last.rep.toRecordedRepLabel()
+            null -> Unit
+        }
         machineState = RepMachineState()
+        logRecordedSequence(config, cal)
 
         if (completedReps.isEmpty()) {
             _uiState.value = cal.toReadyState()
@@ -319,6 +339,23 @@ class RepCounterViewModel @Inject constructor(
         val romAchieved = if (completedReps.all { it.depthReached && it.lockoutReached }) "full" else "partial"
         val avgTempoMs = completedReps.map { it.tempoMs }.average().roundToInt()
         _uiState.value = RepCounterUiState.SetComplete(completedReps.size, romAchieved, avgTempoMs)
+    }
+
+    /** Training-data capture (Prompt C) — fires on every finished set, saved or discarded afterward. */
+    private fun logRecordedSequence(config: ExercisePoseConfig, cal: CalibrationProfile) {
+        if (recordedFrames.isEmpty()) return
+        val framesJson = Json.encodeToString(recordedFrames.toList())
+        val labelsJson = Json.encodeToString(recordedRepLabels.toList())
+        val calibrationSource = if (cal.isUserCalibrated) "user_calibrated" else "default"
+        viewModelScope.launch {
+            workoutRepository.logPoseSequence(
+                exerciseSlug = exerciseSlug,
+                cameraPosition = config.cameraPosition.name.lowercase(),
+                calibrationSource = calibrationSource,
+                landmarkFramesJson = framesJson,
+                repLabelsJson = labelsJson,
+            )
+        }
     }
 
     /** Writes the finished set exactly like manual entry, except `source`. */

@@ -44,6 +44,13 @@ class SyncEventSerializer(serializers.Serializer):
         required=False, allow_null=True, min_value=1, max_value=5
     )
 
+    # pose_landmark_sequence (`exercise` above is reused for this type too).
+    # Both are JSON-encoded strings, not structured fields — see the model docstring.
+    camera_position = serializers.CharField(required=False, allow_blank=True)
+    calibration_source = serializers.CharField(required=False, allow_blank=True)
+    landmark_frames = serializers.CharField(required=False)
+    rep_labels = serializers.CharField(required=False)
+
 
 class SyncRequestSerializer(serializers.Serializer):
     events = SyncEventSerializer(many=True)

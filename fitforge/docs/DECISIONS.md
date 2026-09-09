@@ -475,3 +475,132 @@ rarely credit full depth afterward — the mirror image of Prompt A's
 "don't trust one noisy extreme" concern, mitigated by the confidence gate
 but not eliminated by it.
 
+## 2026-09-10 — Exercise/rep-quality classifier: the data gate is real, not a formality
+
+**No model is trained. None ships with this change. Zero real landmark
+sequences exist to train on.** This is a from-scratch dev repo — the camera
+pipeline (Prompts A/B, above) has never run against a real person in
+production; there are no users, so there is no data. Training now would mean
+training on nothing or on fabricated data, and reporting an "accuracy" for
+that would be the exact dishonest outcome this task warned against and
+`CLAUDE.md` rule 2 forbids outright ("never return a value the code did not
+derive from stored data"). So this slice splits cleanly into what's real and
+what's honestly blocked:
+
+**Built and verified (real, working code):**
+
+- **Data collection**, wired end-to-end through the existing sync
+  architecture: a new `PoseLandmarkSequence` diary-shaped model
+  (`backend/apps/diary/models.py`), captured on-device in
+  `RepCounterViewModel` for every completed set (saved *or* discarded — a
+  discarded set's motion data is still valid, even if the lifter didn't want
+  it logged to their workout log) and synced through `/api/v1/sync/` like
+  every other diary row. See `RepQuality.kt` (a rule-based proxy label
+  derived from the exact same fields `CompletedRep` already carries — a
+  label, not a new measurement) and `feature/repcounter/
+  PoseSequenceRecording.kt` for how a raw `PoseFrame` stream and
+  `CompletedRep`/`RejectedRep` events become training rows.
+  - **`landmark_frames`/`rep_labels` are JSON-encoded text columns
+    (`TextField`), not `JSONField`.** First attempt used `JSONField` +
+    drf-spectacular's free-form-object schema (`{}`), which generates a
+    Kotlin `@Contextual kotlin.Any` field in the Retrofit client — requiring
+    a registered contextual serializer for whatever concrete type gets
+    passed, which this app's `Serializers.kt` doesn't have and which
+    couldn't be verified end-to-end without a live backend. Reusing the same
+    JSON string for both local Room storage and the wire payload sidesteps
+    the whole problem: the generated field is a plain `kotlin.String?`, no
+    serialization plumbing needed anywhere. `sync.py` validates each is
+    parseable JSON before accepting it, so a malformed payload is rejected
+    per-event rather than stored as unusable text.
+  - **Excluded from `DailyState` recompute** (`_TYPES_EXCLUDED_FROM_DAILY_STATE`
+    in `sync.py`) — training-data capture never feeds the engine or any
+    `UserState` computation, per `CLAUDE.md`'s "Features read `UserState`,
+    never each other's tables."
+  - `export_pose_sequences` (new Django management command,
+    `apps/diary/management/commands/`) dumps collected rows to one JSON file
+    — the only interface between the Django backend and `ml/`, which has no
+    Django dependency at all and never touches the database directly.
+- **The training pipeline** (`fitforge/ml/`): `dataset.py` (windowing raw
+  sequences into fixed-length per-rep/per-set arrays), `model.py` (a small
+  1D-CNN per the pose-based exercise-recognition literature — sequence model
+  over joint-landmark features, not raw-frame video), `train.py` (CLI,
+  with the sample-size gate below), all pure Python with no Django coupling.
+  **Verified by actually installing TensorFlow 2.21.0 (current PyPI stable,
+  confirmed via PyPI directly, not guessed) and running `test_pipeline.py`
+  against it** — a synthetic-data smoke test, not a training claim: dataset
+  windowing produces correctly-shaped arrays from the same JSON shape
+  `export_pose_sequences` emits, the sample-size gate actually refuses a
+  too-small dataset (checked with an intentionally tiny 2-example fixture),
+  and a model builds/trains/exports to a valid non-empty `.tflite` file.
+  - **Keras 3 → TFLite requires a SavedModel round-trip, not
+    `TFLiteConverter.from_keras_model` directly.** Known to be unreliable
+    for Keras 3 (TensorFlow 2.16+'s default) per public TensorFlow issues;
+    confirmed by installing TF 2.21.0 and testing both paths for real rather
+    than trusting either the docs or the GitHub issue thread — `model.export()`
+    to a temp dir, then `TFLiteConverter.from_saved_model()`, is what
+    `model.py.export_tflite` does and is the path that was actually run.
+  - **`MIN_SAMPLES_PER_CLASS = 30`** in `train.py` — a deliberately
+    conservative floor, not derived from a formula. Its only job is to stop
+    a lucky train/test split on a handful of examples from producing a
+    misleadingly high held-out accuracy. `check_sample_size` blocks and
+    prints exactly which classes are short rather than training anyway; this
+    was verified to actually refuse (`test_sample_size_gate_blocks_small_data`,
+    and separately by running `train.py` against a real 2-example dataset
+    file and confirming it exits 1 with the blocked message instead of
+    producing a number).
+  - **`WINDOW_LENGTH = 60` frames (~2s at 30fps) and zero-padding for a
+    landmark missing from a frame are provisional, documented choices**, not
+    validated ones — real data may show different rep lengths or
+    landmark-visibility patterns than assumed here. Flagged in `ml/README.md`
+    to be revisited once real data exists, not treated as settled.
+  - `requirements.txt` pins only `tensorflow==2.21.0`; numpy is resolved
+    transitively through TensorFlow's own pin rather than guessed at
+    directly, per `CLAUDE.md`'s "say so rather than guessing" on versions.
+  - **Not part of CI** (`.github/workflows/ci.yml`'s backend job is scoped to
+    `working-directory: fitforge/backend`) — deliberate: a TensorFlow install
+    in CI for a pipeline that currently has nothing to train on would be pure
+    cost. Revisit once training actually happens regularly.
+
+**Honestly not built:**
+
+- **No trained model, no `.tflite` artifact ships with this change, no
+  accuracy number is reported anywhere** — because none was measured. Any
+  number here would be fabricated.
+- **No on-device TFLite integration in the Android app.** Wiring a Kotlin
+  interpreter wrapper into `RepCounterViewModel` with no model to load would
+  be dead code with nothing to exercise it — the construction-phase rule
+  against partial/placeholder implementations applies. `ml/README.md`
+  documents exactly where that integration point is (additive to the
+  existing `RepEvent` flow in `handleCounting`, alongside the live tracker,
+  never blocking it) for when a real model exists and is judged good enough
+  to ship. "No perceptible lag" (this task's DONE-WHEN) can only be verified
+  on a real device, same unresolved gap as the pose-model benchmark flagged
+  2026-09-05 above.
+- **Rep-quality labels bootstrap from the existing rule-based heuristic
+  (`RepQuality.kt`), not human annotation.** No annotation pipeline exists.
+  The classifier's actual value proposition — learning to generalize past
+  the hand-tuned thresholds' edge cases — depends on this being a reasonable
+  starting point, not a limitation that's been resolved.
+
+**This is a genuine gate, not a formality, and the honest state is: pipeline
+built and mechanically verified; training blocked on data that doesn't exist
+yet; nothing downstream of that (on-device deployment, a real accuracy
+number) can honestly proceed until real people use the calibrated tracker
+from Prompts A and B enough to produce a dataset.**
+
+- **Known pre-production risk, not fixed here: sync payload size.** A full
+  set's landmark sequence is buffered client-side and JSON-encoded into one
+  string that rides the batched `/api/v1/sync/` POST. Django's
+  `DATA_UPLOAD_MAX_MEMORY_SIZE` (2.5MB default) rejects the whole request at
+  parse time if exceeded, and a long set's raw 30fps frame buffer can
+  approach that alone — meaning one oversized pose sequence could 400 every
+  other pending row batched with it, not just its own. Unverified without a
+  device; see `fitforge/ml/README.md` for the mitigation direction
+  (downsample toward the training window at capture time) and why it's
+  deferred rather than guessed at now.
+- **Migration number collision risk.** `apps/diary/migrations/0003_pose_landmark_sequence`
+  was authored against this branch's history; if a concurrent branch (e.g.
+  nutrition logging) also adds a `0003_*` migration, whoever merges second
+  will need to renumber one of them. Flagged for the merger, not resolved
+  here since it depends on merge order.
+

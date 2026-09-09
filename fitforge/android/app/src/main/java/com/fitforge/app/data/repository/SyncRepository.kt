@@ -4,6 +4,8 @@ package com.fitforge.app.data.repository
 
 import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.CycleLogEntity
+import com.fitforge.app.core.database.PoseLandmarkSequenceDao
+import com.fitforge.app.core.database.PoseLandmarkSequenceEntity
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.SetLogEntity
 import com.fitforge.app.core.database.SyncStatus
@@ -61,6 +63,20 @@ private fun CycleLogEntity.toSyncEvent() = SyncEvent(
     energyRating = energyRating,
 )
 
+private fun PoseLandmarkSequenceEntity.toSyncEvent() = SyncEvent(
+    type = TypeEnum.pose_landmark_sequence,
+    clientUuid = UUID.fromString(diary.clientUuid),
+    occurredAt = diary.occurredAt,
+    utcOffset = diary.utcOffset,
+    source = diary.source,
+    supersedes = diary.supersedes?.let(UUID::fromString),
+    exercise = exerciseSlug,
+    cameraPosition = cameraPosition,
+    calibrationSource = calibrationSource,
+    landmarkFrames = landmarkFramesJson,
+    repLabels = repLabelsJson,
+)
+
 /**
  * Pushes PENDING rows to `/api/v1/sync/`. Sessions are ordered ahead of their
  * own sets in every batch — `SyncView` does a live, non-transactional lookup
@@ -70,13 +86,14 @@ private fun CycleLogEntity.toSyncEvent() = SyncEvent(
  */
 /** Which DAO a pending row came from, so a sync response's per-index errors
  * can be routed back to the right table's updateSyncStatus. */
-private enum class PendingKind { SESSION, SET, CYCLE_LOG }
+private enum class PendingKind { SESSION, SET, CYCLE_LOG, POSE_SEQUENCE }
 
 @Singleton
 class SyncRepository @Inject constructor(
     private val sessionDao: WorkoutSessionDao,
     private val setLogDao: SetLogDao,
     private val cycleLogDao: CycleLogDao,
+    private val poseLandmarkSequenceDao: PoseLandmarkSequenceDao,
     private val syncApi: SyncApi,
 ) {
     /** Returns true if every pending row synced (or there were none); false means retry. */
@@ -84,14 +101,19 @@ class SyncRepository @Inject constructor(
         val pendingSessions = sessionDao.getPending()
         val pendingSets = setLogDao.getPending()
         val pendingCycleLogs = cycleLogDao.getPending()
-        if (pendingSessions.isEmpty() && pendingSets.isEmpty() && pendingCycleLogs.isEmpty()) return true
+        val pendingPoseSequences = poseLandmarkSequenceDao.getPending()
+        val nothingPending = listOf(pendingSessions, pendingSets, pendingCycleLogs, pendingPoseSequences)
+            .all { it.isEmpty() }
+        if (nothingPending) return true
 
         val ordered = pendingSessions.map { it.diary.clientUuid to PendingKind.SESSION } +
             pendingSets.map { it.diary.clientUuid to PendingKind.SET } +
-            pendingCycleLogs.map { it.diary.clientUuid to PendingKind.CYCLE_LOG }
+            pendingCycleLogs.map { it.diary.clientUuid to PendingKind.CYCLE_LOG } +
+            pendingPoseSequences.map { it.diary.clientUuid to PendingKind.POSE_SEQUENCE }
         val events = pendingSessions.map { it.toSyncEvent() } +
             pendingSets.map { it.toSyncEvent() } +
-            pendingCycleLogs.map { it.toSyncEvent() }
+            pendingCycleLogs.map { it.toSyncEvent() } +
+            pendingPoseSequences.map { it.toSyncEvent() }
 
         val response = syncApi.syncCreate(SyncRequest(events = events))
         if (!response.isSuccessful) return false
@@ -104,6 +126,7 @@ class SyncRepository @Inject constructor(
                 PendingKind.SESSION -> sessionDao.updateSyncStatus(clientUuid, status)
                 PendingKind.SET -> setLogDao.updateSyncStatus(clientUuid, status)
                 PendingKind.CYCLE_LOG -> cycleLogDao.updateSyncStatus(clientUuid, status)
+                PendingKind.POSE_SEQUENCE -> poseLandmarkSequenceDao.updateSyncStatus(clientUuid, status)
             }
         }
         return failedIndices.isEmpty()

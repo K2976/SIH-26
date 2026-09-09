@@ -3,6 +3,8 @@ package com.fitforge.app.data.repository
 import com.fitforge.app.core.database.BaseDiaryColumns
 import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.CycleLogEntity
+import com.fitforge.app.core.database.PoseLandmarkSequenceDao
+import com.fitforge.app.core.database.PoseLandmarkSequenceEntity
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.SetLogEntity
 import com.fitforge.app.core.database.SyncStatus
@@ -69,6 +71,16 @@ private class FakeCycleLogDao(private val pending: List<CycleLogEntity> = emptyL
     override suspend fun deleteAll() = error("not needed")
 }
 
+private class FakePoseLandmarkSequenceDao(private val pending: List<PoseLandmarkSequenceEntity> = emptyList()) :
+    PoseLandmarkSequenceDao {
+    val statusUpdates = mutableListOf<Pair<String, SyncStatus>>()
+    override suspend fun insert(sequence: PoseLandmarkSequenceEntity) = error("not needed")
+    override suspend fun getPending(): List<PoseLandmarkSequenceEntity> = pending
+    override suspend fun updateSyncStatus(clientUuid: String, status: SyncStatus) {
+        statusUpdates += clientUuid to status
+    }
+}
+
 /** Records the events it was sent so the test can assert ordering. */
 private class RecordingSyncApi(private val response: SyncResponse) : SyncApi {
     var lastRequest: SyncRequest? = null
@@ -98,6 +110,7 @@ class SyncRepositoryTest {
             FakeSessionDao(listOf(session)),
             FakeSetLogDao(listOf(set)),
             FakeCycleLogDao(),
+            FakePoseLandmarkSequenceDao(),
             api,
         )
 
@@ -136,7 +149,7 @@ class SyncRepositoryTest {
         val api = RecordingSyncApi(response)
         val sessionDao = FakeSessionDao(listOf(okSession))
         val setLogDao = FakeSetLogDao(listOf(badSet))
-        val repository = SyncRepository(sessionDao, setLogDao, FakeCycleLogDao(), api)
+        val repository = SyncRepository(sessionDao, setLogDao, FakeCycleLogDao(), FakePoseLandmarkSequenceDao(), api)
 
         val success = repository.syncPending()
 

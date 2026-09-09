@@ -39,6 +39,30 @@ class WorkoutSession(DiaryEntry):  # noqa: DJ008 -- preserve existing string rep
     notes = models.TextField(blank=True)
 
 
+class PoseLandmarkSequence(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
+    """One completed camera-tracked set's raw landmark sequence plus the
+    deterministic per-rep labels Prompt A's state machine already computed
+    (depth/lockout/symmetry/rejection reason) — training data for the future
+    exercise + rep-quality classifier (ml/), never read by the engine or any
+    `UserState` computation. See `fitforge/ml/README.md` for the training
+    pipeline this feeds and its current sample-size gate.
+    """
+
+    exercise = models.ForeignKey(Exercise, to_field="slug", on_delete=models.PROTECT)
+    camera_position = models.CharField(max_length=16)
+    # "user_calibrated" | "default" — which CalibrationProfile (Prompt B) counted this set,
+    # so a low-quality default-range set can be excluded from training later if needed.
+    calibration_source = models.CharField(max_length=16)
+    # JSON-encoded text, not JSONField: the Android client already serializes this once
+    # for local Room storage, and reusing that same string for the wire payload avoids
+    # a free-form JSONField producing an untyped `Any` in the generated Retrofit client.
+    # [{"t_ms": int, "landmarks": {"LEFT_KNEE": [x, y, z, visibility], ...}}, ...]
+    landmark_frames = models.TextField()
+    # [{"start_ms", "end_ms", "outcome": "completed"|"rejected", "depth_reached",
+    #   "lockout_reached", "symmetry_deviation_deg", "tempo_ms", "quality", "reason"}, ...]
+    rep_labels = models.TextField(default="[]", blank=True)
+
+
 class SetLog(DiaryEntry):  # noqa: DJ008 -- preserve existing string representation
     session = models.ForeignKey(WorkoutSession, on_delete=models.CASCADE, related_name="sets")
     exercise = models.ForeignKey(Exercise, to_field="slug", on_delete=models.PROTECT)

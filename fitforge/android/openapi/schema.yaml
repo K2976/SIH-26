@@ -1937,6 +1937,14 @@ components:
           maximum: 5
           minimum: 1
           nullable: true
+        camera_position:
+          type: string
+        calibration_source:
+          type: string
+        landmark_frames:
+          type: string
+        rep_labels:
+          type: string
       required:
       - client_uuid
       - occurred_at
@@ -2097,6 +2105,7 @@ components:
       - weight_log
       - sleep_log
       - cycle_log
+      - pose_landmark_sequence
       type: string
       description: |-
         * `planned_session` - planned_session
@@ -2107,6 +2116,7 @@ components:
         * `weight_log` - weight_log
         * `sleep_log` - sleep_log
         * `cycle_log` - cycle_log
+        * `pose_landmark_sequence` - pose_landmark_sequence
     UnitPreferenceEnum:
       enum:
       - metric

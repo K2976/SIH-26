@@ -95,6 +95,13 @@ backend/.env
 *.sqlite3
 *.sqlite3-journal
 
+# Python / ml training pipeline (fitforge/ml/) — never part of CI (see ci.yml);
+# heavy TensorFlow venv, exported datasets, and trained models are all local-only.
+ml/.venv/
+ml/**/__pycache__/
+ml/*.tflite
+ml/dataset*.json
+
 # Android / Gradle
 android/local.properties
 android/.gradle/
