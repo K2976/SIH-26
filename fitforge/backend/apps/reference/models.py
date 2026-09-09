@@ -94,6 +94,33 @@ class Exercise(models.Model):
         return self.localized("instructions", locale)
 
 
+class FoodItem(models.Model):
+    """Versioned nutrition reference row used by every food logging path."""
+
+    slug = models.SlugField(max_length=64, unique=True)
+    name = models.JSONField()
+    kcal_per_100g = models.DecimalField(max_digits=8, decimal_places=2)
+    protein_g = models.DecimalField(max_digits=8, decimal_places=2)
+    carbs_g = models.DecimalField(max_digits=8, decimal_places=2)
+    fat_g = models.DecimalField(max_digits=8, decimal_places=2)
+    default_portion_g = models.DecimalField(max_digits=8, decimal_places=2)
+    portion_label = models.CharField(max_length=64)
+    source = models.CharField(max_length=128)
+    barcode = models.CharField(max_length=64, unique=True, null=True, blank=True)  # noqa: DJ001
+    is_active = models.BooleanField(default=True)
+    updated_at_version = models.PositiveIntegerField(default=0, db_index=True)
+
+    def __str__(self):
+        return self.slug
+
+    def save(self, *args, **kwargs):
+        self.updated_at_version = ReferenceVersion.bump()
+        super().save(*args, **kwargs)
+
+    def localized_name(self, locale: str = "en"):
+        return self.name.get(locale) or self.name.get("en")
+
+
 class TrainingMusicMapping(models.Model):
     """(training_focus, cycle_phase) -> curated genre + YouTube playlist.
 

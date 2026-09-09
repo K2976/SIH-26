@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.fitforge.app.core.di
 
 import android.content.Context
@@ -7,6 +9,8 @@ import com.fitforge.app.core.database.AppDatabase
 import com.fitforge.app.core.database.CalibrationProfileDao
 import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.ExerciseDao
+import com.fitforge.app.core.database.FoodItemDao
+import com.fitforge.app.core.database.MealDao
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.TrainingMusicMappingDao
 import com.fitforge.app.core.database.UserStateDao
@@ -50,6 +54,12 @@ object DatabaseModule {
     @Provides
     fun provideTrainingMusicMappingDao(db: AppDatabase): TrainingMusicMappingDao =
         db.trainingMusicMappingDao()
+
+    @Provides
+    fun provideFoodItemDao(db: AppDatabase): FoodItemDao = db.foodItemDao()
+
+    @Provides
+    fun provideMealDao(db: AppDatabase): MealDao = db.mealDao()
 
     @Provides
     @Singleton

@@ -114,7 +114,12 @@ DJANGO_SETTINGS_MODULE=fitforge.settings.dev
 DJANGO_SECRET_KEY=your-secure-development-key-here
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,10.0.2.2
 DATABASE_URL=postgresql://postgres:password@localhost:5432/fitforge
+GEMINI_API_KEY=
 ```
+
+Set `GEMINI_API_KEY` to a real Google AI Studio key before testing photo food
+labels. The server returns a setup error when it is blank; it never substitutes
+fake label data.
 
 > **Note for Android Emulators**: Include `10.0.2.2` in `DJANGO_ALLOWED_HOSTS` so the Android Emulator can reach your local development server.
 
@@ -138,6 +143,7 @@ FitForge requires an initial reference library of exercises (with movement patte
 
 ```bash
 python manage.py seed_exercises
+python manage.py seed_foods
 ```
 
 To export the reference bundle for the Android client offline database:
@@ -189,6 +195,8 @@ All endpoints require JWT Bearer Authentication (`Authorization: Bearer <token>`
 | `POST` | `/api/v1/sync/` | Batch upload offline diary entries (sessions, sets, meals, weights) |
 | `GET` | `/api/v1/reference/manifest/` | Check reference database version |
 | `GET` | `/api/v1/reference/exercises/` | Fetch exercise library delta updates |
+| `GET` | `/api/v1/reference/foods/` | Fetch local food table delta updates |
+| `POST` | `/api/v1/food/label/` | Detect catalog food names from a temporary photo |
 | `GET` | `/api/v1/app-config/` | Minimum supported app versions and runtime flags |
 
 ---

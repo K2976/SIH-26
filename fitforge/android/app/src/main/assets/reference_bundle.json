@@ -904,6 +904,50 @@
       "updated_at_version": 8
     }
   ],
+  "foods": [
+    {
+      "slug": "banana-raw",
+      "name": {"en": "Banana"},
+      "kcal_per_100g": "89.00",
+      "protein_g": "1.09",
+      "carbs_g": "22.84",
+      "fat_g": "0.33",
+      "default_portion_g": "118.00",
+      "portion_label": "1 medium banana ~118g",
+      "source": "USDA FoodData Central",
+      "barcode": "4011",
+      "is_active": true,
+      "updated_at_version": 0
+    },
+    {
+      "slug": "lentils-cooked",
+      "name": {"en": "Cooked lentils"},
+      "kcal_per_100g": "116.00",
+      "protein_g": "9.02",
+      "carbs_g": "20.13",
+      "fat_g": "0.38",
+      "default_portion_g": "180.00",
+      "portion_label": "1 katori ~180g",
+      "source": "USDA FoodData Central",
+      "barcode": null,
+      "is_active": true,
+      "updated_at_version": 0
+    },
+    {
+      "slug": "vegetable-biryani",
+      "name": {"en": "Vegetable biryani"},
+      "kcal_per_100g": "142.21",
+      "protein_g": "4.20",
+      "carbs_g": "18.80",
+      "fat_g": "5.60",
+      "default_portion_g": "250.00",
+      "portion_label": "1 plate ~250g",
+      "source": "Energy Content and Nutrient Profiles of Frequently Consumed Meals (2021)",
+      "barcode": null,
+      "is_active": true,
+      "updated_at_version": 0
+    }
+  ],
   "training_music_mappings": [
     {
       "training_focus": "endurance",

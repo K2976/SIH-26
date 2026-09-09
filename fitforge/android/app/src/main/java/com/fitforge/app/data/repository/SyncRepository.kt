@@ -4,6 +4,9 @@ package com.fitforge.app.data.repository
 
 import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.CycleLogEntity
+import com.fitforge.app.core.database.MealDao
+import com.fitforge.app.core.database.MealItemEntity
+import com.fitforge.app.core.database.MealLogEntity
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.SetLogEntity
 import com.fitforge.app.core.database.SyncStatus
@@ -61,6 +64,31 @@ private fun CycleLogEntity.toSyncEvent() = SyncEvent(
     energyRating = energyRating,
 )
 
+private fun MealLogEntity.toSyncEvent() = SyncEvent(
+    type = TypeEnum.meal_log,
+    clientUuid = UUID.fromString(diary.clientUuid),
+    occurredAt = diary.occurredAt,
+    utcOffset = diary.utcOffset,
+    source = diary.source,
+    supersedes = diary.supersedes?.let(UUID::fromString),
+)
+
+private fun MealItemEntity.toSyncEvent() = SyncEvent(
+    type = TypeEnum.meal_item,
+    clientUuid = UUID.fromString(diary.clientUuid),
+    occurredAt = diary.occurredAt,
+    utcOffset = diary.utcOffset,
+    source = diary.source,
+    supersedes = diary.supersedes?.let(UUID::fromString),
+    log = UUID.fromString(logClientUuid),
+    foodSlug = foodSlug,
+    quantity = quantity.toBigDecimal(),
+    calories = calories.toBigDecimal(),
+    proteinG = proteinG.toBigDecimal(),
+    carbsG = carbsG.toBigDecimal(),
+    fatG = fatG.toBigDecimal(),
+)
+
 /**
  * Pushes PENDING rows to `/api/v1/sync/`. Sessions are ordered ahead of their
  * own sets in every batch — `SyncView` does a live, non-transactional lookup
@@ -70,13 +98,14 @@ private fun CycleLogEntity.toSyncEvent() = SyncEvent(
  */
 /** Which DAO a pending row came from, so a sync response's per-index errors
  * can be routed back to the right table's updateSyncStatus. */
-private enum class PendingKind { SESSION, SET, CYCLE_LOG }
+private enum class PendingKind { SESSION, SET, CYCLE_LOG, MEAL_LOG, MEAL_ITEM }
 
 @Singleton
 class SyncRepository @Inject constructor(
     private val sessionDao: WorkoutSessionDao,
     private val setLogDao: SetLogDao,
     private val cycleLogDao: CycleLogDao,
+    private val mealDao: MealDao,
     private val syncApi: SyncApi,
 ) {
     /** Returns true if every pending row synced (or there were none); false means retry. */
@@ -84,14 +113,22 @@ class SyncRepository @Inject constructor(
         val pendingSessions = sessionDao.getPending()
         val pendingSets = setLogDao.getPending()
         val pendingCycleLogs = cycleLogDao.getPending()
-        if (pendingSessions.isEmpty() && pendingSets.isEmpty() && pendingCycleLogs.isEmpty()) return true
+        val pendingMealLogs = mealDao.getPendingLogs()
+        val pendingMealItems = mealDao.getPendingItems()
+        val pendingCount = pendingSessions.size + pendingSets.size + pendingCycleLogs.size +
+            pendingMealLogs.size + pendingMealItems.size
+        if (pendingCount == 0) return true
 
         val ordered = pendingSessions.map { it.diary.clientUuid to PendingKind.SESSION } +
             pendingSets.map { it.diary.clientUuid to PendingKind.SET } +
-            pendingCycleLogs.map { it.diary.clientUuid to PendingKind.CYCLE_LOG }
+            pendingCycleLogs.map { it.diary.clientUuid to PendingKind.CYCLE_LOG } +
+            pendingMealLogs.map { it.diary.clientUuid to PendingKind.MEAL_LOG } +
+            pendingMealItems.map { it.diary.clientUuid to PendingKind.MEAL_ITEM }
         val events = pendingSessions.map { it.toSyncEvent() } +
             pendingSets.map { it.toSyncEvent() } +
-            pendingCycleLogs.map { it.toSyncEvent() }
+            pendingCycleLogs.map { it.toSyncEvent() } +
+            pendingMealLogs.map { it.toSyncEvent() } +
+            pendingMealItems.map { it.toSyncEvent() }
 
         val response = syncApi.syncCreate(SyncRequest(events = events))
         if (!response.isSuccessful) return false
@@ -104,6 +141,8 @@ class SyncRepository @Inject constructor(
                 PendingKind.SESSION -> sessionDao.updateSyncStatus(clientUuid, status)
                 PendingKind.SET -> setLogDao.updateSyncStatus(clientUuid, status)
                 PendingKind.CYCLE_LOG -> cycleLogDao.updateSyncStatus(clientUuid, status)
+                PendingKind.MEAL_LOG -> mealDao.updateMealLogStatus(clientUuid, status)
+                PendingKind.MEAL_ITEM -> mealDao.updateMealItemStatus(clientUuid, status)
             }
         }
         return failedIndices.isEmpty()

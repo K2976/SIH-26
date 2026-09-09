@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from apps.reference.models import Exercise, TrainingMusicMapping
+from apps.reference.models import Exercise, FoodItem, TrainingMusicMapping
 
 
 @extend_schema_field({"type": "object"})
@@ -38,6 +38,25 @@ class ExerciseSerializer(serializers.ModelSerializer):
             "is_bodyweight",
             "pose_config",
             "camera_position",
+            "is_active",
+            "updated_at_version",
+        ]
+
+
+class FoodItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FoodItem
+        fields = [
+            "slug",
+            "name",
+            "kcal_per_100g",
+            "protein_g",
+            "carbs_g",
+            "fat_g",
+            "default_portion_g",
+            "portion_label",
+            "source",
+            "barcode",
             "is_active",
             "updated_at_version",
         ]

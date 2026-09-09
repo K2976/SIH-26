@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.diary.models import WorkoutSession
+from apps.diary.models import MealItem, WorkoutSession
 
 User = get_user_model()
 
@@ -90,7 +90,55 @@ def test_sync_timestamp_rejection(api_client, user):
     assert response.status_code == 200
     assert response.data["success_count"] == 0
     assert len(response.data["errors"]) == 2
-
     error_texts = [e["error"] for e in response.data["errors"]]
     assert any("more than one day in the future" in e for e in error_texts)
     assert any("implausibly far in the past" in e for e in error_texts)
+
+
+@pytest.mark.django_db
+def test_photo_search_and_barcode_create_equivalent_meal_items(api_client, user):
+    now = timezone.now().isoformat()
+    events = []
+    for source in ("photo", "search", "barcode"):
+        meal_uuid = str(uuid.uuid4())
+        events.extend(
+            [
+                {
+                    "type": "meal_log",
+                    "client_uuid": meal_uuid,
+                    "occurred_at": now,
+                    "source": source,
+                },
+                {
+                    "type": "meal_item",
+                    "client_uuid": str(uuid.uuid4()),
+                    "occurred_at": now,
+                    "source": source,
+                    "log": meal_uuid,
+                    "food_slug": "vegetable-biryani",
+                    "quantity": "250.00",
+                    "calories": "355.53",
+                    "protein_g": "10.50",
+                    "carbs_g": "47.00",
+                    "fat_g": "14.00",
+                },
+            ]
+        )
+
+    response = api_client.post(reverse("sync"), {"events": events}, format="json")
+
+    assert response.data == {"success_count": 6, "errors": []}
+    items = list(MealItem.objects.filter(user=user).order_by("source"))
+    assert [item.source for item in items] == ["barcode", "photo", "search"]
+    snapshots = {
+        (
+            item.food_slug,
+            item.quantity,
+            item.calories,
+            item.protein_g,
+            item.carbs_g,
+            item.fat_g,
+        )
+        for item in items
+    }
+    assert len(snapshots) == 1

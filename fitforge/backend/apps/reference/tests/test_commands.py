@@ -5,7 +5,8 @@ import pytest
 from django.core.management import call_command
 
 from apps.reference.management.commands.seed_exercises import DEFAULT_SEED_PATH
-from apps.reference.models import Exercise, ReferenceVersion
+from apps.reference.management.commands.seed_foods import DEFAULT_SEED_PATH as FOOD_SEED_PATH
+from apps.reference.models import Exercise, FoodItem, ReferenceVersion
 
 pytestmark = pytest.mark.django_db
 
@@ -74,3 +75,22 @@ class TestExportReferenceBundle:
 
         bundle = json.loads(output.read_text())
         assert "id" not in bundle["exercises"][0]
+
+
+class TestSeedFoods:
+    def test_seed_is_idempotent_and_includes_portion_defaults(self):
+        expected = len(json.loads(FOOD_SEED_PATH.read_text())["foods"])
+        call_command("seed_foods")
+        call_command("seed_foods")
+
+        assert FoodItem.objects.count() == expected
+        assert not FoodItem.objects.filter(default_portion_g__lte=0).exists()
+
+    def test_export_includes_foods_without_numeric_ids(self, tmp_path):
+        call_command("seed_foods")
+        output = tmp_path / "bundle.json"
+        call_command("export_reference_bundle", output=str(output))
+
+        foods = json.loads(output.read_text())["foods"]
+        assert len(foods) == FoodItem.objects.filter(is_active=True).count()
+        assert all("id" not in food for food in foods)

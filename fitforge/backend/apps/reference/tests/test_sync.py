@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 from rest_framework.test import APIClient
 
-from apps.reference.models import Exercise
+from apps.reference.models import Exercise, FoodItem
 
 pytestmark = pytest.mark.django_db
 
@@ -32,6 +32,7 @@ class TestManifest:
         assert resp.status_code == 200
         assert resp.data["reference_version"] == 2
         assert resp.data["table_counts"]["exercises"] == 2
+        assert resp.data["table_counts"]["foods"] == 0
 
     def test_does_not_require_auth(self, client):
         resp = client.get("/api/v1/reference/manifest/")
@@ -102,3 +103,25 @@ class TestExerciseDelta:
     def test_does_not_require_auth(self, client):
         resp = client.get("/api/v1/reference/exercises/")
         assert resp.status_code == 200
+
+
+class TestFoodDelta:
+    def test_foods_are_available_for_offline_sync(self, client):
+        food = FoodItem.objects.create(
+            slug="banana",
+            name={"en": "Banana"},
+            kcal_per_100g=Decimal("89"),
+            protein_g=Decimal("1.09"),
+            carbs_g=Decimal("22.84"),
+            fat_g=Decimal("0.33"),
+            default_portion_g=Decimal("118"),
+            portion_label="1 medium banana ~118g",
+            source="IFCT 2017",
+            barcode="8900000000001",
+        )
+        resp = client.get("/api/v1/reference/foods/")
+        assert resp.status_code == 200
+        assert resp.data[0]["slug"] == food.slug
+        assert resp.data[0]["default_portion_g"] == "118.00"
+        assert resp.data[0]["barcode"] == "8900000000001"
+        assert "id" not in resp.data[0]
