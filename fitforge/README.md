@@ -158,8 +158,11 @@ cd android
 ```
 
 ### 3. Connect to the Backend
-- **Android Emulator**: In `android/app/build.gradle.kts`, debug builds point to `http://10.0.2.2:8000/` which automatically routes to your host machine's `http://localhost:8000/`.
-- **Physical Device**: Update `BASE_URL` in `android/app/build.gradle.kts` (or run a reverse ADB proxy via `adb reverse tcp:8000 tcp:8000`).
+- **Debug install**: `./gradlew installDebug` starts or reuses the local Django backend, configures and verifies ADB reverse-port forwarding, then installs the APK on connected authorized devices.
+- **Debug build only**: `./gradlew assembleDebug` remains side-effect free and does not start services or require a device.
+- **Release build**: Uses the hosted API URL and never invokes the local backend workflow.
+
+See [Run FitForge on a Physical Android Phone](docs/PHONE_BACKEND_SETUP.md) for prerequisites, logs, device selection, and manual troubleshooting.
 
 ---
 

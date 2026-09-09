@@ -89,6 +89,22 @@ tasks.withType<Detekt>().configureEach {
     jvmTarget = "17"
 }
 
+val preparePhoneBackend = tasks.register<Exec>("preparePhoneBackend") {
+    group = "installation"
+    description = "Starts the local backend and configures ADB reverse for debug installs"
+    workingDir(rootDir)
+    commandLine(
+        "bash",
+        rootDir.resolve("../scripts/prepare_phone_backend.sh").absolutePath,
+    )
+}
+
+// A command-line debug install targets a connected device, so prepare the
+// localhost backend bridge first. assembleDebug remains side-effect free for CI.
+tasks.matching { it.name == "installDebug" }.configureEach {
+    dependsOn(preparePhoneBackend)
+}
+
 val openApiGeneratedDir = layout.buildDirectory.dir("generated/openapi").get().asFile
 
 // Retrofit client generated from the backend's OpenAPI schema (see
