@@ -30,9 +30,16 @@ sealed interface RepCounterUiState {
     /** Cached calibration -> this is the whole flow for a repeat session. No cache -> falls through to [DemoRep]. */
     data class VisibilityCheck(val hasCachedCalibration: Boolean) : RepCounterUiState
 
-    data class DemoRep(val phase: DemoRepPhase, val message: String? = null) : RepCounterUiState
+    data class DemoRep(
+        val phase: DemoRepPhase,
+        val message: String? = null,
+        val repIndex: Int = 0,
+        val repCount: Int = 1,
+    ) : RepCounterUiState
 
-    data class Ready(val restAngleDeg: Double, val peakAngleDeg: Double) : RepCounterUiState
+    /** [isUserCalibrated] is false when the angles are the generic default, not this lifter's own. */
+    data class Ready(val restAngleDeg: Double, val peakAngleDeg: Double, val isUserCalibrated: Boolean) :
+        RepCounterUiState
 
     data class Counting(val repCount: Int, val lastFeedback: RepFeedback? = null) : RepCounterUiState
 

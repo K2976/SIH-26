@@ -362,3 +362,116 @@ they cannot prove `MIN_VELOCITY_PER_SEC`, `CONFIDENCE_LOSS_TOLERANCE_MS`, or
 the calibration flow feel right to an actual lifter. Do not treat this
 slice as tuned until that session happens.
 
+## 2026-09-10 — Per-user, per-exercise calibration overrides defaults
+
+Adds a per-user calibrated range per exercise, with a generic default as a
+fallback when calibration hasn't happened yet, and makes recalibration
+user-triggerable. Built on the fix above — same `Calibration.kt`/
+`CalibrationProfile` this fix's DECISIONS entry already covers.
+
+- **Multi-rep calibration (3 reps, not 1).** The existing demo-rep flow
+  (`RepCounterViewModel`'s `HOLD_STILL` → `PERFORMING` phases) now repeats
+  `PERFORMING` `DEMO_REP_COUNT` (3) times, concatenating every rep's angle
+  samples before calling `deriveCalibration` once. The single farthest-
+  from-rest point across all three reps becomes the calibrated peak — more
+  robust than trusting whichever one rep a single-rep flow happened to
+  catch (a rep the lifter under-commits to no longer sets the ceiling).
+  `DEMO_REP_MS` was reduced 6000→4000ms per rep so three reps' total time
+  is comparable to the old one-rep flow; this is a UX tuning call, not a
+  correctness one.
+- **Calibration now runs through the same smoothing pipeline as live
+  counting.** Previously `handleDemoRep` fed raw `computeAngleSample` output
+  straight to rest-averaging and extreme-finding, with no EMA pass — live
+  counting always smoothed first. Now both phases smooth via
+  `smoothAngleSample` before use (a separate `previousDemoSmoothed`
+  accumulator, since it's a different sample stream than a set's). Per this
+  task's explicit instruction to use "the same landmark pipeline as live
+  counting."
+- **Calibration still averages left/right; live counting doesn't, by
+  design, and that's a known, accepted mismatch.** Prompt A's fix made live
+  counting grade depth/lockout on the *stricter* joint (min for depth, max
+  for lockout) specifically to stop a noisy/occluded side from
+  manufacturing motion — see this file's 2026-09-10 fix entry above.
+  `deriveCalibration` keeps using `representativeAngle` (the average)
+  because a supervised demo rep is cooperative: both sides genuinely move
+  together, so there's no anti-cheat concern to defend against, and
+  averaging is the more representative summary of "this lifter's own
+  range." The known cost: for a lifter with real left/right asymmetry, the
+  calibrated peak (an average) sits deeper than their stricter-graded side
+  can reach during live counting, so `depthReached`/`lockoutReached` can
+  under-register slightly more often for asymmetric lifters than for
+  symmetric ones. Not fixed here — fixing it means either calibrating each
+  side separately (bigger change, no evidence yet it's needed) or
+  recalibrating the meaning of "depth" — flagged for the manual-calibration
+  session below to actually surface whether it matters in practice before
+  spending code on it.
+- **Confidence gating during calibration is ratio-based, not just
+  presence-based.** `visibleFraction` counts what fraction of a window's
+  frames had a usable angle; `deriveCalibration` and the hold-still check
+  both refuse (`CalibrationResult.LowConfidence` /
+  a restarted hold-still with the same message) below `MIN_VISIBLE_FRAME_RATIO`
+  (0.5) rather than only refusing when literally every frame was
+  unusable. An empty sample list is now categorized as `LowConfidence`
+  (confidence 0.0) instead of `InsufficientRange` — more accurate (there's
+  no data to have measured a range from) and exercised directly in
+  `CalibrationTest.kt`.
+- **Defaults are a small hardcoded map in `Calibration.kt`, not a backend
+  `pose_config` field.** Only three exercises support camera counting today
+  (`bodyweight-squat`, `push-up`, `dumbbell-bicep-curl`; confirmed via
+  `seed_data/exercises.json`), and these numbers are pose-model tuning
+  constants in the same category as `RepStateMachine.kt`'s `RESTING_BAND`
+  etc. — not reference content a nutritionist/trainer edits, so a backend
+  migration + sync round-trip for two more JSON keys would be schema churn
+  for numbers that live and get tuned alongside the state machine anyway.
+  Values are the same sanity-bound starting points this file already
+  recorded when Prompt A's rep-counting fix landed.
+- **`resolveCalibration(stored, slug, now) = stored ?: defaultCalibration(...)`
+  is the one read-path contract; every live-counting call site uses it.**
+  The existing mandatory first-time flow (calibrate before your first
+  tracked set) is unchanged and is still how virtually every user reaches a
+  calibrated profile — this fallback is a defensive-robustness contract,
+  proven at the pure-function level (`CalibrationTest.kt`), not a
+  user-facing "skip calibration" button. No such button exists: adding one
+  would let a user count reps against generic defaults indefinitely, which
+  the task didn't ask for and works against the whole point of calibrating.
+  `CalibrationProfile.isUserCalibrated` (`false` only for
+  `defaultCalibration`'s output) is how the UI tells a lifter which one
+  they're currently using, and drives the `Ready` screen's "Calibrate to
+  me" vs. "Recalibrate" button label.
+- **Recalibration reuses the first-time flow.** `recalibrate()` nulls the
+  in-memory profile and re-enters `VisibilityCheck`; a fresh
+  `CalibrationResult.Success` overwrites the stored row via the existing
+  `upsert` (`OnConflictStrategy.REPLACE`). No new persistence path, no Room
+  migration — `CalibrationProfileEntity`'s schema is unchanged; only
+  `CalibrationProfile` (the in-memory/pure type) gained
+  `isUserCalibrated`, which is never persisted (a stored row is always a
+  real calibration by construction).
+- **The default-fallback UI branch is currently unreachable in the live app,
+  and that's a deliberate, honest scope limit, not an oversight.**
+  `proceedPastVisibilityCheck` still gates on the stored profile directly
+  (null → mandatory `DemoRep`), so `Ready` is only ever reached with a real
+  calibration — `resolveCalibration`'s default branch, and the
+  `isUserCalibrated = false` UI text/button label, can't currently render.
+  This is intentional: the task asked for a read-path contract ("falls back
+  to defaults only if calibration hasn't been done yet"), not a "skip
+  calibration and count on defaults" feature — adding a way to reach
+  `Counting` without calibrating would work against the whole point of this
+  slice. `resolveCalibration` and `defaultCalibration` are proven at the
+  pure-function level (`CalibrationTest.kt`) and are real, load-bearing
+  defensive code (every live-counting call site resolves through them
+  instead of silently no-op'ing on a null profile) — just not reachable
+  through today's UI.
+
+**Manual follow-up required, not covered by synthetic tests:** whether 3
+demo reps actually feels right (too many/too few), whether the calibrated
+range holds up across a real set for someone with looser or tighter joints
+than the defaults assume, whether the calibration-averages/counting-grades-
+on-stricter-joint mismatch (flagged above) actually causes visible
+under-counting for anyone asymmetric in practice, and the opposite risk:
+`peakAngleDeg` is the single farthest-from-rest sample across all three demo
+reps, so one glitchy-but-visible deep frame that survives smoothing and the
+confidence gate inflates the calibrated peak and can make live counting
+rarely credit full depth afterward — the mirror image of Prompt A's
+"don't trust one noisy extreme" concern, mitigated by the confidence gate
+but not eliminated by it.
+

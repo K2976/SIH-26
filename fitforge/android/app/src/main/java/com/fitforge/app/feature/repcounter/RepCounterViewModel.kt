@@ -1,4 +1,4 @@
-@file:Suppress("ReturnCount", "TooManyFunctions")
+@file:Suppress("ReturnCount", "TooManyFunctions", "LongMethod", "MagicNumber")
 
 package com.fitforge.app.feature.repcounter
 
@@ -25,14 +25,16 @@ import com.fitforge.app.pose.PoseLandmark
 import com.fitforge.app.pose.RepEvent
 import com.fitforge.app.pose.RepMachineState
 import com.fitforge.app.pose.VisibilityResult
+import com.fitforge.app.pose.MIN_VISIBLE_FRAME_RATIO
 import com.fitforge.app.pose.averageRestAngle
 import com.fitforge.app.pose.checkVisibility
 import com.fitforge.app.pose.computeAngleSample
 import com.fitforge.app.pose.deriveCalibration
 import com.fitforge.app.pose.finalizeRepStateMachine
-import com.fitforge.app.pose.representativeAngle
+import com.fitforge.app.pose.resolveCalibration
 import com.fitforge.app.pose.smoothAngleSample
 import com.fitforge.app.pose.stepRepStateMachine
+import com.fitforge.app.pose.visibleFraction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +47,8 @@ import kotlin.math.roundToInt
 private const val VISIBILITY_CONFIRM_FRAMES = 10
 private const val VISIBILITY_TIMEOUT_MS = 8_000L
 private const val HOLD_STILL_MS = 1_200L
-private const val DEMO_REP_MS = 6_000L
+private const val DEMO_REP_MS = 4_000L
+private const val DEMO_REP_COUNT = 3
 
 /**
  * Owns the calibrate-then-count flow for one exercise. Frame processing
@@ -79,8 +82,10 @@ class RepCounterViewModel @Inject constructor(
 
     private var demoPhaseStartMs = 0L
     private var pendingRestAngle: Double? = null
+    private var demoRepIndex = 0
     private val restSamples = mutableListOf<AngleSample>()
-    private val demoRepAngles = mutableListOf<Double>()
+    private val demoRepSamples = mutableListOf<AngleSample>()
+    private var previousDemoSmoothed: AngleSample? = null
 
     private var previousSmoothed: AngleSample? = null
     private var machineState = RepMachineState()
@@ -156,59 +161,80 @@ class RepCounterViewModel @Inject constructor(
     private fun proceedPastVisibilityCheck() {
         val cal = calibration
         if (cal != null) {
-            _uiState.value = RepCounterUiState.Ready(cal.restAngleDeg, cal.peakAngleDeg)
+            _uiState.value = cal.toReadyState()
         } else {
-            restSamples.clear()
-            demoPhaseStartMs = System.currentTimeMillis()
-            _uiState.value = RepCounterUiState.DemoRep(DemoRepPhase.HOLD_STILL)
+            restartHoldStill(null)
         }
     }
 
     private fun handleDemoRep(frame: PoseFrame, config: ExercisePoseConfig) {
-        val phase = (_uiState.value as? RepCounterUiState.DemoRep)?.phase ?: return
+        val state = _uiState.value as? RepCounterUiState.DemoRep ?: return
         val raw = computeAngleSample(frame, config)
+        // Same landmark pipeline as live counting: smoothed, not raw, per-frame angles.
+        val smoothed = smoothAngleSample(previousDemoSmoothed, raw)
+        previousDemoSmoothed = smoothed
         val elapsed = System.currentTimeMillis() - demoPhaseStartMs
 
-        when (phase) {
+        when (state.phase) {
             DemoRepPhase.HOLD_STILL -> {
-                restSamples += raw
+                restSamples += smoothed
                 if (elapsed >= HOLD_STILL_MS) {
+                    val confidence = visibleFraction(restSamples)
+                    if (confidence < MIN_VISIBLE_FRAME_RATIO) {
+                        restartHoldStill(lowConfidenceMessage(confidence))
+                        return
+                    }
                     val rest = averageRestAngle(restSamples)
                     if (rest == null) {
                         restartHoldStill("Lost sight of you — hold still, in frame, and try again.")
                     } else {
                         pendingRestAngle = rest
-                        demoRepAngles.clear()
+                        demoRepSamples.clear()
+                        demoRepIndex = 0
                         demoPhaseStartMs = System.currentTimeMillis()
-                        _uiState.value = RepCounterUiState.DemoRep(DemoRepPhase.PERFORMING)
+                        _uiState.value = RepCounterUiState.DemoRep(
+                            DemoRepPhase.PERFORMING,
+                            repIndex = 0,
+                            repCount = DEMO_REP_COUNT,
+                        )
                     }
                 }
             }
             DemoRepPhase.PERFORMING -> {
-                representativeAngle(raw)?.let { demoRepAngles += it }
+                demoRepSamples += smoothed
                 if (elapsed >= DEMO_REP_MS) {
+                    if (demoRepIndex + 1 < DEMO_REP_COUNT) {
+                        demoRepIndex++
+                        demoPhaseStartMs = System.currentTimeMillis()
+                        _uiState.value = RepCounterUiState.DemoRep(
+                            DemoRepPhase.PERFORMING,
+                            repIndex = demoRepIndex,
+                            repCount = DEMO_REP_COUNT,
+                        )
+                        return
+                    }
                     val rest = pendingRestAngle ?: return restartHoldStill(null)
                     val result = deriveCalibration(
                         exerciseSlug,
                         rest,
-                        demoRepAngles,
+                        demoRepSamples,
                         System.currentTimeMillis(),
                     )
                     when (result) {
                         is CalibrationResult.Success -> {
                             calibration = result.profile
                             viewModelScope.launch { calibrationDao.upsert(result.profile.toEntity()) }
-                            _uiState.value = RepCounterUiState.Ready(
-                                result.profile.restAngleDeg,
-                                result.profile.peakAngleDeg,
-                            )
+                            _uiState.value = result.profile.toReadyState()
                         }
                         is CalibrationResult.InsufficientRange -> {
                             val achieved = result.achievedDeg.roundToInt()
                             restartHoldStill(
-                                "Only ${achieved}° of movement detected — repeat the rep, " +
+                                "Only ${achieved}° of movement detected — repeat the reps, " +
                                     "moving through your full range.",
                             )
+                        }
+                        is CalibrationResult.LowConfidence -> {
+                            restartHoldStill(lowConfidenceMessage(result.visibleFraction))
                         }
                     }
                 }
@@ -216,10 +242,30 @@ class RepCounterViewModel @Inject constructor(
         }
     }
 
+    private fun lowConfidenceMessage(visibleFraction: Double): String {
+        val pct = (visibleFraction * 100).roundToInt()
+        return "Couldn't get a clear reading (only $pct% visible) — reposition so you're fully in frame and try again."
+    }
+
     private fun restartHoldStill(message: String?) {
         restSamples.clear()
+        demoRepSamples.clear()
+        demoRepIndex = 0
         demoPhaseStartMs = System.currentTimeMillis()
         _uiState.value = RepCounterUiState.DemoRep(DemoRepPhase.HOLD_STILL, message)
+    }
+
+    /**
+     * User-triggered recalibration — not one-and-done. Clears the in-memory profile and
+     * re-enters the same visibility-check -> demo-rep flow first-time calibration uses;
+     * a fresh [CalibrationResult.Success] replaces whatever was stored before.
+     */
+    fun recalibrate() {
+        if (poseConfig == null) return
+        calibration = null
+        consecutiveVisibleFrames = 0
+        visibilityCheckStartMs = System.currentTimeMillis()
+        _uiState.value = RepCounterUiState.VisibilityCheck(hasCachedCalibration = false)
     }
 
     /** From [RepCounterUiState.Ready]: begin counting reps for a new set. */
@@ -231,7 +277,7 @@ class RepCounterViewModel @Inject constructor(
     }
 
     private fun handleCounting(frame: PoseFrame, config: ExercisePoseConfig) {
-        val cal = calibration ?: return
+        val cal = resolveCalibration(calibration, exerciseSlug, System.currentTimeMillis()) ?: return
         val raw = computeAngleSample(frame, config)
         val smoothed = smoothAngleSample(previousSmoothed, raw)
         previousSmoothed = smoothed
@@ -262,12 +308,12 @@ class RepCounterViewModel @Inject constructor(
     /** Ends the set, finalizing whatever rep was still in progress, and shows the summary. */
     fun finishSet() {
         val config = poseConfig ?: return
-        val cal = calibration ?: return
+        val cal = resolveCalibration(calibration, exerciseSlug, System.currentTimeMillis()) ?: return
         (finalizeRepStateMachine(machineState, config) as? RepEvent.Completed)?.let { completedReps += it.rep }
         machineState = RepMachineState()
 
         if (completedReps.isEmpty()) {
-            _uiState.value = RepCounterUiState.Ready(cal.restAngleDeg, cal.peakAngleDeg)
+            _uiState.value = cal.toReadyState()
             return
         }
         val romAchieved = if (completedReps.all { it.depthReached && it.lockoutReached }) "full" else "partial"
@@ -278,7 +324,7 @@ class RepCounterViewModel @Inject constructor(
     /** Writes the finished set exactly like manual entry, except `source`. */
     fun saveSet() {
         val state = _uiState.value as? RepCounterUiState.SetComplete ?: return
-        val cal = calibration ?: return
+        val cal = resolveCalibration(calibration, exerciseSlug, System.currentTimeMillis()) ?: return
         viewModelScope.launch {
             workoutRepository.addSet(
                 sessionUuid = sessionUuid,
@@ -289,13 +335,13 @@ class RepCounterViewModel @Inject constructor(
                 romAchieved = state.romAchieved,
                 tempoMs = state.avgTempoMs,
             )
-            _uiState.value = RepCounterUiState.Ready(cal.restAngleDeg, cal.peakAngleDeg)
+            _uiState.value = cal.toReadyState()
         }
     }
 
     fun discardSet() {
-        val cal = calibration ?: return
-        _uiState.value = RepCounterUiState.Ready(cal.restAngleDeg, cal.peakAngleDeg)
+        val cal = resolveCalibration(calibration, exerciseSlug, System.currentTimeMillis()) ?: return
+        _uiState.value = cal.toReadyState()
     }
 
     override fun onCleared() {
@@ -310,6 +356,8 @@ private fun CompletedRep.toFeedback(config: ExercisePoseConfig) = RepFeedback(
     symmetryToleranceDeg = config.symmetryToleranceDeg,
     cameraPosition = config.cameraPosition,
 )
+
+private fun CalibrationProfile.toReadyState() = RepCounterUiState.Ready(restAngleDeg, peakAngleDeg, isUserCalibrated)
 
 private fun CalibrationProfileEntity.toCalibrationProfile() = CalibrationProfile(
     exerciseSlug,
