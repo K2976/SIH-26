@@ -1,11 +1,46 @@
 # Run FitForge on a Physical Android Phone
 
 The FitForge debug app connects to `http://localhost:8000/`. On a physical
-phone, Android Debug Bridge (ADB) must forward that address to the Django
-backend running on this Mac.
+phone, Android Debug Bridge (ADB) forwards that address to the Django backend
+running on this Mac.
+
+## Automatic install workflow
+
+Connect and authorize the phone over USB, then run this from the Android
+directory:
+
+```bash
+./gradlew installDebug
+```
+
+Before installing the APK, Gradle now automatically:
+
+1. Reuses the backend if its health endpoint is already responding.
+2. Otherwise starts Django from `backend/.venv` in the background and waits
+   for it to become ready.
+3. Runs and verifies `adb reverse tcp:8000 tcp:8000` for every connected,
+   authorized Android device.
+4. Installs the debug app normally.
+
+Backend output is written to `android/build/phone-backend/backend.log`. The
+server keeps running after Gradle exits and is reused by later installs.
+`assembleDebug` is not hooked, so CI and APK-only builds do not start local
+services or require a connected device.
+
+To target one device when more than one is connected, set its ADB serial:
+
+```bash
+FITFORGE_ANDROID_SERIAL=<serial-from-adb-devices> ./gradlew installDebug
+```
+
+The backend still uses `backend/.env`; this workflow never copies credentials
+into Gradle or the APK. If the virtual environment is missing, create it using
+the setup commands below.
+
+The remaining sections document the same process manually for troubleshooting.
 
 Repeat the backend and ADB forwarding steps after restarting the Mac, restarting
-the phone, or reconnecting/reinstalling the app if it shows a network error.
+the phone, or reconnecting the app if it shows a network error.
 
 ## 1. Start the backend
 
@@ -81,9 +116,10 @@ tcp:8000 tcp:8000
 
 Keep the USB connection active while using the app.
 
-## 5. Install or reinstall the debug app
+## 5. Install or reinstall the debug app manually
 
-From the Android project directory, install the current debug build:
+Normally, use the automatic workflow above. To troubleshoot the individual
+steps manually, install the current debug build from the Android directory:
 
 ```bash
 cd /Users/kartik/Documents/SIH-26/fitforge/android
