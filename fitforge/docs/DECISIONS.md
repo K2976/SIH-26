@@ -251,3 +251,114 @@ calculator/engine, not out of the command.
   release build has no code path that can show it, regardless of any
   runtime state.
 
+## 2026-09-10 — Rep counter: standing-still miscounts, double filtering, both-joint agreement
+
+**The reported bug — standing still counts reps — is real, and the root
+cause is `representativeAngle`'s silent left/right average**, not the peak/
+trough state machine shape (that part, documented above on 2026-09-05, is
+sound). Reproduced with a synthetic test before any fix: one side held
+exactly at rest the entire time, the other side alone swinging through the
+calibrated range (a single confused/occluded landmark, or one arm moving
+while the other genuinely doesn't) — averaging drags the still side's
+progress up to a fabricated mid-range value, which crosses `DEPTH_MIN` and
+gets counted as a completed rep despite the lifter never moving. See
+`RepStateMachineTest.kt`, `standing still with one hallucinated side counts
+zero reps`, added first and confirmed failing against the old averaging
+code before `RepStateMachine.kt` changed.
+
+- **Fix: both-joint agreement replaces the average.** `agreementProgress`
+  returns `(forDepth, forLockout)` — the shallower side's progress and the
+  more-bent side's progress, respectively. Depth (`peakProgress`, tracked
+  while descending) is graded on `forDepth`: a rep isn't deep unless *every*
+  tracked joint got there, so the shallower joint sets the ceiling. Lockout
+  (`troughProgress`, tracked while ascending) is graded on `forLockout`: a
+  rep isn't locked out unless every joint returned, so the still-most-bent
+  joint sets the floor. This is the explicit decision the task asked for:
+  **count on the stricter joint, always** — never average, and don't merely
+  flag asymmetry as a separate path. `symmetryDeviationDeg` (existing,
+  unchanged) still reports the raw left/right degree gap at the deepest
+  point for UI feedback and the `symmetryToleranceDeg` comparison; it's now
+  purely informational on top of a rule that no longer needs it to catch
+  the phantom-rep case.
+- **Velocity gate.** Every phase transition that used to fire off a bare
+  progress-band/reversal comparison (arming out of `RESTING`, and both
+  reversal directions) now also requires
+  `abs(progress_now − progress_last) / dt_seconds ≥ MIN_VELOCITY_PER_SEC`
+  (`0.05`, normalized progress/sec — scales with each exercise's own
+  calibrated range rather than a fixed degree count). Continuous
+  peak/trough refinement *within* a phase, and the existing `SETTLE_MS`
+  stability close, are deliberately **not** gated on velocity — those are
+  supposed to fire at or near zero motion (a paused rep, a settled trough).
+  `0.05`/sec is a tuning starting point per the task, not a measured
+  number — a deliberately slow synthetic rep (3s down, 3s up) clears it
+  with over 30x margin in `RepStateMachineTest.kt`; real-world tuning needs
+  a person, not a synthetic ramp.
+- **Mid-rep confidence loss.** Previously, a frame where neither side's
+  angle could be computed (occlusion, or visibility below `AngleMath.kt`'s
+  `MIN_VISIBILITY`) just silently held state forever — no crash, but also
+  no honest signal, and it could eventually surface as a confusing
+  `TOO_SLOW` timeout with no explanation. Now: a single dropped frame is
+  tolerated (normal camera/detector noise), but a run of unresolved frames
+  past `CONFIDENCE_LOSS_TOLERANCE_MS` (`500ms`) mid-rep rejects with the new
+  `RejectionReason.LOST_TRACKING`, surfaced in `RepCounterScreen.kt` as
+  "can't see you clearly. Reposition and try again." — the same honest,
+  no-guessing pattern `checkVisibility` already uses before a set starts,
+  extended to mid-set.
+- **Double filtering: confirmed, and left as-is, deliberately.** Verified
+  against MediaPipe's own graph source
+  (`pose_landmarker_graph.cc`): `smooth_landmarks` is set to
+  `use_stream_mode()`, which is `true` for `RunningMode.LIVE_STREAM` with
+  `numPoses == 1` — exactly this app's configuration
+  (`PoseLandmarkerHelper.kt`). MediaPipe Tasks Vision 1.0.0's public Java
+  `PoseLandmarkerOptions.Builder` has no setter for it — landmark
+  smoothing (a One-Euro-family filter, internal to the graph) is **on by
+  default with no way to turn it off** from this app. `smoothAngleSample`'s
+  own EMA (`Smoothing.kt`, alpha 0.35) therefore *is* a second smoothing
+  pass stacked on top, applied to the derived joint angle rather than the
+  raw landmark coordinates MediaPipe smooths. This compounds latency
+  (a real cost — depth/lockout get graded against a laggier signal) but
+  was not observed to compound noise-suppression benefit, since one euro
+  filtering upstream already removes the kind of single-frame spike
+  `Smoothing.kt`'s own test (`jittery landmark noise…`) exercises.
+  **Decision: keep both layers for this slice.** The new velocity gate and
+  both-joint agreement rule are now the primary defenses against
+  jitter-driven false reps (see `realistic per-frame noise on a still pose
+  produces zero reps`), so the EMA is no longer load-bearing for
+  correctness — removing it is a latency optimization, not a correctness
+  fix, and untestable without a real device and a person moving in front
+  of it. Flagged here as the first thing to try, alpha first, then removal,
+  if a manual calibration session finds fast reps under-crediting depth or
+  lockout because of lag.
+- **Thresholds are calibration-based, not fixed exercise degrees, and that
+  design predates and survives this fix.** The task's own reference numbers
+  (squat knee armed<100°/complete>160°, push-up elbow armed<90°/
+  complete>160°, bicep curl elbow armed<40°/complete>160°) describe the
+  intent — separate "armed" and "complete" thresholds, hysteresis instead
+  of a single crossing — which `RESTING_BAND` (arm) vs. `DEPTH_FULL`/
+  `LOCKOUT_FULL` (complete) already express, just as normalized progress
+  against a per-user `CalibrationProfile` rather than raw degrees. Fixed
+  degrees were considered and rejected: they regress exactly the
+  inclusivity the task also asks for (confidence gating "for larger body
+  types or loose clothing") since a universal degree threshold can't
+  account for build or camera angle the way a supervised demo-rep
+  calibration does. **These starting-point degree numbers are not wired
+  into code anywhere** (there's no uncalibrated counting path — `Counting`
+  state requires a `CalibrationProfile` — so they'd be dead code), but they
+  remain useful as sanity bounds during manual calibration-flow testing:
+  if a real demo rep calibrates a squat's `peakAngleDeg` far outside
+  ~90–100° or its `restAngleDeg` far outside ~160–170°, that's a signal the
+  demo rep itself was bad (wrong exercise selected, camera angle off,
+  landmark misdetection), not that the number is wrong.
+- **`form_score` remains absent.** Nothing in this fix reintroduces it —
+  confirmed by repo-wide grep. Scoring stays depth/lockout/symmetry only,
+  per `CLAUDE.md`.
+
+**Manual follow-up required, explicitly not covered by the synthetic tests
+above:** a real person, on a real device, testing standing still and
+fidgeting, a deliberately slow rep, a deliberately fast rep, a deliberate
+partial rep, and stepping out of frame mid-rep. Synthetic landmark
+sequences can prove the state machine's logic is internally consistent;
+they cannot prove `MIN_VELOCITY_PER_SEC`, `CONFIDENCE_LOSS_TOLERANCE_MS`, or
+the calibration flow feel right to an actual lifter. Do not treat this
+slice as tuned until that session happens.
+

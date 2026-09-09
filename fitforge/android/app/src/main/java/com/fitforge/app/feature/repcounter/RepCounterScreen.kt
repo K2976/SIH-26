@@ -241,6 +241,7 @@ private fun feedbackText(feedback: RepFeedback): String {
             RejectionReason.INSUFFICIENT_DEPTH -> "Rep not counted — didn't reach full depth."
             RejectionReason.TOO_FAST -> "Rep not counted — too fast to measure."
             RejectionReason.TOO_SLOW -> "Rep timed out — reset."
+            RejectionReason.LOST_TRACKING -> "Rep not counted — can't see you clearly. Reposition and try again."
         }
     }
     val depth = if (feedback.depthReached) "depth ✓" else "depth ✗"
