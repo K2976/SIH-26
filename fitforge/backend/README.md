@@ -115,11 +115,16 @@ DJANGO_SECRET_KEY=your-secure-development-key-here
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,10.0.2.2
 DATABASE_URL=postgresql://postgres:password@localhost:5432/fitforge
 GEMINI_API_KEY=
+USDA_FDC_API_KEY=
 ```
 
 Set `GEMINI_API_KEY` to a real Google AI Studio key before testing photo food
 labels. The server returns a setup error when it is blank; it never substitutes
 fake label data.
+
+Set `USDA_FDC_API_KEY` to a free FoodData Central API key before seeding the
+external generic-food catalog. The command fails before making requests or
+writing rows when it is blank; the key is never stored in seed data.
 
 > **Note for Android Emulators**: Include `10.0.2.2` in `DJANGO_ALLOWED_HOSTS` so the Android Emulator can reach your local development server.
 
@@ -145,6 +150,7 @@ FitForge requires an initial reference library of exercises (with movement patte
 python manage.py seed_exercises
 python manage.py seed_foods
 python manage.py seed_recipes
+python manage.py seed_external_foods
 ```
 
 `seed_foods` loads 542 raw ingredients from the verified 421-column
@@ -156,6 +162,23 @@ and deterministic kJ-to-kcal transformation. `seed_recipes` then loads 18
 starter composed dishes. Their ingredient weights are deliberately documented
 as household-recipe starting approximations; nutrition is always computed from
 the current ingredient rows, never entered as a recipe macro value.
+
+`seed_external_foods` adds curated packaged/barcoded products from the official
+Open Food Facts API and generic international foods from USDA FoodData Central.
+It requires `USDA_FDC_API_KEY`, validates complete per-100-g macros and a real
+gram-based serving before writing anything, records `open_food_facts` or
+`usda_fdc` on every row, and is safe to re-run. To seed only packaged products
+without making a USDA request, run:
+
+```bash
+python manage.py seed_external_foods --source open_food_facts
+```
+
+Open Food Facts database data is available under ODbL; USDA FoodData Central
+data is CC0/public domain. The curated identifiers and per-item portion
+reasoning live in `apps/reference/seed_data/external_foods.json`.
+Endpoint, record-key, validation, and license details are recorded alongside it
+in `apps/reference/seed_data/EXTERNAL_FOOD_PROVENANCE.md`.
 
 To export the reference bundle for the Android client offline database:
 ```bash
