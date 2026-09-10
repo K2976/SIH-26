@@ -1,5 +1,7 @@
 import datetime
+import json
 import uuid
+from decimal import Decimal
 
 import pytest
 from django.contrib.auth import get_user_model
@@ -7,7 +9,8 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.diary.models import WorkoutSession
+from apps.diary.models import PoseLandmarkSequence, WorkoutSession
+from apps.reference.models import Exercise
 
 User = get_user_model()
 
@@ -94,3 +97,78 @@ def test_sync_timestamp_rejection(api_client, user):
     error_texts = [e["error"] for e in response.data["errors"]]
     assert any("more than one day in the future" in e for e in error_texts)
     assert any("implausibly far in the past" in e for e in error_texts)
+
+
+@pytest.mark.django_db
+def test_sync_pose_landmark_sequence_stores_json_text_and_skips_daily_state(api_client, user):
+    exercise = Exercise.objects.create(
+        slug="bodyweight-squat",
+        name={"en": "Bodyweight Squat"},
+        instructions={"en": "..."},
+        primary_muscles=["quads"],
+        movement_pattern=Exercise.MovementPattern.SQUAT,
+        met_value=Decimal("5.0"),
+    )
+    url = reverse("sync")
+    sequence_uuid = str(uuid.uuid4())
+    frames = json.dumps([{"t_ms": 0, "landmarks": {"LEFT_KNEE": [0.5, 0.5, 0.0, 0.9]}}])
+    labels = json.dumps(
+        [{"start_ms": 0, "end_ms": 500, "outcome": "completed", "quality": "clean"}]
+    )
+
+    payload = {
+        "events": [
+            {
+                "type": "pose_landmark_sequence",
+                "client_uuid": sequence_uuid,
+                "occurred_at": timezone.now().isoformat(),
+                "exercise": exercise.slug,
+                "camera_position": "side",
+                "calibration_source": "user_calibrated",
+                "landmark_frames": frames,
+                "rep_labels": labels,
+            },
+        ]
+    }
+
+    response = api_client.post(url, payload, format="json")
+
+    assert response.status_code == 200
+    assert response.data["success_count"] == 1
+    stored = PoseLandmarkSequence.objects.get(client_uuid=sequence_uuid)
+    assert stored.landmark_frames == frames
+    assert stored.rep_labels == labels
+    assert json.loads(stored.landmark_frames)[0]["landmarks"]["LEFT_KNEE"] == [0.5, 0.5, 0.0, 0.9]
+
+
+@pytest.mark.django_db
+def test_sync_pose_landmark_sequence_rejects_non_json_payload(api_client, user):
+    Exercise.objects.create(
+        slug="bodyweight-squat",
+        name={"en": "Bodyweight Squat"},
+        instructions={"en": "..."},
+        primary_muscles=["quads"],
+        movement_pattern=Exercise.MovementPattern.SQUAT,
+        met_value=Decimal("5.0"),
+    )
+    url = reverse("sync")
+
+    payload = {
+        "events": [
+            {
+                "type": "pose_landmark_sequence",
+                "client_uuid": str(uuid.uuid4()),
+                "occurred_at": timezone.now().isoformat(),
+                "exercise": "bodyweight-squat",
+                "camera_position": "side",
+                "calibration_source": "user_calibrated",
+                "landmark_frames": "not json",
+            },
+        ]
+    }
+
+    response = api_client.post(url, payload, format="json")
+
+    assert response.status_code == 200
+    assert response.data["success_count"] == 0
+    assert "JSON-encoded string" in response.data["errors"][0]["error"]

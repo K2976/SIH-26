@@ -5,6 +5,8 @@ package com.fitforge.app.data.repository
 import com.fitforge.app.core.database.BaseDiaryColumns
 import com.fitforge.app.core.database.ExerciseDao
 import com.fitforge.app.core.database.ExerciseEntity
+import com.fitforge.app.core.database.PoseLandmarkSequenceDao
+import com.fitforge.app.core.database.PoseLandmarkSequenceEntity
 import com.fitforge.app.core.database.SetLogDao
 import com.fitforge.app.core.database.SetLogEntity
 import com.fitforge.app.core.database.SyncStatus
@@ -81,6 +83,7 @@ class WorkoutRepository @Inject constructor(
     private val sessionDao: WorkoutSessionDao,
     private val setLogDao: SetLogDao,
     private val exerciseDao: ExerciseDao,
+    private val poseLandmarkSequenceDao: PoseLandmarkSequenceDao,
     private val workManager: WorkManager,
 ) {
     fun activeSession(): Flow<WorkoutSessionEntity?> = sessionDao.getActiveSession()
@@ -141,6 +144,32 @@ class WorkoutRepository @Inject constructor(
         val session = sessionDao.getByUuid(sessionUuid) ?: return
         val elapsedMinutes = (Clock.System.now() - session.diary.occurredAt).inWholeMinutes.toInt()
         sessionDao.update(session.copy(durationMinutes = elapsedMinutes))
+        SyncWorker.enqueue(workManager)
+    }
+
+    /**
+     * Training-data capture for the future exercise/rep-quality classifier
+     * (Prompt C) — every completed camera-tracked set, saved or discarded
+     * afterward, since a discarded set's landmarks are still valid motion
+     * data even if the lifter didn't want it logged to their workout log.
+     */
+    suspend fun logPoseSequence(
+        exerciseSlug: String,
+        cameraPosition: String,
+        calibrationSource: String,
+        landmarkFramesJson: String,
+        repLabelsJson: String,
+    ) {
+        poseLandmarkSequenceDao.insert(
+            PoseLandmarkSequenceEntity(
+                diary = newDiaryColumns(CAMERA_SOURCE),
+                exerciseSlug = exerciseSlug,
+                cameraPosition = cameraPosition,
+                calibrationSource = calibrationSource,
+                landmarkFramesJson = landmarkFramesJson,
+                repLabelsJson = repLabelsJson,
+            ),
+        )
         SyncWorker.enqueue(workManager)
     }
 }

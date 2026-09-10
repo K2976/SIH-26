@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
@@ -11,6 +12,7 @@ from apps.diary.models import (
     MealItem,
     MealLog,
     PlannedSession,
+    PoseLandmarkSequence,
     SetLog,
     SleepLog,
     WeightLog,
@@ -28,7 +30,12 @@ MODEL_MAP = {
     "weight_log": WeightLog,
     "sleep_log": SleepLog,
     "cycle_log": CycleLog,
+    "pose_landmark_sequence": PoseLandmarkSequence,
 }
+
+# Training-data capture only (ml/ pipeline) — never feeds the engine, so it never
+# needs a same-day UserState/DailyState recompute the way real diary events do.
+_TYPES_EXCLUDED_FROM_DAILY_STATE = {"pose_landmark_sequence"}
 
 # Imported here, after MODEL_MAP, to avoid a circular import: serializers.py
 # reads MODEL_MAP from this module at load time.
@@ -172,12 +179,37 @@ class SyncView(APIView):
                     defaults["flow"] = event.get("flow", "")
                     defaults["symptoms"] = event.get("symptoms", [])
                     defaults["energy_rating"] = event.get("energy_rating")
+                elif event_type == "pose_landmark_sequence":
+                    exercise_slug = event.get("exercise")
+                    if not exercise_slug:
+                        raise ValueError("exercise slug is required")
+                    defaults["exercise_id"] = exercise_slug
+
+                    defaults["camera_position"] = event.get("camera_position", "")
+                    defaults["calibration_source"] = event.get("calibration_source", "")
+
+                    landmark_frames = event.get("landmark_frames")
+                    if not landmark_frames:
+                        raise ValueError("landmark_frames is required")
+                    try:
+                        json.loads(landmark_frames)
+                    except (TypeError, ValueError):
+                        raise ValueError("landmark_frames must be a JSON-encoded string") from None
+                    defaults["landmark_frames"] = landmark_frames
+
+                    rep_labels = event.get("rep_labels", "[]")
+                    try:
+                        json.loads(rep_labels)
+                    except (TypeError, ValueError):
+                        raise ValueError("rep_labels must be a JSON-encoded string") from None
+                    defaults["rep_labels"] = rep_labels
 
                 # Idempotent save
                 obj, created = ModelClass.objects.update_or_create(
                     user=request.user, client_uuid=client_uuid, defaults=defaults
                 )
-                touched_local_dates.add(resolve_local_day(occurred_at, utc_offset))
+                if event_type not in _TYPES_EXCLUDED_FROM_DAILY_STATE:
+                    touched_local_dates.add(resolve_local_day(occurred_at, utc_offset))
                 results["success_count"] += 1
             except Exception as e:
                 results["errors"].append(
