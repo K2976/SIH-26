@@ -28,4 +28,4 @@ jobs:
       - name: Ping health check
         env:
           HEALTH_URL: ${{ vars.RENDER_HEALTH_URL }}
-        run: curl --fail --silent --show-error --max-time 90 "${HEALTH_URL:-https://fitforge-backend.onrender.com/healthz/}"
+        run: curl --fail --silent --show-error --max-time 90 "${HEALTH_URL:-https://fitforge-backend-f7ow.onrender.com/healthz/}"

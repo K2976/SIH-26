@@ -45,11 +45,12 @@ android {
             // Configurable so CI/local release builds can point at the
             // deployed Render URL without editing this file — pass
             // -PRELEASE_API_BASE_URL=... or set the env var of the same
-            // name. Falls back to the Render service name from render.yaml
-            // until the first deploy's actual URL is confirmed.
+            // name. Falls back to the confirmed deployed URL — Render
+            // appended "-f7ow" since the bare "fitforge-backend" name was
+            // unavailable; don't assume it matches the service name.
             val releaseBaseUrl = (project.findProperty("RELEASE_API_BASE_URL") as String?)
                 ?: System.getenv("RELEASE_API_BASE_URL")
-                ?: "https://fitforge-backend.onrender.com/"
+                ?: "https://fitforge-backend-f7ow.onrender.com/"
             buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
         }
     }
