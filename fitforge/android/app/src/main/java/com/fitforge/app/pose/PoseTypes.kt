@@ -87,15 +87,18 @@ data class ExercisePoseConfig(
 data class AngleSample(val timestampMs: Long, val leftDeg: Double?, val rightDeg: Double?)
 
 /**
- * User-specific thresholds derived once from a supervised demo rep, then
- * cached. [restAngleDeg] is the angle at the start of the demo rep (before
- * any movement); [peakAngleDeg] is the extreme reached during it. Which one
- * is numerically larger depends on the exercise/joint — see
- * [ExercisePoseConfig] — so nothing here assumes a sign.
+ * User-specific thresholds derived once from a few supervised demo reps,
+ * then cached. [restAngleDeg] is the angle held before any movement;
+ * [peakAngleDeg] is the extreme reached during the reps. Which one is
+ * numerically larger depends on the exercise/joint — see
+ * [ExercisePoseConfig] — so nothing here assumes a sign. [isUserCalibrated]
+ * is false only for [defaultCalibration]'s generic fallback; every other
+ * profile (derived or loaded from storage) is a real measurement.
  */
 data class CalibrationProfile(
     val exerciseSlug: String,
     val restAngleDeg: Double,
     val peakAngleDeg: Double,
     val calibratedAtMs: Long,
+    val isUserCalibrated: Boolean = true,
 )

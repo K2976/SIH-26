@@ -159,7 +159,7 @@ private fun RepCounterControls(
                 if (!state.hasCachedCalibration) {
                     Text(
                         "First time with this exercise: after we confirm we can see you, " +
-                            "you'll do one slow demo rep so we can learn your range of motion.",
+                            "you'll do a few slow demo reps so we can learn your range of motion.",
                         color = Color.White,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp),
@@ -178,7 +178,9 @@ private fun RepCounterControls(
                 Text(
                     when (state.phase) {
                         DemoRepPhase.HOLD_STILL -> "Hold your starting position still…"
-                        DemoRepPhase.PERFORMING -> "Now do one slow rep, through your full range of motion."
+                        DemoRepPhase.PERFORMING ->
+                            "Now do a slow rep (${state.repIndex + 1} of ${state.repCount}), " +
+                                "through your full range of motion."
                     },
                     color = Color.White,
                     style = MaterialTheme.typography.bodyLarge,
@@ -190,8 +192,21 @@ private fun RepCounterControls(
 
             is RepCounterUiState.Ready -> {
                 Text("Ready. Start when you are.", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "Your range: ${state.restAngleDeg.toInt()}° – ${state.peakAngleDeg.toInt()}°" +
+                        if (state.isUserCalibrated) " (calibrated to you)" else " (default — not yet calibrated)",
+                    color = Color.White,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
                 Button(onClick = viewModel::startSet, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                     Text("Start set")
+                }
+                OutlinedButton(
+                    onClick = viewModel::recalibrate,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                ) {
+                    Text(if (state.isUserCalibrated) "Recalibrate" else "Calibrate to me")
                 }
             }
 
