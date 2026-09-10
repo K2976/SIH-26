@@ -17,7 +17,11 @@ fun calibrationProgress(angleDeg: Double, calibration: CalibrationProfile): Doub
     return (angleDeg - calibration.restAngleDeg) / range
 }
 
-/** Average of whichever side(s) are visible this frame; null if neither is. */
+/**
+ * Average of whichever side(s) are visible this frame; null if neither is.
+ * Calibration-time use only — see [agreementProgress] for why live counting
+ * never averages.
+ */
 fun representativeAngle(sample: AngleSample): Double? = when {
     sample.leftDeg != null && sample.rightDeg != null -> (sample.leftDeg + sample.rightDeg) / 2.0
     sample.leftDeg != null -> sample.leftDeg
@@ -48,10 +52,55 @@ private const val MOVEMENT_EPS = 0.03
 // so once the trough has held for this long, close eagerly.
 private const val SETTLE_MS = 200
 
+// A phase transition (arming out of rest, or a peak/trough reversal) must be
+// backed by real motion, not noise that happened to cross a band. Expressed
+// as normalized progress-per-second, so it scales with each exercise's own
+// calibrated range instead of a fixed degree count. Deliberately low — see
+// DECISIONS.md — a deliberately slow rep must still clear it comfortably.
+private const val MIN_VELOCITY_PER_SEC = 0.05
+
+// A single dropped/occluded frame mid-rep is normal camera noise and must not
+// nuke an in-progress rep; only a sustained loss does. See DECISIONS.md.
+private const val CONFIDENCE_LOSS_TOLERANCE_MS = 500
+
 enum class RejectionReason {
     INSUFFICIENT_DEPTH,
     TOO_FAST,
     TOO_SLOW,
+    LOST_TRACKING,
+}
+
+/**
+ * Both-joint agreement, in place of silently averaging left and right: a rep
+ * only counts what BOTH visible sides agree happened. [forDepth] is the
+ * shallower (lower-progress) side — depth is graded on whichever joint went
+ * *least* deep, since a rep isn't deep unless every tracked joint got there.
+ * [forLockout] is the more-bent (higher-progress) side — lockout is graded on
+ * whichever joint is *still least* returned to rest. Concretely: one knee
+ * locking out while the other doesn't means the rep is stricter-joint-gated,
+ * not averaged into a phantom mid-range reading. This is also what stops a
+ * single noisy/occluded side from manufacturing motion a still lifter never
+ * made — the genuinely-still side caps both signals near zero. See
+ * DECISIONS.md for the full write-up of this rule.
+ */
+private fun agreementProgress(sample: AngleSample, calibration: CalibrationProfile): Pair<Double, Double>? {
+    val left = sample.leftDeg?.let { calibrationProgress(it, calibration) }
+    val right = sample.rightDeg?.let { calibrationProgress(it, calibration) }
+    val values = listOfNotNull(left, right)
+    if (values.isEmpty()) return null
+    return (values.min()) to (values.max())
+}
+
+/**
+ * Normalized-progress-per-second between this sample and whatever was last
+ * tracked; unbounded (no gate) when there's no prior sample to compare against.
+ */
+private fun velocityPerSec(state: RepMachineState, progress: Double, timestampMs: Long): Double {
+    val lastProgress = state.lastProgress ?: return Double.MAX_VALUE
+    val lastMs = state.lastProgressMs ?: return Double.MAX_VALUE
+    val dtSec = (timestampMs - lastMs) / 1000.0
+    if (dtSec <= 0.0) return Double.MAX_VALUE
+    return abs(progress - lastProgress) / dtSec
 }
 
 data class CompletedRep(
@@ -85,6 +134,11 @@ data class RepMachineState(
     val troughProgress: Double = 0.0,
     val troughMs: Long? = null,
     val troughStableSinceMs: Long? = null,
+    /** Progress/timestamp last fed to the velocity gate — not necessarily the running peak or trough. */
+    val lastProgress: Double? = null,
+    val lastProgressMs: Long? = null,
+    /** First timestamp of the current unbroken run of unusable (both-sides-unresolvable) frames, mid-rep. */
+    val unresolvedSinceMs: Long? = null,
 )
 
 data class StepResult(val state: RepMachineState, val event: RepEvent?)
@@ -113,83 +167,115 @@ fun stepRepStateMachine(
         }
     }
 
-    val angle = representativeAngle(sample) ?: return StepResult(state, null)
-    val progress = calibrationProgress(angle, calibration)
+    val agreement = agreementProgress(sample, calibration) ?: return handleUnresolvedFrame(state, sample.timestampMs)
+    val (forDepth, forLockout) = agreement
+    // Descending (and arming out of rest) is graded on the shallower side; ascending is
+    // graded on the more-bent side — see agreementProgress's doc comment.
+    val tracked = if (state.phase == Phase.ASCENDING) forLockout else forDepth
+    val velocity = velocityPerSec(state, tracked, sample.timestampMs)
+    fun carryForward(next: RepMachineState) =
+        next.copy(lastProgress = tracked, lastProgressMs = sample.timestampMs, unresolvedSinceMs = null)
 
     return when (state.phase) {
         Phase.RESTING ->
-            if (progress > RESTING_BAND) {
+            if (forDepth > RESTING_BAND && velocity >= MIN_VELOCITY_PER_SEC) {
                 val next = RepMachineState(
                     phase = Phase.DESCENDING,
                     excursionStartMs = sample.timestampMs,
-                    peakProgress = progress,
+                    peakProgress = forDepth,
                     peakLeftDeg = sample.leftDeg,
                     peakRightDeg = sample.rightDeg,
                 )
-                StepResult(next, null)
+                StepResult(carryForward(next), null)
             } else {
-                StepResult(state, null)
+                StepResult(carryForward(state), null)
             }
 
         Phase.DESCENDING -> when {
-            progress > state.peakProgress ->
+            forDepth > state.peakProgress ->
                 StepResult(
-                    state.copy(
-                        peakProgress = progress,
-                        peakLeftDeg = sample.leftDeg,
-                        peakRightDeg = sample.rightDeg,
+                    carryForward(
+                        state.copy(
+                            peakProgress = forDepth,
+                            peakLeftDeg = sample.leftDeg,
+                            peakRightDeg = sample.rightDeg,
+                        ),
                     ),
                     null,
                 )
 
-            progress < state.peakProgress - MOVEMENT_EPS ->
+            forDepth < state.peakProgress - MOVEMENT_EPS && velocity >= MIN_VELOCITY_PER_SEC ->
                 StepResult(
-                    state.copy(
-                        phase = Phase.ASCENDING,
-                        troughProgress = progress,
-                        troughMs = sample.timestampMs,
-                        troughStableSinceMs = sample.timestampMs,
+                    carryForward(
+                        state.copy(
+                            phase = Phase.ASCENDING,
+                            troughProgress = forLockout,
+                            troughMs = sample.timestampMs,
+                            troughStableSinceMs = sample.timestampMs,
+                        ),
                     ),
                     null,
                 )
 
-            else -> StepResult(state, null)
+            else -> StepResult(carryForward(state), null)
         }
 
         Phase.ASCENDING -> when {
-            progress < state.troughProgress ->
+            forLockout < state.troughProgress ->
                 StepResult(
-                    state.copy(
-                        troughProgress = progress,
-                        troughMs = sample.timestampMs,
-                        troughStableSinceMs = sample.timestampMs,
+                    carryForward(
+                        state.copy(
+                            troughProgress = forLockout,
+                            troughMs = sample.timestampMs,
+                            troughStableSinceMs = sample.timestampMs,
+                        ),
                     ),
                     null,
                 )
 
-            progress > state.troughProgress + MOVEMENT_EPS -> {
+            forLockout > state.troughProgress + MOVEMENT_EPS && velocity >= MIN_VELOCITY_PER_SEC -> {
                 // Reversed back downward before settling: the previous rep ended at its
                 // trough; this sample is already the start of the next descent.
                 val event = closeRep(state, config, state.troughMs ?: sample.timestampMs)
                 val next = RepMachineState(
                     phase = Phase.DESCENDING,
                     excursionStartMs = state.troughMs ?: sample.timestampMs,
-                    peakProgress = progress,
+                    peakProgress = forDepth,
                     peakLeftDeg = sample.leftDeg,
                     peakRightDeg = sample.rightDeg,
                 )
-                StepResult(next, event)
+                StepResult(carryForward(next), event)
             }
 
-            progress <= RESTING_BAND &&
+            forLockout <= RESTING_BAND &&
                 state.troughStableSinceMs != null &&
                 sample.timestampMs - state.troughStableSinceMs >= SETTLE_MS -> {
                 val event = closeRep(state, config, state.troughMs ?: sample.timestampMs)
                 StepResult(RepMachineState(), event)
             }
 
-            else -> StepResult(state, null)
+            else -> StepResult(carryForward(state), null)
         }
+    }
+}
+
+/**
+ * A frame where neither side's angle could be resolved (occlusion, low
+ * confidence, or nothing detected). While resting there's no rep to lose, so
+ * it's a no-op. Mid-rep, a single dropped frame is normal camera noise and is
+ * tolerated; a sustained loss past [CONFIDENCE_LOSS_TOLERANCE_MS] rejects the
+ * in-progress rep with [RejectionReason.LOST_TRACKING] instead of either
+ * silently freezing forever or guessing through the gap.
+ */
+private fun handleUnresolvedFrame(state: RepMachineState, timestampMs: Long): StepResult {
+    if (state.phase == Phase.RESTING) return StepResult(state, null)
+    val start = state.excursionStartMs ?: return StepResult(state, null)
+    val unresolvedSince = state.unresolvedSinceMs ?: timestampMs
+    return if (timestampMs - unresolvedSince >= CONFIDENCE_LOSS_TOLERANCE_MS) {
+        val rejected = RejectedRep(start, timestampMs, RejectionReason.LOST_TRACKING)
+        StepResult(RepMachineState(), RepEvent.Rejected(rejected))
+    } else {
+        StepResult(state.copy(unresolvedSinceMs = unresolvedSince), null)
     }
 }
 
