@@ -168,10 +168,12 @@ private fun RepCounterControls(
                 Button(onClick = viewModel::onPositioned, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                     Text("I'm in position")
                 }
+                CancelButton(onDone)
             }
 
             is RepCounterUiState.VisibilityCheck -> {
                 Text("Checking we can see you…", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                CancelButton(onDone)
             }
 
             is RepCounterUiState.DemoRep -> {
@@ -186,6 +188,7 @@ private fun RepCounterControls(
                 state.message?.let {
                     Text(it, color = Color(0xFFFFB4A9), modifier = Modifier.padding(top = 8.dp))
                 }
+                CancelButton(onDone)
             }
 
             is RepCounterUiState.Ready -> {
@@ -193,6 +196,7 @@ private fun RepCounterControls(
                 Button(onClick = viewModel::startSet, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                     Text("Start set")
                 }
+                CancelButton(onDone)
             }
 
             is RepCounterUiState.Counting -> {
@@ -203,6 +207,7 @@ private fun RepCounterControls(
                 Button(onClick = viewModel::finishSet, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                     Text("Finish set")
                 }
+                CancelButton(onDone)
             }
 
             is RepCounterUiState.SetComplete -> {
@@ -226,6 +231,19 @@ private fun RepCounterControls(
                 }
             }
         }
+    }
+}
+
+/**
+ * Explicit exit for every mid-flow state that previously had none —
+ * PositionGuide, VisibilityCheck, DemoRep, Ready, Counting. Exits the same
+ * way system back already does (discarding whatever this attempt has built
+ * up so far); this only makes that exit visible instead of implicit.
+ */
+@Composable
+private fun CancelButton(onDone: () -> Unit) {
+    OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+        Text("Cancel")
     }
 }
 

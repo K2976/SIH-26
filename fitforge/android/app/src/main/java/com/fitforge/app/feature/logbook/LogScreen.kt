@@ -80,13 +80,16 @@ fun LogScreen() {
             ROUTE_SESSION_DETAIL,
             arguments = listOf(navArgument("sessionUuid") { type = NavType.StringType }),
         ) {
-            SessionDetailScreen(onExerciseSelected = { slug -> navController.navigate("log_exercise/$slug") })
+            SessionDetailScreen(
+                onBack = { navController.popBackStack() },
+                onExerciseSelected = { slug -> navController.navigate("log_exercise/$slug") },
+            )
         }
         composable(
             ROUTE_EXERCISE_HISTORY,
             arguments = listOf(navArgument("slug") { type = NavType.StringType }),
         ) {
-            ExerciseHistoryScreen()
+            ExerciseHistoryScreen(onBack = { navController.popBackStack() })
         }
         composable(ROUTE_FOOD) {
             FoodLogScreen(onDone = { navController.popBackStack() })
