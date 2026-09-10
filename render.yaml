@@ -15,22 +15,34 @@ services:
     name: fitforge-backend
     runtime: python
     rootDir: fitforge/backend
-    plan: starter
+    # Free tier: spins down after 15 min with no inbound traffic; the next
+    # request pays a ~30-50s cold start. See docs/DEPLOYMENT.md "Free-tier
+    # cold starts" for the keep-alive workflow and the manual pre-demo
+    # warm-up step that work around it — this is a deliberate free-tier
+    # accommodation, not left over from a paid-plan setup.
+    #
+    # Free tier does NOT support preDeployCommand or Shell/SSH access
+    # (confirmed against Render's docs), which is why migrate runs in
+    # buildCommand below instead of as a separate pre-deploy step, and why
+    # DEPLOYMENT.md's manual-migration fallback runs locally against
+    # DATABASE_URL rather than through a Render shell.
+    plan: free
     region: oregon
     branch: master
 
     # collectstatic is a build-time concern (writes to STATIC_ROOT on the
-    # build filesystem); it does not touch the database.
-    buildCommand: "pip install -r requirements/prod.txt && python manage.py collectstatic --noinput"
+    # build filesystem); it does not touch the database. migrate runs here
+    # too — free tier has no preDeployCommand, and free tier can't scale to
+    # multiple instances anyway, so "once per deploy, not once per
+    # instance" isn't a concern to design around here. migrate is
+    # idempotent (a no-op when nothing's pending), so running it on every
+    # build is safe.
+    buildCommand: "pip install -r requirements/prod.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
     startCommand: "gunicorn fitforge.wsgi:application --bind 0.0.0.0:$PORT"
-
-    # Runs once per deploy, after build and before the new instance(s)
-    # start serving traffic — not once per instance if this service scales
-    # to multiple instances, and not baked into the build image.
-    preDeployCommand: "python manage.py migrate --noinput"
 
     # Plain 200, no DB query — see fitforge/backend/fitforge/health.py.
     # A slow query elsewhere must not make Render think the service is down.
+    # Also the endpoint the keep-alive workflow and manual warm-up ping.
     healthCheckPath: /healthz/
 
     envVars:
