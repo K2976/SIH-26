@@ -1,0 +1,58 @@
+# Render Blueprint for the FitForge Django backend.
+#
+# Database: this app already runs against a managed Neon PostgreSQL
+# instance (see fitforge/backend/.env / docs/PHONE_BACKEND_SETUP.md) —
+# there is no Render-managed Postgres resource defined here. DATABASE_URL
+# below is a plain env var you fill in with the Neon connection string
+# from Render's dashboard, not a Render `databases:` block. This avoids
+# running two Postgres instances and keeps prod/dev on the same data.
+#
+# No secret values live in this file — every credential below is
+# `sync: false`, which makes Render prompt for the value once in the
+# dashboard at Blueprint creation time instead of reading it from here.
+services:
+  - type: web
+    name: fitforge-backend
+    runtime: python
+    rootDir: fitforge/backend
+    plan: starter
+    region: oregon
+    branch: master
+
+    # collectstatic is a build-time concern (writes to STATIC_ROOT on the
+    # build filesystem); it does not touch the database.
+    buildCommand: "pip install -r requirements/prod.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn fitforge.wsgi:application --bind 0.0.0.0:$PORT"
+
+    # Runs once per deploy, after build and before the new instance(s)
+    # start serving traffic — not once per instance if this service scales
+    # to multiple instances, and not baked into the build image.
+    preDeployCommand: "python manage.py migrate --noinput"
+
+    # Plain 200, no DB query — see fitforge/backend/fitforge/health.py.
+    # A slow query elsewhere must not make Render think the service is down.
+    healthCheckPath: /healthz/
+
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: fitforge.settings.prod
+      - key: PYTHON_VERSION
+        value: 3.12.8
+
+      # Secrets and per-environment values — set in Render's dashboard,
+      # never here. See docs/DEPLOYMENT.md for the full list and what
+      # each one is for.
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: USDA_FDC_API_KEY
+        sync: false
+      - key: DJANGO_ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
