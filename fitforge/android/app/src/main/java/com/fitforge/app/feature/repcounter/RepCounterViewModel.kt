@@ -75,7 +75,12 @@ class RepCounterViewModel @Inject constructor(
     private var landmarkerHelper: PoseLandmarkerHelper? = null
 
     private var consecutiveVisibleFrames = 0
-    private var visibilityCheckStartMs = 0L
+    private var lastMissingJoints: Set<PoseLandmark>? = null
+    private val visibilityTimeout = VisibilityTimeout(
+        scope = viewModelScope,
+        timeoutMs = VISIBILITY_TIMEOUT_MS,
+        onTimeout = ::onVisibilityTimeout,
+    )
 
     private var demoPhaseStartMs = 0L
     private var pendingRestAngle: Double? = null
@@ -105,16 +110,25 @@ class RepCounterViewModel @Inject constructor(
     fun onPositioned() {
         if (poseConfig == null) return
         consecutiveVisibleFrames = 0
-        visibilityCheckStartMs = System.currentTimeMillis()
+        lastMissingJoints = null
         _uiState.value = RepCounterUiState.VisibilityCheck(hasCachedCalibration = calibration != null)
+        visibilityTimeout.start()
         if (landmarkerHelper == null) {
             landmarkerHelper = PoseLandmarkerHelper(
                 context = context,
                 modelVariant = ModelVariant.DEFAULT,
                 onResult = ::handleFrame,
-                onError = { message -> _uiState.value = RepCounterUiState.Refused(message) },
+                onError = { message ->
+                    visibilityTimeout.cancel()
+                    _uiState.value = RepCounterUiState.Refused(message)
+                },
             )
         }
+    }
+
+    /** Called by [visibilityTimeout] when 8s pass with visibility never confirmed — with or without frames. */
+    private fun onVisibilityTimeout() {
+        _uiState.value = RepCounterUiState.Refused(visibilityTimeoutMessage(lastMissingJoints))
     }
 
     /** [ImageAnalysis.Analyzer] entry point — called on CameraX's analysis executor thread, not the main thread. */
@@ -146,14 +160,16 @@ class RepCounterViewModel @Inject constructor(
             }
             is VisibilityResult.NotVisible -> {
                 consecutiveVisibleFrames = 0
-                if (System.currentTimeMillis() - visibilityCheckStartMs > VISIBILITY_TIMEOUT_MS) {
-                    _uiState.value = RepCounterUiState.Refused(missingJointsMessage(visibility.missing))
-                }
+                // Remembered so the timeout — which no longer depends on a frame
+                // arriving to re-check itself — can still explain *what* wasn't
+                // visible, when something was seen at all.
+                lastMissingJoints = visibility.missing
             }
         }
     }
 
     private fun proceedPastVisibilityCheck() {
+        visibilityTimeout.cancel()
         val cal = calibration
         if (cal != null) {
             _uiState.value = RepCounterUiState.Ready(cal.restAngleDeg, cal.peakAngleDeg)
@@ -329,3 +345,16 @@ private fun missingJointsMessage(missing: Set<PoseLandmark>): String {
     val names = missing.joinToString(", ") { it.name.lowercase().replace('_', ' ') }
     return "Can't start: $names not visible. Reposition so your whole side is in frame, then try again."
 }
+
+/**
+ * The message shown when the visibility check times out. [missing] is
+ * whatever the last processed frame reported — null when no frame was ever
+ * processed at all (a stalled camera/analyzer pipeline), in which case there's
+ * no joint-specific detail to give.
+ */
+internal fun visibilityTimeoutMessage(missing: Set<PoseLandmark>?): String =
+    if (missing.isNullOrEmpty()) {
+        "Can't start: no camera feed detected. Check the camera can see you, then try again."
+    } else {
+        missingJointsMessage(missing)
+    }

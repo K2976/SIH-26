@@ -1,4 +1,4 @@
-@file:Suppress("LongMethod", "MagicNumber")
+@file:Suppress("LongMethod", "LongParameterList", "MagicNumber")
 
 package com.fitforge.app.feature.food
 
@@ -94,21 +94,23 @@ fun FoodLogScreen(
                 onBarcode = viewModel::beginBarcode,
                 onBack = onDone,
             )
-            is FoodLogStep.Label -> LabelStep(current, viewModel::selectLabel, viewModel::beginSearch)
+            is FoodLogStep.Label -> LabelStep(current, viewModel::selectLabel, viewModel::beginSearch, onDone)
             is FoodLogStep.Search -> SearchStep(
                 current,
                 query,
                 results,
                 viewModel::updateSearch,
                 viewModel::selectSearchResult,
+                onDone,
             )
-            is FoodLogStep.Barcode -> BarcodeStep(current, viewModel::findBarcode)
+            is FoodLogStep.Barcode -> BarcodeStep(current, viewModel::findBarcode, onDone)
             is FoodLogStep.Portion -> PortionStep(
                 current,
                 viewModel::updatePortion,
                 viewModel::confirmPortion,
+                onDone,
             )
-            is FoodLogStep.Nutrition -> NutritionStep(current.preview, viewModel::logNutrition)
+            is FoodLogStep.Nutrition -> NutritionStep(current.preview, viewModel::logNutrition, onDone)
             FoodLogStep.Logged -> {
                 Text(stringResource(R.string.food_logged))
                 Button(onClick = onDone) { Text(stringResource(R.string.food_done)) }
@@ -136,6 +138,7 @@ private fun LabelStep(
     step: FoodLogStep.Label,
     onSelect: (FoodItemEntity) -> Unit,
     onSearch: () -> Unit,
+    onCancel: () -> Unit,
 ) {
     StepTitle(1, stringResource(R.string.food_step_label))
     when {
@@ -153,6 +156,7 @@ private fun LabelStep(
             Text(stringResource(R.string.food_choose_label))
             step.candidates.forEach { food -> FoodRow(food) { onSelect(food) } }
             OutlinedButton(onClick = onSearch) { Text(stringResource(R.string.food_none_of_these)) }
+            OutlinedButton(onClick = onCancel) { Text(stringResource(R.string.food_cancel)) }
         }
     }
 }
@@ -164,8 +168,13 @@ private fun SearchStep(
     results: List<FoodItemEntity>,
     onQuery: (String) -> Unit,
     onSelect: (FoodItemEntity) -> Unit,
+    onCancel: () -> Unit,
 ) {
     StepTitle(2, stringResource(R.string.food_step_portion))
+    // Placed before the results list on purpose: a LazyColumn with no weight
+    // consumes the rest of the column's height, so anything after it in this
+    // unscrolled Column would render off-screen.
+    OutlinedButton(onClick = onCancel) { Text(stringResource(R.string.food_cancel)) }
     if (step.fallbackFromPhoto) Text(stringResource(R.string.food_label_fallback))
     OutlinedTextField(
         value = query,
@@ -177,7 +186,7 @@ private fun SearchStep(
 }
 
 @Composable
-private fun BarcodeStep(step: FoodLogStep.Barcode, onLookup: (String) -> Unit) {
+private fun BarcodeStep(step: FoodLogStep.Barcode, onLookup: (String) -> Unit, onCancel: () -> Unit) {
     var barcode by remember { mutableStateOf("") }
     StepTitle(2, stringResource(R.string.food_step_portion))
     Text(stringResource(R.string.food_barcode_intro))
@@ -194,10 +203,16 @@ private fun BarcodeStep(step: FoodLogStep.Barcode, onLookup: (String) -> Unit) {
     Button(onClick = { onLookup(barcode) }, enabled = barcode.isNotBlank()) {
         Text(stringResource(R.string.food_find_barcode))
     }
+    OutlinedButton(onClick = onCancel) { Text(stringResource(R.string.food_cancel)) }
 }
 
 @Composable
-private fun PortionStep(step: FoodLogStep.Portion, onChange: (String) -> Unit, onConfirm: () -> Unit) {
+private fun PortionStep(
+    step: FoodLogStep.Portion,
+    onChange: (String) -> Unit,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+) {
     StepTitle(2, stringResource(R.string.food_step_portion))
     Text(step.food.name, style = MaterialTheme.typography.titleMedium)
     Text(stringResource(R.string.food_portion_default, step.food.portionLabel))
@@ -214,10 +229,13 @@ private fun PortionStep(step: FoodLogStep.Portion, onChange: (String) -> Unit, o
     Button(onClick = onConfirm, modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.food_confirm_portion))
     }
+    OutlinedButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.food_cancel))
+    }
 }
 
 @Composable
-private fun NutritionStep(preview: NutritionPreview, onLog: () -> Unit) {
+private fun NutritionStep(preview: NutritionPreview, onLog: () -> Unit, onCancel: () -> Unit) {
     StepTitle(3, stringResource(R.string.food_step_nutrition))
     Text(preview.food.name, style = MaterialTheme.typography.titleMedium)
     Text(stringResource(R.string.food_nutrition_portion, preview.portionG))
@@ -230,6 +248,9 @@ private fun NutritionStep(preview: NutritionPreview, onLog: () -> Unit) {
     Text(stringResource(R.string.food_nutrition_source, preview.food.source))
     Button(onClick = onLog, modifier = Modifier.fillMaxWidth()) {
         Text(stringResource(R.string.food_log_confirm))
+    }
+    OutlinedButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
+        Text(stringResource(R.string.food_cancel))
     }
 }
 
