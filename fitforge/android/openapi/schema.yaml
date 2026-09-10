@@ -423,6 +423,29 @@ paths:
                 items:
                   $ref: '#/components/schemas/TrainingMusicMapping'
           description: ''
+  /api/v1/reference/recipes/:
+    get:
+      operationId: reference_recipes_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+          description: ''
   /api/v1/social/check-username/:
     get:
       operationId: social_check_username_retrieve
@@ -1544,10 +1567,14 @@ components:
           type: integer
           maximum: 2147483647
           minimum: 0
+        item_type:
+          type: string
+          readOnly: true
       required:
       - carbs_g
       - default_portion_g
       - fat_g
+      - item_type
       - kcal_per_100g
       - name
       - portion_label
@@ -1842,6 +1869,98 @@ components:
       - timezone
       - tracks_cycle
       - unit_preference
+    Recipe:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        serving_description:
+          type: string
+          maxLength: 128
+        serving_grams_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+          readOnly: true
+        kcal_per_100g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        default_portion_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        portion_label:
+          type: string
+          readOnly: true
+        source:
+          type: string
+          readOnly: true
+        barcode:
+          type: string
+          nullable: true
+          readOnly: true
+        item_type:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - barcode
+      - carbs_g
+      - default_portion_g
+      - fat_g
+      - ingredients
+      - item_type
+      - kcal_per_100g
+      - name
+      - portion_label
+      - protein_g
+      - serving_description
+      - serving_grams_total
+      - slug
+      - source
+    RecipeIngredient:
+      type: object
+      properties:
+        ingredient_slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        grams_in_serving:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+      required:
+      - grams_in_serving
+      - ingredient_slug
     RoleEnum:
       enum:
       - owner

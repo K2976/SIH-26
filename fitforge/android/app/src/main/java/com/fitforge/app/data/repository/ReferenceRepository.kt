@@ -12,6 +12,7 @@ import com.fitforge.app.core.datastore.UserPreferencesDataStore
 import com.fitforge.app.data.remote.generated.apis.ReferenceApi
 import com.fitforge.app.data.remote.generated.models.Exercise
 import com.fitforge.app.data.remote.generated.models.FoodItem
+import com.fitforge.app.data.remote.generated.models.Recipe
 import com.fitforge.app.data.remote.generated.models.TrainingMusicMapping
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,7 @@ private data class ReferenceBundleDto(
     @SerialName("reference_version") val referenceVersion: Int,
     val exercises: List<ExerciseBundleDto>,
     val foods: List<FoodItemBundleDto> = emptyList(),
+    val recipes: List<FoodItemBundleDto> = emptyList(),
     @SerialName("training_music_mappings")
     val trainingMusicMappings: List<TrainingMusicMappingBundleDto> = emptyList(),
 )
@@ -188,6 +190,25 @@ private fun FoodItem.toEntity(): FoodItemEntity {
     )
 }
 
+@Suppress("UNCHECKED_CAST")
+private fun Recipe.toEntity(): FoodItemEntity {
+    val nameMap = name as? Map<String, String>
+    return FoodItemEntity(
+        slug = slug,
+        name = nameMap?.get("en") ?: nameMap?.values?.firstOrNull() ?: slug,
+        kcalPer100g = kcalPer100g.toDouble(),
+        proteinG = proteinG.toDouble(),
+        carbsG = carbsG.toDouble(),
+        fatG = fatG.toDouble(),
+        defaultPortionG = defaultPortionG.toDouble(),
+        portionLabel = portionLabel,
+        source = source,
+        barcode = barcode,
+        isActive = isActive ?: true,
+        updatedAtVersion = updatedAtVersion ?: 0,
+    )
+}
+
 /**
  * Exercise library cache: seeded once from the bundled asset so a fresh
  * install can search/log offline before its first sync, then kept fresh by
@@ -215,7 +236,9 @@ class ReferenceRepository @Inject constructor(
             preferences.setReferenceVersion(bundle.referenceVersion)
         }
         if (foodItemDao.count() == 0) {
-            foodItemDao.upsertWithSearchIndex(bundle.foods.map { it.toEntity() })
+            foodItemDao.upsertWithSearchIndex(
+                (bundle.foods + bundle.recipes).map { it.toEntity() },
+            )
         }
     }
 
@@ -232,6 +255,11 @@ class ReferenceRepository @Inject constructor(
         val foodDelta = referenceApi.referenceFoodsList(since = localVersion).body().orEmpty()
         if (foodDelta.isNotEmpty()) {
             foodItemDao.upsertWithSearchIndex(foodDelta.map { it.toEntity() })
+        }
+
+        val recipeDelta = referenceApi.referenceRecipesList(since = localVersion).body().orEmpty()
+        if (recipeDelta.isNotEmpty()) {
+            foodItemDao.upsertWithSearchIndex(recipeDelta.map { it.toEntity() })
         }
 
         val delta = referenceApi.referenceExercisesList(since = localVersion).body().orEmpty()

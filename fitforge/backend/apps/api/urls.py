@@ -11,6 +11,7 @@ from apps.reference.views import (
     ExerciseDeltaView,
     FoodItemDeltaView,
     ManifestView,
+    RecipeDeltaView,
     TrainingMusicMappingDeltaView,
 )
 
@@ -29,6 +30,7 @@ urlpatterns = [
     path("reference/manifest/", ManifestView.as_view(), name="reference-manifest"),
     path("reference/exercises/", ExerciseDeltaView.as_view(), name="reference-exercises"),
     path("reference/foods/", FoodItemDeltaView.as_view(), name="reference-foods"),
+    path("reference/recipes/", RecipeDeltaView.as_view(), name="reference-recipes"),
     path(
         "reference/music/",
         TrainingMusicMappingDeltaView.as_view(),

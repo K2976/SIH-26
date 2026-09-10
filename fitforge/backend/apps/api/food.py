@@ -10,7 +10,7 @@ from apps.reference.food_label import (
     GeminiLabelError,
     detect_food_labels,
 )
-from apps.reference.models import FoodItem
+from apps.reference.models import FoodItem, Recipe
 
 MAX_IMAGE_BYTES = 8 * 1024 * 1024
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"}
@@ -52,6 +52,10 @@ class FoodLabelView(APIView):
                 food.localized_name()
                 for food in FoodItem.objects.filter(is_active=True).order_by("slug")
             ]
+            names.extend(
+                recipe.localized_name()
+                for recipe in Recipe.objects.filter(is_active=True).order_by("slug")
+            )
             candidates = detect_food_labels(image, uploaded.content_type, names)
         except GeminiConfigurationError as exc:
             return Response({"error": str(exc)}, status=status.HTTP_503_SERVICE_UNAVAILABLE)

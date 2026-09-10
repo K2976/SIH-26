@@ -24,9 +24,7 @@ def detect_food_labels(image: bytes, mime_type: str, allowed_names: list[str]) -
         return []
 
     model = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
-    endpoint = (
-        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    )
+    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
     prompt = (
         "Identify food visible in this image. Return only names from the supplied catalog. "
         "Return an empty candidates array when no food is visible or the identity is uncertain. "

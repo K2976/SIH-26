@@ -144,7 +144,18 @@ FitForge requires an initial reference library of exercises (with movement patte
 ```bash
 python manage.py seed_exercises
 python manage.py seed_foods
+python manage.py seed_recipes
 ```
+
+`seed_foods` loads 542 raw ingredients from the verified 421-column
+`@ifct2017/compositions@2.0.9` export with source `ifct_2017`. The upstream
+description says 528 foods, but its actual CSV contains 542 unique codes: 528
+core foods plus 14 oils/fats. See
+`apps/reference/seed_data/IFCT_PROVENANCE.md` for the checksum, MIT license,
+and deterministic kJ-to-kcal transformation. `seed_recipes` then loads 18
+starter composed dishes. Their ingredient weights are deliberately documented
+as household-recipe starting approximations; nutrition is always computed from
+the current ingredient rows, never entered as a recipe macro value.
 
 To export the reference bundle for the Android client offline database:
 ```bash
@@ -196,6 +207,7 @@ All endpoints require JWT Bearer Authentication (`Authorization: Bearer <token>`
 | `GET` | `/api/v1/reference/manifest/` | Check reference database version |
 | `GET` | `/api/v1/reference/exercises/` | Fetch exercise library delta updates |
 | `GET` | `/api/v1/reference/foods/` | Fetch local food table delta updates |
+| `GET` | `/api/v1/reference/recipes/` | Fetch composed recipes with computed macro updates |
 | `POST` | `/api/v1/food/label/` | Detect catalog food names from a temporary photo |
 | `GET` | `/api/v1/app-config/` | Minimum supported app versions and runtime flags |
 

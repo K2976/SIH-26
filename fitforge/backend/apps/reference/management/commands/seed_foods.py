@@ -7,6 +7,8 @@ from django.core.management.base import BaseCommand
 from apps.reference.models import FoodItem
 
 DEFAULT_SEED_PATH = Path(__file__).resolve().parent.parent.parent / "seed_data" / "foods.json"
+EXPECTED_SOURCE = "ifct_2017"
+EXPECTED_IFCT_ROWS = 542
 DECIMAL_FIELDS = {
     "kcal_per_100g",
     "protein_g",
@@ -31,6 +33,19 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         data = json.loads(Path(options["file"]).read_text())
+        metadata = data.get("metadata", {})
+        if Path(options["file"]).resolve() == DEFAULT_SEED_PATH.resolve():
+            if metadata.get("source") != EXPECTED_SOURCE:
+                raise ValueError("Default food seed must identify source as ifct_2017")
+            if metadata.get("source_rows") != EXPECTED_IFCT_ROWS:
+                raise ValueError(f"Default IFCT seed must contain {EXPECTED_IFCT_ROWS} rows")
+            if len(data["foods"]) != EXPECTED_IFCT_ROWS:
+                raise ValueError(f"Default IFCT seed must contain {EXPECTED_IFCT_ROWS} foods")
+            slugs = [row["slug"] for row in data["foods"]]
+            if len(set(slugs)) != EXPECTED_IFCT_ROWS:
+                raise ValueError("Default IFCT seed must contain unique ingredient slugs")
+            if any(row.get("source") != EXPECTED_SOURCE for row in data["foods"]):
+                raise ValueError("Every default ingredient row must use source ifct_2017")
         created = updated = unchanged = 0
         for row in data["foods"]:
             fields = {
