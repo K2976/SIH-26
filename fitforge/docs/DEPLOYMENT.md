@@ -32,7 +32,7 @@ never in source. Names only, no values here either:
 | `DATABASE_URL` | Neon Postgres connection string. |
 | `GEMINI_API_KEY` | Food label recognition (`apps/reference/food_label.py`). |
 | `USDA_FDC_API_KEY` | USDA FoodData Central lookups (`apps/reference/external_foods.py`). |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated hostnames the app will accept `Host:` headers from (e.g. your `.onrender.com` domain, plus any custom domain) — bare hostnames, no scheme. |
+| `DJANGO_ALLOWED_HOSTS` | **Required — the health check itself fails without it.** Comma-separated hostnames the app will accept `Host:` headers from (e.g. `fitforge-backend-f7ow.onrender.com`, plus any custom domain) — bare hostnames, no scheme. Left unset, `ALLOWED_HOSTS` defaults to empty and Django rejects every request with `400`, including `/healthz/`, which fails the deploy outright (this happened on the first deploy — see "Free-tier cold starts" below). |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated browser origins allowed to call the API cross-origin. Django requires a full scheme, e.g. `https://app.example.com`, not just `app.example.com`. Leave unset (empty) if nothing calls this from a browser. |
 | `CSRF_TRUSTED_ORIGINS` | Comma-separated origins trusted for CSRF-protected requests (relevant for Django admin login). Same scheme requirement as `CORS_ALLOWED_ORIGINS`. |
 
@@ -89,18 +89,26 @@ traffic**, and the next request pays a **~30-50s (Render's own docs say "about
 a minute") cold start** while the instance restarts. Two mitigations are in
 place, and neither is a guarantee — read both.
 
-> **Before any of this works**: as of writing, no `fitforge-backend` service
-> exists yet in the connected Render workspace — this is configuration for
-> the first deploy, not a correction of an observed live service. Both the
-> keep-alive workflow and the Android app's fallback URL assume the deployed
-> service ends up at `https://fitforge-backend.onrender.com` (Render's
-> default URL pattern for a service named `fitforge-backend`, matching
-> `render.yaml`). **After the first deploy, confirm the actual URL** and, if
-> it differs, set the `RENDER_HEALTH_URL` repo variable (see below) and
-> update the Android fallback in
-> `app/build.gradle.kts`/`-PRELEASE_API_BASE_URL`. The keep-alive workflow
-> also only starts firing once this branch is merged to `master` — it isn't
-> running yet on an unmerged branch.
+> **Confirmed URL**: the deployed service is at
+> `https://fitforge-backend-f7ow.onrender.com` — Render appended `-f7ow`
+> because the bare `fitforge-backend` name from `render.yaml` was
+> unavailable. The keep-alive workflow and the Android release fallback
+> (`app/build.gradle.kts`) both use this confirmed URL now. If the service
+> is ever recreated and lands at a different URL, update both, or set the
+> `RENDER_HEALTH_URL` repo variable (see below) instead of editing the
+> workflow.
+
+> **First-deploy gotcha (already hit, now documented so it isn't repeated)**:
+> the first deploy attempt failed because `DJANGO_ALLOWED_HOSTS` wasn't set
+> in Render's dashboard. With it unset, `ALLOWED_HOSTS` in `base.py`
+> defaults to an empty list, so Django's `DisallowedHost` check rejects
+> *every* request with a plain `400` — including the health check itself,
+> which made Render time out the deploy after 15 minutes of failing checks
+> (visible in the deploy logs as `GET /healthz/` returning `400` on a tight
+> loop). `DJANGO_ALLOWED_HOSTS` must be set to the service's actual host —
+> `fitforge-backend-f7ow.onrender.com` — not left blank. If you ever
+> recreate the service under a new name/URL, this is the first thing to set
+> before the health check can pass.
 
 ### Automated keep-alive (best-effort, not a guarantee)
 
