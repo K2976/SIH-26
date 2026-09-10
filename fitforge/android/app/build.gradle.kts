@@ -42,8 +42,15 @@ android {
         }
         release {
             isMinifyEnabled = false
-            // ponytail: placeholder until a real deployment exists.
-            buildConfigField("String", "BASE_URL", "\"https://api.fitforge.app/\"")
+            // Configurable so CI/local release builds can point at the
+            // deployed Render URL without editing this file — pass
+            // -PRELEASE_API_BASE_URL=... or set the env var of the same
+            // name. Falls back to the Render service name from render.yaml
+            // until the first deploy's actual URL is confirmed.
+            val releaseBaseUrl = (project.findProperty("RELEASE_API_BASE_URL") as String?)
+                ?: System.getenv("RELEASE_API_BASE_URL")
+                ?: "https://fitforge-backend.onrender.com/"
+            buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
         }
     }
 
