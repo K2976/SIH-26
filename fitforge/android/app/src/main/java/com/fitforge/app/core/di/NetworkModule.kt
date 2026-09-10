@@ -5,6 +5,7 @@ package com.fitforge.app.core.di
 import com.fitforge.app.BuildConfig
 import com.fitforge.app.core.network.AnySerializer
 import com.fitforge.app.core.network.AuthInterceptor
+import com.fitforge.app.core.network.ColdStartInterceptor
 import com.fitforge.app.core.network.RefreshApi
 import com.fitforge.app.core.network.TokenAuthenticator
 import com.fitforge.app.core.network.createJsonWithJavaTime
@@ -87,6 +88,10 @@ object NetworkModule {
         tokenAuthenticator: TokenAuthenticator,
         logging: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
+        // Outermost: extends the timeout for the whole call while the
+        // backend hasn't answered yet this process lifetime (cold-start
+        // tolerance for Render's free tier).
+        .addInterceptor(ColdStartInterceptor())
         .addInterceptor(authInterceptor)
         .addInterceptor(logging)
         .authenticator(tokenAuthenticator)

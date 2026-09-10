@@ -91,6 +91,8 @@
     <string name="food_logged">Meal logged.</string>
     <string name="food_done">Done</string>
 
+    <string name="backend_waking_up">Waking up the server — this can take up to a minute…</string>
+
     <string name="update_required_title">Update required</string>
     <string name="update_required_body">A new version of FitForge is required to continue. Please update the app from the Play Store.</string>
     <string name="update_required_min_version">Minimum supported version: %1$s</string>
