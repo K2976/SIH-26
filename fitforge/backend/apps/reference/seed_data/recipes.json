@@ -1,0 +1,149 @@
+{
+  "_comment": "Starter recipes use approximate raw edible ingredient weights for one cooked serving. Household recipes and cooking yields vary; these proportions are a starting point for refinement, not precision claims.",
+  "recipes": [
+    {
+      "slug": "plain-rice",
+      "name": {"en": "Plain rice"},
+      "serving_description": "1 bowl, ~270g",
+      "serving_grams_total": "270.00",
+      "ingredients": [["ifct-a015", "90.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "roti",
+      "name": {"en": "Roti"},
+      "serving_description": "1 medium roti, ~50g",
+      "serving_grams_total": "50.00",
+      "ingredients": [["ifct-a019", "45.00"], ["ifct-t005", "2.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "moong-dal",
+      "name": {"en": "Moong dal"},
+      "serving_description": "1 katori, ~220g",
+      "serving_grams_total": "220.00",
+      "ingredients": [["ifct-b010", "50.00"], ["ifct-g017", "20.00"], ["ifct-d076", "30.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "masoor-dal",
+      "name": {"en": "Masoor dal"},
+      "serving_description": "1 katori, ~220g",
+      "serving_grams_total": "220.00",
+      "ingredients": [["ifct-b013", "50.00"], ["ifct-g017", "20.00"], ["ifct-d076", "30.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "chana-dal",
+      "name": {"en": "Chana dal"},
+      "serving_description": "1 katori, ~220g",
+      "serving_grams_total": "220.00",
+      "ingredients": [["ifct-b001", "50.00"], ["ifct-g017", "20.00"], ["ifct-d076", "30.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "toor-dal",
+      "name": {"en": "Toor dal"},
+      "serving_description": "1 katori, ~220g",
+      "serving_grams_total": "220.00",
+      "ingredients": [["ifct-b021", "50.00"], ["ifct-g017", "20.00"], ["ifct-d076", "30.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "mixed-vegetable-sabzi",
+      "name": {"en": "Mixed vegetable sabzi"},
+      "serving_description": "1 bowl, ~250g",
+      "serving_grams_total": "250.00",
+      "ingredients": [["ifct-f006", "70.00"], ["ifct-d036", "60.00"], ["ifct-d061", "30.00"], ["ifct-f002", "30.00"], ["ifct-g017", "25.00"], ["ifct-d076", "25.00"], ["ifct-t005", "7.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "aloo-gobi",
+      "name": {"en": "Aloo gobi"},
+      "serving_description": "1 bowl, ~250g",
+      "serving_grams_total": "250.00",
+      "ingredients": [["ifct-f006", "110.00"], ["ifct-d036", "100.00"], ["ifct-g017", "25.00"], ["ifct-d076", "25.00"], ["ifct-t005", "8.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "vegetable-biryani",
+      "name": {"en": "Vegetable biryani"},
+      "serving_description": "1 plate, ~300g",
+      "serving_grams_total": "300.00",
+      "ingredients": [["ifct-a015", "80.00"], ["ifct-d036", "30.00"], ["ifct-d061", "25.00"], ["ifct-f002", "25.00"], ["ifct-g017", "30.00"], ["ifct-d076", "20.00"], ["ifct-t005", "10.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "moong-dal-khichdi",
+      "name": {"en": "Moong dal khichdi"},
+      "serving_description": "1 bowl, ~300g",
+      "serving_grams_total": "300.00",
+      "ingredients": [["ifct-a015", "55.00"], ["ifct-b010", "35.00"], ["ifct-g017", "15.00"], ["ifct-d076", "20.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "idli",
+      "name": {"en": "Idli"},
+      "serving_description": "3 idlis, ~150g",
+      "serving_grams_total": "150.00",
+      "ingredients": [["ifct-a015", "55.00"], ["ifct-b003", "18.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "plain-dosa",
+      "name": {"en": "Plain dosa"},
+      "serving_description": "1 dosa, ~120g",
+      "serving_grams_total": "120.00",
+      "ingredients": [["ifct-a015", "60.00"], ["ifct-b003", "15.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "vegetable-upma",
+      "name": {"en": "Vegetable upma"},
+      "serving_description": "1 bowl, ~250g",
+      "serving_grams_total": "250.00",
+      "ingredients": [["ifct-a022", "60.00"], ["ifct-g017", "25.00"], ["ifct-d076", "25.00"], ["ifct-d061", "15.00"], ["ifct-f002", "15.00"], ["ifct-t005", "7.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "vegetable-poha",
+      "name": {"en": "Vegetable poha"},
+      "serving_description": "1 bowl, ~250g",
+      "serving_grams_total": "250.00",
+      "ingredients": [["ifct-a011", "70.00"], ["ifct-g017", "25.00"], ["ifct-f006", "50.00"], ["ifct-d061", "20.00"], ["ifct-t005", "7.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "rajma-curry",
+      "name": {"en": "Rajma curry"},
+      "serving_description": "1 katori, ~240g",
+      "serving_grams_total": "240.00",
+      "ingredients": [["ifct-b020", "60.00"], ["ifct-g017", "30.00"], ["ifct-d076", "40.00"], ["ifct-t005", "7.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "chole",
+      "name": {"en": "Chole"},
+      "serving_description": "1 katori, ~240g",
+      "serving_grams_total": "240.00",
+      "ingredients": [["ifct-b002", "60.00"], ["ifct-g017", "30.00"], ["ifct-d076", "40.00"], ["ifct-t005", "7.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "sambar",
+      "name": {"en": "Sambar"},
+      "serving_description": "1 bowl, ~250g",
+      "serving_grams_total": "250.00",
+      "ingredients": [["ifct-b021", "40.00"], ["ifct-g017", "20.00"], ["ifct-d076", "30.00"], ["ifct-f006", "30.00"], ["ifct-e064", "8.00"], ["ifct-t005", "5.00"]],
+      "is_active": true
+    },
+    {
+      "slug": "paneer-sabzi",
+      "name": {"en": "Paneer sabzi"},
+      "serving_description": "1 bowl, ~220g",
+      "serving_grams_total": "220.00",
+      "ingredients": [["ifct-l003", "100.00"], ["ifct-g017", "35.00"], ["ifct-d076", "50.00"], ["ifct-t005", "7.00"]],
+      "is_active": true
+    }
+  ]
+}

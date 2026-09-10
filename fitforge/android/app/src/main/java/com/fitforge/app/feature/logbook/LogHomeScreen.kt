@@ -32,6 +32,7 @@ fun LogHomeScreen(
     onAddExercise: (String) -> Unit,
     onOpenSession: (String) -> Unit,
     onOpenExerciseHistory: (String) -> Unit,
+    onLogFood: () -> Unit,
     viewModel: LogHomeViewModel = hiltViewModel(),
 ) {
     val activeSession by viewModel.activeSession.collectAsStateWithLifecycle()
@@ -42,6 +43,11 @@ fun LogHomeScreen(
     val pastSessions = history.filter { it.durationMinutes != null }
 
     Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+        Button(onClick = onLogFood, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.food_log_meal))
+        }
+        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
         val session = activeSession
         if (session != null) {
             ActiveSessionCard(

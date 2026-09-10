@@ -4,6 +4,9 @@ import com.fitforge.app.core.database.BaseDiaryColumns
 import com.fitforge.app.core.database.CycleLogDao
 import com.fitforge.app.core.database.CycleLogEntity
 import com.fitforge.app.core.database.SetLogDao
+import com.fitforge.app.core.database.MealDao
+import com.fitforge.app.core.database.MealItemEntity
+import com.fitforge.app.core.database.MealLogEntity
 import com.fitforge.app.core.database.SetLogEntity
 import com.fitforge.app.core.database.SyncStatus
 import com.fitforge.app.core.database.WorkoutSessionDao
@@ -69,6 +72,18 @@ private class FakeCycleLogDao(private val pending: List<CycleLogEntity> = emptyL
     override suspend fun deleteAll() = error("not needed")
 }
 
+private class FakeMealDao(
+    private val logs: List<MealLogEntity> = emptyList(),
+    private val items: List<MealItemEntity> = emptyList(),
+) : MealDao {
+    override suspend fun insertMealLog(log: MealLogEntity) = error("not needed")
+    override suspend fun insertMealItem(item: MealItemEntity) = error("not needed")
+    override suspend fun getPendingLogs(): List<MealLogEntity> = logs
+    override suspend fun getPendingItems(): List<MealItemEntity> = items
+    override suspend fun updateMealLogStatus(clientUuid: String, status: SyncStatus) = Unit
+    override suspend fun updateMealItemStatus(clientUuid: String, status: SyncStatus) = Unit
+}
+
 /** Records the events it was sent so the test can assert ordering. */
 private class RecordingSyncApi(private val response: SyncResponse) : SyncApi {
     var lastRequest: SyncRequest? = null
@@ -98,6 +113,7 @@ class SyncRepositoryTest {
             FakeSessionDao(listOf(session)),
             FakeSetLogDao(listOf(set)),
             FakeCycleLogDao(),
+            FakeMealDao(),
             api,
         )
 
@@ -136,7 +152,7 @@ class SyncRepositoryTest {
         val api = RecordingSyncApi(response)
         val sessionDao = FakeSessionDao(listOf(okSession))
         val setLogDao = FakeSetLogDao(listOf(badSet))
-        val repository = SyncRepository(sessionDao, setLogDao, FakeCycleLogDao(), api)
+        val repository = SyncRepository(sessionDao, setLogDao, FakeCycleLogDao(), FakeMealDao(), api)
 
         val success = repository.syncPending()
 

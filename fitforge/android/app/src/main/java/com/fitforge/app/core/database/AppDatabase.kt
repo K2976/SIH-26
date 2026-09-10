@@ -14,8 +14,12 @@ import androidx.room.TypeConverters
         CalibrationProfileEntity::class,
         CycleLogEntity::class,
         TrainingMusicMappingEntity::class,
+        FoodItemEntity::class,
+        FoodSearchEntity::class,
+        MealLogEntity::class,
+        MealItemEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = false,
 )
 @TypeConverters(Converters::class)
@@ -27,4 +31,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun calibrationProfileDao(): CalibrationProfileDao
     abstract fun cycleLogDao(): CycleLogDao
     abstract fun trainingMusicMappingDao(): TrainingMusicMappingDao
+    abstract fun foodItemDao(): FoodItemDao
+    abstract fun mealDao(): MealDao
 }

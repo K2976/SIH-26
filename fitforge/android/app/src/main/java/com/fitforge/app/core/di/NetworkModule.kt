@@ -18,6 +18,7 @@ import com.fitforge.app.data.remote.generated.apis.ReferenceApi
 import com.fitforge.app.data.remote.generated.apis.SocialApi
 import com.fitforge.app.data.remote.generated.apis.StateApi
 import com.fitforge.app.data.remote.generated.apis.SyncApi
+import com.fitforge.app.data.remote.FoodLabelUploadApi
 import com.fitforge.app.data.remote.generated.infrastructure.Serializer
 import dagger.Module
 import dagger.Provides
@@ -148,4 +149,9 @@ object NetworkModule {
     @Singleton
     fun provideCommunityApi(retrofit: Retrofit): CommunityApi =
         retrofit.create(CommunityApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideFoodLabelUploadApi(retrofit: Retrofit): FoodLabelUploadApi =
+        retrofit.create(FoodLabelUploadApi::class.java)
 }

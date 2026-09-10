@@ -55,6 +55,42 @@
     <string name="log_pr_none">No personal record yet</string>
     <string name="log_exercise_history_empty">No sets logged for this exercise yet.</string>
 
+    <!-- Food logging — label → portion → nutrition -->
+    <string name="food_log_meal">Log food</string>
+    <string name="food_log_title">Log food</string>
+    <string name="food_photo">Take a food photo</string>
+    <string name="food_search">Search foods</string>
+    <string name="food_barcode">Enter barcode</string>
+    <string name="food_cancel">Cancel</string>
+    <string name="food_step_label">Label</string>
+    <string name="food_step_portion">Portion</string>
+    <string name="food_step_nutrition">Nutrition</string>
+    <string name="food_step_title">%1$d. %2$s</string>
+    <string name="food_choose_label">What food is this?</string>
+    <string name="food_search_instead">Search instead</string>
+    <string name="food_gemini_not_configured">Photo labels need GEMINI_API_KEY in backend/.env.</string>
+    <string name="food_recognition_unavailable">Food recognition is unavailable.</string>
+    <string name="food_none_of_these">None of these — search foods</string>
+    <string name="food_label_fallback">We couldn’t identify the food confidently. Search the local food table.</string>
+    <string name="food_search_hint">Food name</string>
+    <string name="food_barcode_intro">Enter the digits printed under the barcode.</string>
+    <string name="food_barcode_hint">Barcode</string>
+    <string name="food_find_barcode">Find food</string>
+    <string name="food_barcode_not_found">No food found for that barcode.</string>
+    <string name="food_portion_default">Suggested portion: %1$s</string>
+    <string name="food_portion_grams">Portion (g)</string>
+    <string name="food_confirm_portion">Confirm portion</string>
+    <string name="food_invalid_portion">Enter a portion greater than zero.</string>
+    <string name="food_nutrition_portion">For %1$.0f g</string>
+    <string name="food_calories">%1$.0f kcal</string>
+    <string name="food_protein">Protein %1$.1f g</string>
+    <string name="food_carbs">Carbs %1$.1f g</string>
+    <string name="food_fat">Fat %1$.1f g</string>
+    <string name="food_nutrition_source">Source: %1$s</string>
+    <string name="food_log_confirm">Log meal</string>
+    <string name="food_logged">Meal logged.</string>
+    <string name="food_done">Done</string>
+
     <string name="update_required_title">Update required</string>
     <string name="update_required_body">A new version of FitForge is required to continue. Please update the app from the Play Store.</string>
     <string name="update_required_min_version">Minimum supported version: %1$s</string>

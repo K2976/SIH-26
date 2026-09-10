@@ -1,7 +1,8 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from apps.reference.models import Exercise, TrainingMusicMapping
+from apps.reference.models import Exercise, FoodItem, Recipe, RecipeIngredient, TrainingMusicMapping
+from apps.reference.nutrition import recipe_nutrition_per_100g
 
 
 @extend_schema_field({"type": "object"})
@@ -38,6 +39,111 @@ class ExerciseSerializer(serializers.ModelSerializer):
             "is_bodyweight",
             "pose_config",
             "camera_position",
+            "is_active",
+            "updated_at_version",
+        ]
+
+
+class FoodItemSerializer(serializers.ModelSerializer):
+    item_type = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.CharField())
+    def get_item_type(self, obj):
+        return "ingredient"
+
+    class Meta:
+        model = FoodItem
+        fields = [
+            "slug",
+            "name",
+            "kcal_per_100g",
+            "protein_g",
+            "carbs_g",
+            "fat_g",
+            "default_portion_g",
+            "portion_label",
+            "source",
+            "barcode",
+            "is_active",
+            "updated_at_version",
+            "item_type",
+        ]
+
+
+class RecipeIngredientSerializer(serializers.ModelSerializer):
+    ingredient_slug = serializers.SlugField(source="ingredient.slug")
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ["ingredient_slug", "grams_in_serving"]
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    kcal_per_100g = serializers.SerializerMethodField()
+    protein_g = serializers.SerializerMethodField()
+    carbs_g = serializers.SerializerMethodField()
+    fat_g = serializers.SerializerMethodField()
+    default_portion_g = serializers.DecimalField(
+        source="serving_grams_total", max_digits=8, decimal_places=2, read_only=True
+    )
+    portion_label = serializers.CharField(source="serving_description", read_only=True)
+    source = serializers.SerializerMethodField()
+    barcode = serializers.SerializerMethodField()
+    item_type = serializers.SerializerMethodField()
+    ingredients = RecipeIngredientSerializer(many=True, read_only=True)
+
+    def _nutrition(self, obj):
+        cached = getattr(obj, "_serialized_nutrition", None)
+        if cached is None:
+            cached = recipe_nutrition_per_100g(obj)
+            obj._serialized_nutrition = cached
+        return cached
+
+    @extend_schema_field(serializers.DecimalField(max_digits=8, decimal_places=2))
+    def get_kcal_per_100g(self, obj):
+        return str(self._nutrition(obj).calories)
+
+    @extend_schema_field(serializers.DecimalField(max_digits=8, decimal_places=2))
+    def get_protein_g(self, obj):
+        return str(self._nutrition(obj).protein_g)
+
+    @extend_schema_field(serializers.DecimalField(max_digits=8, decimal_places=2))
+    def get_carbs_g(self, obj):
+        return str(self._nutrition(obj).carbs_g)
+
+    @extend_schema_field(serializers.DecimalField(max_digits=8, decimal_places=2))
+    def get_fat_g(self, obj):
+        return str(self._nutrition(obj).fat_g)
+
+    @extend_schema_field(serializers.CharField())
+    def get_source(self, obj):
+        return "recipe_computed"
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_barcode(self, obj):
+        return None
+
+    @extend_schema_field(serializers.CharField())
+    def get_item_type(self, obj):
+        return "recipe"
+
+    class Meta:
+        model = Recipe
+        fields = [
+            "slug",
+            "name",
+            "serving_description",
+            "serving_grams_total",
+            "ingredients",
+            "kcal_per_100g",
+            "protein_g",
+            "carbs_g",
+            "fat_g",
+            "default_portion_g",
+            "portion_label",
+            "source",
+            "barcode",
+            "item_type",
             "is_active",
             "updated_at_version",
         ]

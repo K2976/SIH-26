@@ -1,5 +1,6 @@
 import datetime
 import uuid
+from decimal import Decimal
 
 import pytest
 from django.contrib.auth import get_user_model
@@ -7,7 +8,9 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.diary.models import WorkoutSession
+from apps.diary.models import MealItem, WorkoutSession
+from apps.diary.nutrition import nutrition_for_portion
+from apps.reference.models import FoodItem, Recipe, RecipeIngredient
 
 User = get_user_model()
 
@@ -90,7 +93,76 @@ def test_sync_timestamp_rejection(api_client, user):
     assert response.status_code == 200
     assert response.data["success_count"] == 0
     assert len(response.data["errors"]) == 2
-
     error_texts = [e["error"] for e in response.data["errors"]]
     assert any("more than one day in the future" in e for e in error_texts)
     assert any("implausibly far in the past" in e for e in error_texts)
+
+
+@pytest.mark.django_db
+def test_photo_search_and_barcode_create_equivalent_meal_items(api_client, user):
+    rice = FoodItem.objects.create(
+        slug="ifct-a015",
+        name={"en": "Rice, raw, milled"},
+        kcal_per_100g=Decimal("356.36"),
+        protein_g=Decimal("7.94"),
+        carbs_g=Decimal("78.24"),
+        fat_g=Decimal("0.52"),
+        default_portion_g=Decimal("100.00"),
+        portion_label="100 g",
+        source="ifct_2017",
+    )
+    recipe = Recipe.objects.create(
+        slug="vegetable-biryani",
+        name={"en": "Vegetable biryani"},
+        serving_description="1 plate, ~300g",
+        serving_grams_total=Decimal("300.00"),
+    )
+    RecipeIngredient.objects.create(
+        recipe=recipe, ingredient=rice, grams_in_serving=Decimal("80.00")
+    )
+    snapshot = nutrition_for_portion(recipe, recipe.serving_grams_total)
+    now = timezone.now().isoformat()
+    events = []
+    for source in ("photo", "search", "barcode"):
+        meal_uuid = str(uuid.uuid4())
+        events.extend(
+            [
+                {
+                    "type": "meal_log",
+                    "client_uuid": meal_uuid,
+                    "occurred_at": now,
+                    "source": source,
+                },
+                {
+                    "type": "meal_item",
+                    "client_uuid": str(uuid.uuid4()),
+                    "occurred_at": now,
+                    "source": source,
+                    "log": meal_uuid,
+                    "food_slug": recipe.slug,
+                    "quantity": str(recipe.serving_grams_total),
+                    "calories": str(snapshot.calories),
+                    "protein_g": str(snapshot.protein_g),
+                    "carbs_g": str(snapshot.carbs_g),
+                    "fat_g": str(snapshot.fat_g),
+                },
+            ]
+        )
+
+    response = api_client.post(reverse("sync"), {"events": events}, format="json")
+
+    assert response.data == {"success_count": 6, "errors": []}
+    items = list(MealItem.objects.filter(user=user).order_by("source"))
+    assert [item.source for item in items] == ["barcode", "photo", "search"]
+    snapshots = {
+        (
+            item.food_slug,
+            item.quantity,
+            item.calories,
+            item.protein_g,
+            item.carbs_g,
+            item.fat_g,
+        )
+        for item in items
+    }
+    assert len(snapshots) == 1

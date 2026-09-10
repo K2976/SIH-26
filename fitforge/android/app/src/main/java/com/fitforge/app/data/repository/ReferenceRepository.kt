@@ -3,12 +3,16 @@ package com.fitforge.app.data.repository
 import android.content.Context
 import com.fitforge.app.core.database.ExerciseDao
 import com.fitforge.app.core.database.ExerciseEntity
+import com.fitforge.app.core.database.FoodItemDao
+import com.fitforge.app.core.database.FoodItemEntity
 import com.fitforge.app.core.database.NO_CYCLE_PHASE
 import com.fitforge.app.core.database.TrainingMusicMappingDao
 import com.fitforge.app.core.database.TrainingMusicMappingEntity
 import com.fitforge.app.core.datastore.UserPreferencesDataStore
 import com.fitforge.app.data.remote.generated.apis.ReferenceApi
 import com.fitforge.app.data.remote.generated.models.Exercise
+import com.fitforge.app.data.remote.generated.models.FoodItem
+import com.fitforge.app.data.remote.generated.models.Recipe
 import com.fitforge.app.data.remote.generated.models.TrainingMusicMapping
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +27,26 @@ import javax.inject.Singleton
 private data class ReferenceBundleDto(
     @SerialName("reference_version") val referenceVersion: Int,
     val exercises: List<ExerciseBundleDto>,
+    val foods: List<FoodItemBundleDto> = emptyList(),
+    val recipes: List<FoodItemBundleDto> = emptyList(),
     @SerialName("training_music_mappings")
     val trainingMusicMappings: List<TrainingMusicMappingBundleDto> = emptyList(),
+)
+
+@Serializable
+private data class FoodItemBundleDto(
+    val slug: String,
+    val name: Map<String, String>,
+    @SerialName("kcal_per_100g") val kcalPer100g: String,
+    @SerialName("protein_g") val proteinG: String,
+    @SerialName("carbs_g") val carbsG: String,
+    @SerialName("fat_g") val fatG: String,
+    @SerialName("default_portion_g") val defaultPortionG: String,
+    @SerialName("portion_label") val portionLabel: String,
+    val source: String,
+    val barcode: String? = null,
+    @SerialName("is_active") val isActive: Boolean = true,
+    @SerialName("updated_at_version") val updatedAtVersion: Int = 0,
 )
 
 @Serializable
@@ -86,6 +108,21 @@ private fun ExerciseBundleDto.toEntity() = ExerciseEntity(
     poseSymmetryToleranceDeg = poseConfig?.symmetryToleranceDeg,
 )
 
+private fun FoodItemBundleDto.toEntity() = FoodItemEntity(
+    slug = slug,
+    name = name["en"] ?: name.values.firstOrNull() ?: slug,
+    kcalPer100g = kcalPer100g.toDouble(),
+    proteinG = proteinG.toDouble(),
+    carbsG = carbsG.toDouble(),
+    fatG = fatG.toDouble(),
+    defaultPortionG = defaultPortionG.toDouble(),
+    portionLabel = portionLabel,
+    source = source,
+    barcode = barcode,
+    isActive = isActive,
+    updatedAtVersion = updatedAtVersion,
+)
+
 @Suppress("UNCHECKED_CAST")
 private fun Exercise.toEntity(): ExerciseEntity {
     val nameMap = name as? Map<String, String>
@@ -134,6 +171,44 @@ private fun TrainingMusicMapping.toEntity() = TrainingMusicMappingEntity(
     updatedAtVersion = updatedAtVersion ?: 0,
 )
 
+@Suppress("UNCHECKED_CAST")
+private fun FoodItem.toEntity(): FoodItemEntity {
+    val nameMap = name as? Map<String, String>
+    return FoodItemEntity(
+        slug = slug,
+        name = nameMap?.get("en") ?: nameMap?.values?.firstOrNull() ?: slug,
+        kcalPer100g = kcalPer100g.toDouble(),
+        proteinG = proteinG.toDouble(),
+        carbsG = carbsG.toDouble(),
+        fatG = fatG.toDouble(),
+        defaultPortionG = defaultPortionG.toDouble(),
+        portionLabel = portionLabel,
+        source = source,
+        barcode = barcode,
+        isActive = isActive ?: true,
+        updatedAtVersion = updatedAtVersion ?: 0,
+    )
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun Recipe.toEntity(): FoodItemEntity {
+    val nameMap = name as? Map<String, String>
+    return FoodItemEntity(
+        slug = slug,
+        name = nameMap?.get("en") ?: nameMap?.values?.firstOrNull() ?: slug,
+        kcalPer100g = kcalPer100g.toDouble(),
+        proteinG = proteinG.toDouble(),
+        carbsG = carbsG.toDouble(),
+        fatG = fatG.toDouble(),
+        defaultPortionG = defaultPortionG.toDouble(),
+        portionLabel = portionLabel,
+        source = source,
+        barcode = barcode,
+        isActive = isActive ?: true,
+        updatedAtVersion = updatedAtVersion ?: 0,
+    )
+}
+
 /**
  * Exercise library cache: seeded once from the bundled asset so a fresh
  * install can search/log offline before its first sync, then kept fresh by
@@ -143,6 +218,7 @@ private fun TrainingMusicMapping.toEntity() = TrainingMusicMappingEntity(
 class ReferenceRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val exerciseDao: ExerciseDao,
+    private val foodItemDao: FoodItemDao,
     private val trainingMusicMappingDao: TrainingMusicMappingDao,
     private val referenceApi: ReferenceApi,
     private val preferences: UserPreferencesDataStore,
@@ -152,12 +228,18 @@ class ReferenceRepository @Inject constructor(
     val musicMappings: Flow<List<TrainingMusicMappingEntity>> = trainingMusicMappingDao.getAllActive()
 
     suspend fun seedFromAssetsIfEmpty() {
-        if (exerciseDao.count() > 0) return
         val raw = context.assets.open("reference_bundle.json").bufferedReader().use { it.readText() }
         val bundle = json.decodeFromString(ReferenceBundleDto.serializer(), raw)
-        exerciseDao.upsertWithSearchIndex(bundle.exercises.map { it.toEntity() })
-        trainingMusicMappingDao.upsertAll(bundle.trainingMusicMappings.map { it.toEntity() })
-        preferences.setReferenceVersion(bundle.referenceVersion)
+        if (exerciseDao.count() == 0) {
+            exerciseDao.upsertWithSearchIndex(bundle.exercises.map { it.toEntity() })
+            trainingMusicMappingDao.upsertAll(bundle.trainingMusicMappings.map { it.toEntity() })
+            preferences.setReferenceVersion(bundle.referenceVersion)
+        }
+        if (foodItemDao.count() == 0) {
+            foodItemDao.upsertWithSearchIndex(
+                (bundle.foods + bundle.recipes).map { it.toEntity() },
+            )
+        }
     }
 
     suspend fun syncDelta() {
@@ -168,6 +250,16 @@ class ReferenceRepository @Inject constructor(
         val musicDelta = referenceApi.referenceMusicList(since = localVersion).body().orEmpty()
         if (musicDelta.isNotEmpty()) {
             trainingMusicMappingDao.upsertAll(musicDelta.map { it.toEntity() })
+        }
+
+        val foodDelta = referenceApi.referenceFoodsList(since = localVersion).body().orEmpty()
+        if (foodDelta.isNotEmpty()) {
+            foodItemDao.upsertWithSearchIndex(foodDelta.map { it.toEntity() })
+        }
+
+        val recipeDelta = referenceApi.referenceRecipesList(since = localVersion).body().orEmpty()
+        if (recipeDelta.isNotEmpty()) {
+            foodItemDao.upsertWithSearchIndex(recipeDelta.map { it.toEntity() })
         }
 
         val delta = referenceApi.referenceExercisesList(since = localVersion).body().orEmpty()

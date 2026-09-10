@@ -215,6 +215,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/CycleProfile'
           description: ''
+  /api/v1/food/label/:
+    post:
+      operationId: food_label_create
+      tags:
+      - food
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoodLabelRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoodLabelRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodLabelResponse'
+          description: ''
   /api/v1/goal/:
     get:
       operationId: goal_retrieve
@@ -339,6 +362,29 @@ paths:
                 items:
                   $ref: '#/components/schemas/Exercise'
           description: ''
+  /api/v1/reference/foods/:
+    get:
+      operationId: reference_foods_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodItem'
+          description: ''
   /api/v1/reference/manifest/:
     get:
       operationId: reference_manifest_retrieve
@@ -376,6 +422,29 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TrainingMusicMapping'
+          description: ''
+  /api/v1/reference/recipes/:
+    get:
+      operationId: reference_recipes_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
           description: ''
   /api/v1/social/check-username/:
     get:
@@ -1454,6 +1523,81 @@ components:
       - insufficient_data_for_adaptation
       - missing_food_days_7d
       - missing_weight_days_14d
+    FoodItem:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        kcal_per_100g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        default_portion_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        portion_label:
+          type: string
+          maxLength: 64
+        source:
+          type: string
+          maxLength: 128
+        barcode:
+          type: string
+          nullable: true
+          maxLength: 64
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        item_type:
+          type: string
+          readOnly: true
+      required:
+      - carbs_g
+      - default_portion_g
+      - fat_g
+      - item_type
+      - kcal_per_100g
+      - name
+      - portion_label
+      - protein_g
+      - slug
+      - source
+    FoodLabelRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+      required:
+      - image
+    FoodLabelResponse:
+      type: object
+      properties:
+        candidates:
+          type: array
+          items:
+            type: string
+      required:
+      - candidates
     Goal:
       type: object
       properties:
@@ -1725,6 +1869,98 @@ components:
       - timezone
       - tracks_cycle
       - unit_preference
+    Recipe:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        serving_description:
+          type: string
+          maxLength: 128
+        serving_grams_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+          readOnly: true
+        kcal_per_100g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        default_portion_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        portion_label:
+          type: string
+          readOnly: true
+        source:
+          type: string
+          readOnly: true
+        barcode:
+          type: string
+          nullable: true
+          readOnly: true
+        item_type:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - barcode
+      - carbs_g
+      - default_portion_g
+      - fat_g
+      - ingredients
+      - item_type
+      - kcal_per_100g
+      - name
+      - portion_label
+      - protein_g
+      - serving_description
+      - serving_grams_total
+      - slug
+      - source
+    RecipeIngredient:
+      type: object
+      properties:
+        ingredient_slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        grams_in_serving:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+      required:
+      - grams_in_serving
+      - ingredient_slug
     RoleEnum:
       enum:
       - owner
@@ -1921,6 +2157,33 @@ components:
         tempo_ms:
           type: integer
           nullable: true
+        log:
+          type: string
+          format: uuid
+          nullable: true
+        food_slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        quantity:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
         date:
           type: string
           format: date

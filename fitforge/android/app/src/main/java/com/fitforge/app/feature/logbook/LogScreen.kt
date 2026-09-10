@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.fitforge.app.feature.repcounter.RepCounterScreen
+import com.fitforge.app.feature.food.FoodLogScreen
 
 private const val ROUTE_HOME = "log_home"
 private const val ROUTE_PICK_EXERCISE = "log_pick_exercise/{sessionUuid}"
@@ -16,6 +17,7 @@ private const val ROUTE_ADD_SET = "log_add_set/{sessionUuid}/{slug}"
 private const val ROUTE_CAMERA_REP = "log_camera_rep/{sessionUuid}/{slug}"
 private const val ROUTE_SESSION_DETAIL = "log_session/{sessionUuid}"
 private const val ROUTE_EXERCISE_HISTORY = "log_exercise/{slug}"
+private const val ROUTE_FOOD = "log_food"
 
 /** Root of the Log tab. A small nested graph, not the app-level nav host. */
 @Composable
@@ -34,6 +36,7 @@ fun LogScreen() {
                 onOpenExerciseHistory = { slug ->
                     navController.navigate("log_exercise/$slug")
                 },
+                onLogFood = { navController.navigate(ROUTE_FOOD) },
             )
         }
         composable(
@@ -84,6 +87,9 @@ fun LogScreen() {
             arguments = listOf(navArgument("slug") { type = NavType.StringType }),
         ) {
             ExerciseHistoryScreen()
+        }
+        composable(ROUTE_FOOD) {
+            FoodLogScreen(onDone = { navController.popBackStack() })
         }
     }
 }

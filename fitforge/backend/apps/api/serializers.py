@@ -35,6 +35,15 @@ class SyncEventSerializer(serializers.Serializer):
     rom_achieved = serializers.CharField(required=False, allow_null=True)
     tempo_ms = serializers.IntegerField(required=False, allow_null=True)
 
+    # meal_item
+    log = serializers.UUIDField(required=False, allow_null=True)
+    food_slug = serializers.SlugField(required=False)
+    quantity = serializers.DecimalField(max_digits=8, decimal_places=2, required=False)
+    calories = serializers.DecimalField(max_digits=8, decimal_places=2, required=False)
+    protein_g = serializers.DecimalField(max_digits=8, decimal_places=2, required=False)
+    carbs_g = serializers.DecimalField(max_digits=8, decimal_places=2, required=False)
+    fat_g = serializers.DecimalField(max_digits=8, decimal_places=2, required=False)
+
     # cycle_log
     date = serializers.DateField(required=False)
     event = serializers.CharField(required=False, allow_blank=True)
