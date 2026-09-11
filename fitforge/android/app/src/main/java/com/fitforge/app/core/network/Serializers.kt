@@ -8,7 +8,6 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.plus
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -58,5 +57,6 @@ fun createJsonWithJavaTime(
     additionalSerializersModule: SerializersModule = SerializersModule {},
 ): Json = Json {
     ignoreUnknownKeys = true
+    isLenient = true
     serializersModule = javaTimeSerializersModule + additionalSerializersModule
 }

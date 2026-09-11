@@ -11,6 +11,7 @@ import com.fitforge.app.core.network.TokenAuthenticator
 import com.fitforge.app.core.network.createJsonWithJavaTime
 import com.fitforge.app.data.remote.generated.apis.AppConfigApi
 import com.fitforge.app.data.remote.generated.apis.AuthApi
+import com.fitforge.app.data.remote.generated.apis.ChallengeApi
 import com.fitforge.app.data.remote.generated.apis.CommunityApi
 import com.fitforge.app.data.remote.generated.apis.CycleApi
 import com.fitforge.app.data.remote.generated.apis.GoalApi
@@ -154,6 +155,10 @@ object NetworkModule {
     @Singleton
     fun provideCommunityApi(retrofit: Retrofit): CommunityApi =
         retrofit.create(CommunityApi::class.java)
+    @Provides
+    @Singleton
+    fun provideChallengeApi(retrofit: Retrofit): ChallengeApi =
+        retrofit.create(ChallengeApi::class.java)
 
     @Provides
     @Singleton

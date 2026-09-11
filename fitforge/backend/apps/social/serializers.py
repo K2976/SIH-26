@@ -1,11 +1,17 @@
 import re
+from decimal import Decimal
 
 from django.db import transaction
+from django.utils import timezone
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from apps.social.models import (
     USERNAME_REGEX,
+    Challenge,
+    ChallengeParticipant,
+    ChallengeStatus,
+    ChallengeType,
     Community,
     CommunityMembership,
     CommunityRole,
@@ -292,3 +298,239 @@ class CommunityUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = ["name", "description", "visibility"]
+
+
+class ChallengeParticipantSerializer(serializers.ModelSerializer):
+    """Serializer for challenge participant."""
+
+    user = CommunityMemberUserSerializer(read_only=True)
+    progress = serializers.SerializerMethodField()
+    is_completed = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = ChallengeParticipant
+        fields = ["id", "user", "joined_at", "completed_at", "progress", "is_completed"]
+        read_only_fields = fields
+
+    @extend_schema_field(serializers.DictField)
+    def get_progress(self, obj):
+        return obj.progress
+
+
+class ChallengeListSerializer(serializers.ModelSerializer):
+    """Serializer for challenge cards and listings."""
+
+    community = serializers.IntegerField(source="community_id", read_only=True)
+    created_by = CommunityMemberUserSerializer(read_only=True)
+    participants_count = serializers.IntegerField(read_only=True)
+    current_user_participating = serializers.SerializerMethodField()
+    current_user_progress = serializers.SerializerMethodField()
+    is_participant = serializers.SerializerMethodField()
+    user_progress = serializers.SerializerMethodField()
+    status_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Challenge
+        fields = [
+            "id",
+            "community",
+            "title",
+            "description",
+            "challenge_type",
+            "target_value",
+            "start_date",
+            "end_date",
+            "status",
+            "status_display",
+            "created_by",
+            "participants_count",
+            "current_user_participating",
+            "current_user_progress",
+            "is_participant",
+            "user_progress",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+    @extend_schema_field(serializers.CharField)
+    def get_status_display(self, obj):
+        return obj.get_status_display()
+
+    @extend_schema_field(serializers.BooleanField)
+    def get_current_user_participating(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.participants.filter(user=request.user).exists()
+
+    @extend_schema_field(serializers.BooleanField)
+    def get_is_participant(self, obj):
+        return self.get_current_user_participating(obj)
+
+    @extend_schema_field(serializers.DictField(allow_null=True))
+    def get_current_user_progress(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return None
+        participation = obj.participants.filter(user=request.user).first()
+        if participation:
+            return participation.progress
+        return None
+
+    @extend_schema_field(serializers.DictField(allow_null=True))
+    def get_user_progress(self, obj):
+        return self.get_current_user_progress(obj)
+
+
+class ChallengeDetailSerializer(serializers.ModelSerializer):
+    """Full detail serializer for a challenge."""
+
+    community = serializers.IntegerField(source="community_id", read_only=True)
+    created_by = CommunityMemberUserSerializer(read_only=True)
+    participants_count = serializers.IntegerField(read_only=True)
+    current_user_participating = serializers.SerializerMethodField()
+    current_user_progress = serializers.SerializerMethodField()
+    is_participant = serializers.SerializerMethodField()
+    user_progress = serializers.SerializerMethodField()
+    status_display = serializers.SerializerMethodField()
+    participants = ChallengeParticipantSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Challenge
+        fields = [
+            "id",
+            "community",
+            "title",
+            "description",
+            "challenge_type",
+            "target_value",
+            "start_date",
+            "end_date",
+            "status",
+            "status_display",
+            "created_by",
+            "participants_count",
+            "current_user_participating",
+            "current_user_progress",
+            "is_participant",
+            "user_progress",
+            "participants",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+    @extend_schema_field(serializers.CharField)
+    def get_status_display(self, obj):
+        return obj.get_status_display()
+
+    @extend_schema_field(serializers.BooleanField)
+    def get_current_user_participating(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.participants.filter(user=request.user).exists()
+
+    @extend_schema_field(serializers.BooleanField)
+    def get_is_participant(self, obj):
+        return self.get_current_user_participating(obj)
+
+    @extend_schema_field(serializers.DictField(allow_null=True))
+    def get_current_user_progress(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return None
+        participation = obj.participants.filter(user=request.user).first()
+        if participation:
+            return participation.progress
+        return None
+
+    @extend_schema_field(serializers.DictField(allow_null=True))
+    def get_user_progress(self, obj):
+        return self.get_current_user_progress(obj)
+
+
+class ChallengeCreateSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=128, min_length=2)
+    description = serializers.CharField(required=False, allow_blank=True, default="")
+    challenge_type = serializers.ChoiceField(choices=ChallengeType.choices)
+    target_value = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal("0.01")
+    )
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
+
+    class Meta:
+        model = Challenge
+        fields = [
+            "title",
+            "description",
+            "challenge_type",
+            "target_value",
+            "start_date",
+            "end_date",
+        ]
+
+    def validate(self, attrs):
+        start_date = attrs.get("start_date")
+        end_date = attrs.get("end_date")
+        if start_date and end_date and end_date <= start_date:
+            raise serializers.ValidationError("End date must be after start date.")
+        return attrs
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        community = self.context.get("community")
+        now = timezone.now()
+        start = validated_data["start_date"]
+        end = validated_data["end_date"]
+        initial_status = (
+            ChallengeStatus.ACTIVE
+            if start <= now <= end
+            else (ChallengeStatus.COMPLETED if end < now else ChallengeStatus.UPCOMING)
+        )
+        return Challenge.objects.create(
+            community=community,
+            created_by=request.user,
+            status=initial_status,
+            **validated_data,
+        )
+
+
+class ChallengeUpdateSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=128, min_length=2, required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
+    challenge_type = serializers.ChoiceField(choices=ChallengeType.choices, required=False)
+    target_value = serializers.DecimalField(
+        max_digits=10, decimal_places=2, min_value=Decimal("0.01"), required=False
+    )
+    start_date = serializers.DateTimeField(required=False)
+    end_date = serializers.DateTimeField(required=False)
+    status = serializers.ChoiceField(choices=ChallengeStatus.choices, required=False)
+
+    class Meta:
+        model = Challenge
+        fields = [
+            "title",
+            "description",
+            "challenge_type",
+            "target_value",
+            "start_date",
+            "end_date",
+            "status",
+        ]
+
+    def validate(self, attrs):
+        start_date = attrs.get("start_date")
+        end_date = attrs.get("end_date")
+        instance = self.instance
+
+        # Use instance values if not provided
+        if start_date is None and instance:
+            start_date = instance.start_date
+        if end_date is None and instance:
+            end_date = instance.end_date
+
+        if start_date and end_date and end_date <= start_date:
+            raise serializers.ValidationError("End date must be after start date.")
+        return attrs

@@ -266,9 +266,42 @@
     <string name="community_members_header">Members (%1$d)</string>
     <string name="community_role_owner">Owner</string>
     <string name="community_role_admin">Admin</string>
-    <string name="community_role_member">Member</string>
     <string name="empty_my_communities">You haven\'t joined any communities yet.\nDiscover active fitness groups or start your own!</string>
     <string name="empty_discover_communities">No public communities found.\nBe the first to create one!</string>
+
+    <!-- Challenges -->
+    <string name="challenges_title">Challenges</string>
+    <string name="tab_overview">Overview</string>
+    <string name="tab_challenges">Challenges</string>
+    <string name="tab_members">Members</string>
+    <string name="filter_all">All</string>
+    <string name="filter_active">Active</string>
+    <string name="filter_upcoming">Upcoming</string>
+    <string name="filter_completed">Completed</string>
+    <string name="create_challenge_title">Create Challenge</string>
+    <string name="challenge_title_label">Title</string>
+    <string name="challenge_desc_label">Description (Optional)</string>
+    <string name="challenge_type_label">Challenge Type</string>
+    <string name="challenge_target_label">Target Value</string>
+    <string name="challenge_duration_days_label">Duration (Days)</string>
+    <string name="type_workout_count">Workout Count</string>
+    <string name="type_workout_minutes">Workout Minutes</string>
+    <string name="type_steps">Steps</string>
+    <string name="type_calories">Calories Burned</string>
+    <string name="type_distance">Distance (km)</string>
+    <string name="status_active">Active</string>
+    <string name="status_upcoming">Upcoming</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="join_challenge">Join Challenge</string>
+    <string name="leave_challenge">Leave Challenge</string>
+    <string name="leave_challenge_confirm">Are you sure you want to leave this challenge? Your current progress will be preserved if you rejoin.</string>
+    <string name="joined_badge">Joined</string>
+    <string name="completed_badge">Completed</string>
+    <string name="participants_count">%1$d participants</string>
+    <string name="progress_label">Your Progress</string>
+    <string name="progress_derived_explainer">Progress is automatically tracked from your verified activity.</string>
+    <string name="empty_challenges">No challenges in this category yet.\nCommunity leaders can create one!</string>
 
     <!-- Cycle module -->
     <string name="cycle_quick_log_prompt">How are you feeling today?</string>

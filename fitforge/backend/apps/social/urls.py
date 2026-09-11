@@ -1,6 +1,11 @@
 from django.urls import path
 
 from apps.social.views import (
+    ChallengeDetailView,
+    ChallengeJoinView,
+    ChallengeLeaveView,
+    ChallengeListCreateView,
+    ChallengeProgressView,
     CheckUsernameView,
     CommunityDetailView,
     CommunityJoinView,
@@ -26,4 +31,30 @@ urlpatterns = [
     path("communities/<int:pk>/members/", CommunityMembersView.as_view(), name="community-members"),
     path("communities/<int:pk>/join/", CommunityJoinView.as_view(), name="community-join"),
     path("communities/<int:pk>/leave/", CommunityLeaveView.as_view(), name="community-leave"),
+    # Phase 3: Challenges
+    path(
+        "communities/<int:community_pk>/challenges/",
+        ChallengeListCreateView.as_view(),
+        name="challenge-list-create",
+    ),
+    path(
+        "communities/<int:community_pk>/challenges/<int:pk>/",
+        ChallengeDetailView.as_view(),
+        name="challenge-detail",
+    ),
+    path(
+        "communities/<int:community_pk>/challenges/<int:pk>/join/",
+        ChallengeJoinView.as_view(),
+        name="challenge-join",
+    ),
+    path(
+        "communities/<int:community_pk>/challenges/<int:pk>/leave/",
+        ChallengeLeaveView.as_view(),
+        name="challenge-leave",
+    ),
+    path(
+        "communities/<int:community_pk>/challenges/<int:pk>/progress/",
+        ChallengeProgressView.as_view(),
+        name="challenge-progress",
+    ),
 ]

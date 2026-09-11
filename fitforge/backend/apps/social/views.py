@@ -9,6 +9,9 @@ from rest_framework.views import APIView
 
 from apps.social.models import (
     USERNAME_REGEX,
+    Challenge,
+    ChallengeParticipant,
+    ChallengeStatus,
     Community,
     CommunityMembership,
     CommunityRole,
@@ -16,9 +19,15 @@ from apps.social.models import (
     SocialProfile,
 )
 from apps.social.permissions import (
+    IsChallengeCreatorOrCommunityAdmin,
     IsCommunityAdminOrOwner,
 )
 from apps.social.serializers import (
+    ChallengeCreateSerializer,
+    ChallengeDetailSerializer,
+    ChallengeListSerializer,
+    ChallengeParticipantSerializer,
+    ChallengeUpdateSerializer,
     CommunityCreateSerializer,
     CommunityDetailSerializer,
     CommunityListSerializer,
@@ -274,7 +283,8 @@ class CommunityListCreateView(APIView):
                 type=str,
                 location=OpenApiParameter.QUERY,
                 description=(
-                    "Filter options: 'my' (joined communities) or 'discover' (public communities)"
+                    "Filter options: 'my' (joined communities) or "
+                    "'discover' (public communities)"
                 ),
                 default="discover",
             ),
@@ -353,8 +363,8 @@ class CommunityDetailView(APIView):
                 return Response(
                     {
                         "detail": (
-                            "This is a private community. Membership is required "
-                            "to view full details."
+                            "This is a private community. "
+                            "Membership is required to view full details."
                         )
                     },
                     status=status.HTTP_403_FORBIDDEN,
@@ -557,3 +567,349 @@ class CommunityLeaveView(APIView):
             {"detail": "Successfully left the community."},
             status=status.HTTP_200_OK,
         )
+
+
+class ChallengeListCreateView(APIView):
+    """List and create challenges within a community."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_community(self, community_pk):
+        return get_object_or_404(Community, pk=community_pk)
+
+    def check_community_membership(self, community, user):
+        """Check if user is a member of the community."""
+        return community.memberships.filter(user=user).exists()
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="List challenges in a community",
+        parameters=[
+            OpenApiParameter(
+                name="status",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Filter by status: upcoming, active, completed, cancelled",
+            ),
+        ],
+        responses={200: ChallengeListSerializer(many=True)},
+    )
+    def get(self, request, community_pk):
+        community = self.get_community(community_pk)
+
+        # Check if user can view this community's challenges
+        if community.visibility == CommunityVisibility.PRIVATE:
+            if not self.check_community_membership(community, request.user):
+                return Response(
+                    {
+                        "detail": (
+                            "This is a private community. Membership required to view challenges."
+                        )
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        status_filter = request.query_params.get("status", "").strip().lower()
+        qs = community.challenges.all()
+
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+
+        qs = qs.select_related("created_by", "created_by__social_profile").order_by("-start_date")
+        serializer = ChallengeListSerializer(qs, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Create a new challenge (owner/admin only)",
+        request=ChallengeCreateSerializer,
+        responses={
+            201: ChallengeDetailSerializer,
+            400: dict,
+            403: dict,
+            404: dict,
+        },
+    )
+    def post(self, request, community_pk):
+        community = self.get_community(community_pk)
+
+        # Check permission - only owner/admin can create challenges
+        has_perm = IsCommunityAdminOrOwner().has_object_permission(request, self, community)
+        if not has_perm:
+            return Response(
+                {"detail": "Only community owners and admins can create challenges."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = ChallengeCreateSerializer(
+            data=request.data, context={"request": request, "community": community}
+        )
+        serializer.is_valid(raise_exception=True)
+        challenge = serializer.save()
+
+        # Re-fetch with annotations
+        challenge_with_details = Challenge.objects.select_related(
+            "created_by", "created_by__social_profile"
+        ).get(pk=challenge.pk)
+
+        return Response(
+            ChallengeDetailSerializer(challenge_with_details, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ChallengeDetailView(APIView):
+    """Retrieve, update, or delete a specific challenge."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, community_pk, pk):
+        return get_object_or_404(
+            Challenge.objects.select_related(
+                "created_by", "created_by__social_profile", "community"
+            ),
+            community_id=community_pk,
+            pk=pk,
+        )
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Retrieve challenge details",
+        responses={
+            200: ChallengeDetailSerializer,
+            403: dict,
+            404: dict,
+        },
+    )
+    def get(self, request, community_pk, pk):
+        challenge = self.get_object(community_pk, pk)
+
+        # Check view permission
+        if challenge.community.visibility == CommunityVisibility.PRIVATE:
+            is_member = challenge.community.memberships.filter(user=request.user).exists()
+            if not is_member:
+                return Response(
+                    {
+                        "detail": (
+                            "This is a private community. Membership required to view challenge."
+                        )
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        return Response(ChallengeDetailSerializer(challenge, context={"request": request}).data)
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Update challenge (creator or community admin/owner only)",
+        request=ChallengeUpdateSerializer,
+        responses={
+            200: ChallengeDetailSerializer,
+            400: dict,
+            403: dict,
+            404: dict,
+        },
+    )
+    def patch(self, request, community_pk, pk):
+        challenge = self.get_object(community_pk, pk)
+
+        has_perm = IsChallengeCreatorOrCommunityAdmin().has_object_permission(
+            request, self, challenge
+        )
+        if not has_perm:
+            return Response(
+                {"detail": "You do not have permission to edit this challenge."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = ChallengeUpdateSerializer(
+            instance=challenge,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+        updated = serializer.save()
+
+        updated_with_details = Challenge.objects.select_related(
+            "created_by", "created_by__social_profile"
+        ).get(pk=updated.pk)
+
+        return Response(
+            ChallengeDetailSerializer(updated_with_details, context={"request": request}).data
+        )
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Replace challenge (creator or community admin/owner only)",
+        request=ChallengeUpdateSerializer,
+        responses={
+            200: ChallengeDetailSerializer,
+            400: dict,
+            403: dict,
+            404: dict,
+        },
+    )
+    def put(self, request, community_pk, pk):
+        return self.patch(request, community_pk, pk)
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Delete challenge (creator or community owner only)",
+        responses={
+            204: None,
+            403: dict,
+            404: dict,
+        },
+    )
+    def delete(self, request, community_pk, pk):
+        challenge = self.get_object(community_pk, pk)
+
+        is_creator = challenge.created_by == request.user
+        is_community_owner = challenge.community.owner == request.user
+
+        if not (is_creator or is_community_owner):
+            return Response(
+                {
+                    "detail": (
+                        "Only the challenge creator or community owner can delete this challenge."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        challenge.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ChallengeJoinView(APIView):
+    """Join a challenge."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Join a challenge",
+        request=None,
+        responses={
+            201: ChallengeParticipantSerializer,
+            400: dict,
+            403: dict,
+            404: dict,
+        },
+    )
+    def post(self, request, community_pk, pk):
+        challenge = get_object_or_404(
+            Challenge.objects.select_related("community"),
+            community_id=community_pk,
+            pk=pk,
+        )
+
+        # Check if user is community member
+        is_member = challenge.community.memberships.filter(user=request.user).exists()
+        if not is_member:
+            return Response(
+                {"detail": "You must be a member of this community to join the challenge."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Check challenge status
+        if challenge.status in [ChallengeStatus.COMPLETED, ChallengeStatus.CANCELLED]:
+            return Response(
+                {"detail": "Cannot join a completed or cancelled challenge."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check for existing participation
+        existing = ChallengeParticipant.objects.filter(
+            challenge=challenge, user=request.user
+        ).first()
+        if existing:
+            return Response(
+                {"detail": "You are already participating in this challenge."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        participation = ChallengeParticipant.objects.create(
+            challenge=challenge,
+            user=request.user,
+        )
+        return Response(
+            ChallengeParticipantSerializer(participation).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ChallengeLeaveView(APIView):
+    """Leave a challenge."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Leave a challenge",
+        request=None,
+        responses={
+            200: dict,
+            400: dict,
+            404: dict,
+        },
+    )
+    def post(self, request, community_pk, pk):
+        challenge = get_object_or_404(Challenge, community_id=community_pk, pk=pk)
+
+        participation = ChallengeParticipant.objects.filter(
+            challenge=challenge, user=request.user
+        ).first()
+
+        if not participation:
+            return Response(
+                {"detail": "You are not participating in this challenge."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        participation.delete()
+        return Response(
+            {"detail": "Successfully left the challenge."},
+            status=status.HTTP_200_OK,
+        )
+
+
+class ChallengeProgressView(APIView):
+    """Get current user's progress in a challenge."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        tags=["challenge"],
+        summary="Get challenge progress for current user",
+        responses={
+            200: dict,
+            403: dict,
+            404: dict,
+        },
+    )
+    def get(self, request, community_pk, pk):
+        challenge = get_object_or_404(
+            Challenge.objects.select_related("community"),
+            community_id=community_pk,
+            pk=pk,
+        )
+
+        # Check view permission
+        if challenge.community.visibility == CommunityVisibility.PRIVATE:
+            is_member = challenge.community.memberships.filter(user=request.user).exists()
+            if not is_member:
+                return Response(
+                    {"detail": "This is a private community. Membership required."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        participation = challenge.participants.filter(user=request.user).first()
+        if not participation:
+            return Response(
+                {"detail": "You are not participating in this challenge."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(participation.progress)

@@ -312,4 +312,35 @@ Membership roster and role hierarchy for fitness communities.
   - UNIQUE `(community_id, user_id)` (`unique_community_membership`)
   - Index on `(community_id, role)`
 
+---
+
+### 3.3 Challenges Domain (`apps/social`) - Phase 3 Addition
+
+#### `social_challenge`
+Fitness challenges created within communities with targets, dates, and server-derived tracking.
+- **`id`**: `bigint` | PK | NOT NULL
+- **`community_id`**: `bigint` | FK -> `social_community.id` ON DELETE CASCADE | NOT NULL
+- **`created_by_id`**: `integer` | FK -> `auth_user.id` ON DELETE CASCADE | NOT NULL
+- **`title`**: `varchar(128)` | NOT NULL
+- **`description`**: `text` | NOT NULL | Default `""`
+- **`challenge_type`**: `varchar(32)` | NOT NULL (Choices: `'workout_count'`, `'workout_minutes'`, `'steps'`, `'calories_burned'`, `'distance_km'`)
+- **`target_value`**: `numeric(10, 2)` | NOT NULL
+- **`start_date`**: `timestamptz` | NOT NULL
+- **`end_date`**: `timestamptz` | NOT NULL
+- **`status`**: `varchar(16)` | NOT NULL | Default `'upcoming'` (Choices: `'upcoming'`, `'active'`, `'completed'`, `'cancelled'`)
+- **`created_at`**: `timestamptz` | NOT NULL
+- **`updated_at`**: `timestamptz` | NOT NULL
+- **Constraints & Indexes**:
+  - Index on `(community_id, status, start_date)` (`social_chal_communi_4de1bc_idx`)
+
+#### `social_challengeparticipant`
+Tracks user participation and completion in challenges. Progress is derived server-side from verified workout activity.
+- **`id`**: `bigint` | PK | NOT NULL
+- **`challenge_id`**: `bigint` | FK -> `social_challenge.id` ON DELETE CASCADE | NOT NULL
+- **`user_id`**: `integer` | FK -> `auth_user.id` ON DELETE CASCADE | NOT NULL
+- **`joined_at`**: `timestamptz` | NOT NULL
+- **`completed_at`**: `timestamptz` | NULL
+- **Constraints & Indexes**:
+  - UNIQUE `(challenge_id, user_id)` (`unique_challenge_participation`)
+
 
