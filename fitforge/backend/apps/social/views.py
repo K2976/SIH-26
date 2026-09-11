@@ -19,10 +19,7 @@ from apps.social.models import (
     SocialProfile,
 )
 from apps.social.permissions import (
-<<<<<<< HEAD
     IsChallengeCreatorOrCommunityAdmin,
-=======
->>>>>>> master
     IsCommunityAdminOrOwner,
 )
 from apps.social.serializers import (
@@ -286,12 +283,8 @@ class CommunityListCreateView(APIView):
                 type=str,
                 location=OpenApiParameter.QUERY,
                 description=(
-<<<<<<< HEAD
                     "Filter options: 'my' (joined communities) or "
                     "'discover' (public communities)"
-=======
-                    "Filter options: 'my' (joined communities) or 'discover' (public communities)"
->>>>>>> master
                 ),
                 default="discover",
             ),
@@ -370,13 +363,8 @@ class CommunityDetailView(APIView):
                 return Response(
                     {
                         "detail": (
-<<<<<<< HEAD
                             "This is a private community. "
                             "Membership is required to view full details."
-=======
-                            "This is a private community. Membership is required "
-                            "to view full details."
->>>>>>> master
                         )
                     },
                     status=status.HTTP_403_FORBIDDEN,
