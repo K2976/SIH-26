@@ -12,8 +12,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
+import kotlinx.datetime.Instant
 
 class ChallengeFeatureLogicTest {
 
@@ -121,7 +120,7 @@ class ChallengeFeatureLogicTest {
             profileImage = null,
         )
 
-        val baseDate = OffsetDateTime.of(2026, 9, 1, 0, 0, 0, 0, ZoneOffset.UTC)
+        val baseDate = Instant.parse("2026-09-01T00:00:00Z")
 
         val activeChallenge = ChallengeList(
             id = 1,
@@ -129,7 +128,7 @@ class ChallengeFeatureLogicTest {
             challengeType = ChallengeTypeEnum.workout_count,
             targetValue = BigDecimal.valueOf(30),
             startDate = baseDate,
-            endDate = baseDate.plusDays(30),
+            endDate = Instant.parse("2026-10-01T00:00:00Z"),
             status = StatusEnum.active,
             participantsCount = 10,
             createdBy = dummyCreator,
@@ -141,8 +140,8 @@ class ChallengeFeatureLogicTest {
             title = "October 10K",
             challengeType = ChallengeTypeEnum.steps,
             targetValue = BigDecimal.valueOf(100000),
-            startDate = baseDate.plusMonths(1),
-            endDate = baseDate.plusMonths(1).plusDays(31),
+            startDate = Instant.parse("2026-10-01T00:00:00Z"),
+            endDate = Instant.parse("2026-11-01T00:00:00Z"),
             status = StatusEnum.upcoming,
             participantsCount = 4,
             createdBy = dummyCreator,
@@ -154,8 +153,8 @@ class ChallengeFeatureLogicTest {
             title = "August Consistency",
             challengeType = ChallengeTypeEnum.workout_minutes,
             targetValue = BigDecimal.valueOf(1200),
-            startDate = baseDate.minusMonths(1),
-            endDate = baseDate.minusMonths(1).plusDays(31),
+            startDate = Instant.parse("2026-08-01T00:00:00Z"),
+            endDate = Instant.parse("2026-09-01T00:00:00Z"),
             status = StatusEnum.completed,
             participantsCount = 18,
             createdBy = dummyCreator,

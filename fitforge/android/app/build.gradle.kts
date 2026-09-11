@@ -100,6 +100,7 @@ tasks.withType<Detekt>().configureEach {
 val preparePhoneBackend = tasks.register<Exec>("preparePhoneBackend") {
     group = "installation"
     description = "Starts the local backend and configures ADB reverse for debug installs"
+    onlyIf { !System.getProperty("os.name").lowercase().contains("windows") }
     workingDir(rootDir)
     commandLine(
         "bash",

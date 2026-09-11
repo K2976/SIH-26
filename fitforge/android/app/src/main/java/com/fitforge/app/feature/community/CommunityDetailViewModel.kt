@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
-import java.time.OffsetDateTime
+import kotlinx.datetime.Instant
 import javax.inject.Inject
 
 sealed interface CommunityDetailUiState {
@@ -196,8 +196,10 @@ class CommunityDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _actionInProgress.value = true
             _actionError.value = null
-            val now = OffsetDateTime.now()
-            val end = now.plusDays(durationDays.toLong())
+            val now = Instant.fromEpochMilliseconds(java.lang.System.currentTimeMillis())
+            val end = Instant.fromEpochMilliseconds(
+                java.lang.System.currentTimeMillis() + durationDays.toLong() * 86_400_000L,
+            )
             val request = ChallengeCreate(
                 title = title,
                 description = description,
