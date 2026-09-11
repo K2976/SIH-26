@@ -5,7 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.OffsetDateTime
+import kotlin.time.Clock
 
 class SocialFeatureLogicTest {
 
@@ -43,7 +43,7 @@ class SocialFeatureLogicTest {
 
     @Test
     fun `social profile data model properties correctly stored`() {
-        val now = OffsetDateTime.now()
+        val now = Clock.System.now()
         val profile = SocialProfile(
             id = 42,
             username = "fit_pro",

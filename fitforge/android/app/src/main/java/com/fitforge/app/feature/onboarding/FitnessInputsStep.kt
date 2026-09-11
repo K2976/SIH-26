@@ -1,3 +1,5 @@
+@file:Suppress("LongParameterList")
+
 package com.fitforge.app.feature.onboarding
 
 import androidx.compose.foundation.BorderStroke

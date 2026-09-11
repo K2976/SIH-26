@@ -7,7 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.OffsetDateTime
+import kotlin.time.Clock
 
 class CommunityFeatureLogicTest {
 
@@ -79,7 +79,7 @@ class CommunityFeatureLogicTest {
 
     @Test
     fun `community detail model accurately reflects membership and role`() {
-        val now = OffsetDateTime.now()
+        val now = Clock.System.now()
         val ownerUser = CommunityMemberUser(
             id = 10,
             username = "coach_carter",

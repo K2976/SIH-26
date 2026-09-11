@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.social
 
 import androidx.compose.foundation.background
@@ -36,6 +38,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.fitforge.app.data.remote.generated.models.SocialProfile
+import java.time.Instant
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -137,7 +141,7 @@ private fun ActiveSocialProfileCard(
 
     val joinedDate = try {
         val formatter = DateTimeFormatter.ofPattern("MMM yyyy", Locale.getDefault())
-        profile.createdAt.format(formatter)
+        Instant.parse(profile.createdAt.toString()).atZone(ZoneId.systemDefault()).format(formatter)
     } catch (_: Exception) {
         "Recently"
     }

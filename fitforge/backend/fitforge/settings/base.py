@@ -16,6 +16,15 @@ DEBUG = False
 
 ALLOWED_HOSTS: list[str] = [h for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h]
 
+# Empty by default (no origins allowed) — never wildcarded. Populated from
+# env in every environment so dev/staging/prod all go through the same path.
+CORS_ALLOWED_ORIGINS: list[str] = [
+    o for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o
+]
+CSRF_TRUSTED_ORIGINS: list[str] = [
+    o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o
+]
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -23,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "drf_spectacular",
@@ -39,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod")
+
 package com.fitforge.app.feature.onboarding
 
 import androidx.compose.animation.AnimatedContent

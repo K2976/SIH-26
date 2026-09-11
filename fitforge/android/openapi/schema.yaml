@@ -1,9 +1,3 @@
-# Snapshot of the backend's OpenAPI schema, checked in so the Retrofit
-# client can be generated at build time without a running backend.
-# Trimmed to avoid the known openapi-generator kotlin-client bug with
-# BlankEnum/NullEnum nullable-enum fields — nullable enums are typed as
-# plain strings here. Regenerate in full and re-trim when needed:
-#   cd backend && python manage.py spectacular --file ../android/openapi/schema.yaml
 openapi: 3.0.3
 info:
   title: FitForge API
@@ -28,15 +22,20 @@ paths:
   /api/v1/auth/login/:
     post:
       operationId: auth_login_create
-      description: 'Takes a set of user credentials and returns an access and refresh
-        JSON web
-
-        token pair to prove the authentication of those credentials.'
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
       tags:
       - auth
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailTokenObtainPair'
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/EmailTokenObtainPair'
         required: true
@@ -59,6 +58,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Signup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Signup'
         required: true
       security:
       - jwtAuth: []
@@ -73,19 +78,23 @@ paths:
   /api/v1/auth/token/refresh/:
     post:
       operationId: auth_token_refresh_create
-      description: 'TokenRefreshView with an accurate response schema.
+      description: |-
+        TokenRefreshView with an accurate response schema.
 
-
-        simplejwt''s own serializer only declares the request field; with
-
+        simplejwt's own serializer only declares the request field; with
         ROTATE_REFRESH_TOKENS on, the response body also carries a new
-
-        `refresh` token, which TokenPairSerializer already models.'
+        `refresh` token, which TokenPairSerializer already models.
       tags:
       - auth
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/TokenRefresh'
         required: true
@@ -96,11 +105,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenPair'
           description: ''
-  /api/v1/profile/:
+  /api/v1/cycle/data/:
     get:
-      operationId: profile_retrieve
+      operationId: cycle_data_retrieve
+      description: |-
+        GET: full export of every cycle-module row the user owns.
+        DELETE: full, irreversible delete of every cycle-module row.
+
+        Both requirements from §10: "Full export and full delete are
+        requirements." Nothing here is partial — every CycleLog row (including
+        ones superseded by a correction) is included/removed, since a
+        superseded row is still cycle data sitting on the server.
       tags:
-      - profile
+      - cycle
       security:
       - jwtAuth: []
       responses:
@@ -108,25 +125,118 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfile'
+                $ref: '#/components/schemas/CycleExport'
           description: ''
-    patch:
-      operationId: profile_partial_update
+    delete:
+      operationId: cycle_data_destroy
+      description: |-
+        GET: full export of every cycle-module row the user owns.
+        DELETE: full, irreversible delete of every cycle-module row.
+
+        Both requirements from §10: "Full export and full delete are
+        requirements." Nothing here is partial — every CycleLog row (including
+        ones superseded by a correction) is included/removed, since a
+        superseded row is still cycle data sitting on the server.
       tags:
-      - profile
+      - cycle
       security:
       - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/cycle/profile/:
+    get:
+      operationId: cycle_profile_retrieve
+      description: |-
+        Tracking mode and self-reported cycle-length settings. Never inferred
+        — set only by a direct question in onboarding/settings (§10).
+      tags:
+      - cycle
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleProfile'
+          description: ''
+    put:
+      operationId: cycle_profile_update
+      description: |-
+        Tracking mode and self-reported cycle-length settings. Never inferred
+        — set only by a direct question in onboarding/settings (§10).
+      tags:
+      - cycle
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedUserProfile'
+              $ref: '#/components/schemas/CycleProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CycleProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CycleProfile'
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfile'
+                $ref: '#/components/schemas/CycleProfile'
+          description: ''
+    patch:
+      operationId: cycle_profile_partial_update
+      description: |-
+        Tracking mode and self-reported cycle-length settings. Never inferred
+        — set only by a direct question in onboarding/settings (§10).
+      tags:
+      - cycle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCycleProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCycleProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCycleProfile'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleProfile'
+          description: ''
+  /api/v1/food/label/:
+    post:
+      operationId: food_label_create
+      tags:
+      - food
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoodLabelRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoodLabelRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodLabelResponse'
           description: ''
   /api/v1/goal/:
     get:
@@ -146,26 +256,32 @@ paths:
       operationId: goal_create
       tags:
       - goal
-      security:
-      - jwtAuth: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GoalRequest'
+              $ref: '#/components/schemas/Goal'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Goal'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Goal'
         required: true
+      security:
+      - jwtAuth: []
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Goal'
           description: ''
-  /api/v1/social/profile/:
+  /api/v1/profile/:
     get:
-      operationId: social_my_profile_retrieve
+      operationId: profile_retrieve
       tags:
-      - social
+      - profile
       security:
       - jwtAuth: []
       responses:
@@ -173,77 +289,70 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SocialProfile'
+                $ref: '#/components/schemas/UserProfile'
           description: ''
-    post:
-      operationId: social_my_profile_create
+    put:
+      operationId: profile_update
       tags:
-      - social
-      security:
-      - jwtAuth: []
+      - profile
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialProfileCreate'
-        required: true
+              $ref: '#/components/schemas/UserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+      security:
+      - jwtAuth: []
       responses:
-        '201':
+        '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SocialProfile'
+                $ref: '#/components/schemas/UserProfile'
           description: ''
     patch:
-      operationId: social_my_profile_partial_update
+      operationId: profile_partial_update
       tags:
-      - social
-      security:
-      - jwtAuth: []
+      - profile
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialProfileUpdate'
-        required: false
+              $ref: '#/components/schemas/PatchedUserProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfile'
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SocialProfile'
+                $ref: '#/components/schemas/UserProfile'
           description: ''
-  /api/v1/social/profile/{username}/:
+  /api/v1/reference/exercises/:
     get:
-      operationId: social_user_profile_retrieve
-      tags:
-      - social
-      parameters:
-      - in: path
-        name: username
-        required: true
-        schema:
-          type: string
-        description: Unique public handle
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SocialProfile'
-          description: ''
-  /api/v1/social/search/:
-    get:
-      operationId: social_search_users
-      tags:
-      - social
+      operationId: reference_exercises_list
       parameters:
       - in: query
-        name: q
-        required: false
+        name: since
         schema:
-          type: string
-        description: Search query
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -251,22 +360,116 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SocialProfile'
+                  $ref: '#/components/schemas/Exercise'
+          description: ''
+  /api/v1/reference/foods/:
+    get:
+      operationId: reference_foods_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodItem'
+          description: ''
+  /api/v1/reference/manifest/:
+    get:
+      operationId: reference_manifest_retrieve
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+          description: ''
+  /api/v1/reference/music/:
+    get:
+      operationId: reference_music_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingMusicMapping'
+          description: ''
+  /api/v1/reference/recipes/:
+    get:
+      operationId: reference_recipes_list
+      parameters:
+      - in: query
+        name: since
+        schema:
+          type: integer
+        description: Return rows changed after this reference_version. Default 0.
+      tags:
+      - reference
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
           description: ''
   /api/v1/social/check-username/:
     get:
-      operationId: social_check_username
-      tags:
-      - social
+      operationId: social_check_username_retrieve
+      description: Check whether a social username is valid and available.
+      summary: Check username availability
       parameters:
       - in: query
         name: username
-        required: true
         schema:
           type: string
-        description: Candidate username to check
+        description: Candidate public handle to check
+      tags:
+      - social
+      security:
+      - jwtAuth: []
+      - {}
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsernameCheckResponse'
+          description: ''
+        '400':
           content:
             application/json:
               schema:
@@ -275,22 +478,25 @@ paths:
   /api/v1/social/communities/:
     get:
       operationId: social_communities_list
-      tags:
-      - community
+      description: List and create fitness communities.
+      summary: List communities
       parameters:
       - in: query
         name: filter
-        required: false
         schema:
           type: string
           default: discover
-        description: Filter options
+        description: 'Filter options: ''my'' (joined communities) or ''discover''
+          (public communities)'
       - in: query
         name: search
-        required: false
         schema:
           type: string
-        description: Search keyword
+        description: Search keyword for community name or description
+      tags:
+      - community
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -302,6 +508,8 @@ paths:
           description: ''
     post:
       operationId: social_communities_create
+      description: List and create fitness communities.
+      summary: Create a new community
       tags:
       - community
       requestBody:
@@ -309,7 +517,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CommunityCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommunityCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommunityCreate'
         required: true
+      security:
+      - jwtAuth: []
       responses:
         '201':
           content:
@@ -317,17 +533,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommunityDetail'
           description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
   /api/v1/social/communities/{id}/:
     get:
       operationId: social_communities_retrieve
-      tags:
-      - community
+      description: Retrieve, update, or delete a specific community.
+      summary: Retrieve community details
       parameters:
       - in: path
         name: id
-        required: true
         schema:
           type: integer
+        required: true
+      tags:
+      - community
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -335,21 +562,91 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommunityDetail'
           description: ''
-    patch:
-      operationId: social_communities_partial_update
-      tags:
-      - community
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+    put:
+      operationId: social_communities_update
+      description: Retrieve, update, or delete a specific community.
+      summary: Replace community details (owner/admin only)
       parameters:
       - in: path
         name: id
-        required: true
         schema:
           type: integer
+        required: true
+      tags:
+      - community
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommunityUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommunityUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommunityUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityDetail'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+    patch:
+      operationId: social_communities_partial_update
+      description: Retrieve, update, or delete a specific community.
+      summary: Update community details (owner/admin only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - community
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedCommunityUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCommunityUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCommunityUpdate'
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -357,30 +654,146 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommunityDetail'
           description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
     delete:
       operationId: social_communities_destroy
-      tags:
-      - community
+      description: Retrieve, update, or delete a specific community.
+      summary: Delete community (owner only)
       parameters:
       - in: path
         name: id
-        required: true
         schema:
           type: integer
+        required: true
+      tags:
+      - community
+      security:
+      - jwtAuth: []
       responses:
         '204':
           description: No response body
-  /api/v1/social/communities/{id}/members/:
-    get:
-      operationId: social_communities_members_list
-      tags:
-      - community
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/social/communities/{id}/join/:
+    post:
+      operationId: social_communities_join_create
+      description: Join a public community.
+      summary: Join a community
       parameters:
       - in: path
         name: id
-        required: true
         schema:
           type: integer
+        required: true
+      tags:
+      - community
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommunityMember'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/social/communities/{id}/leave/:
+    post:
+      operationId: social_communities_leave_create
+      description: Leave a community.
+      summary: Leave a community
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - community
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/social/communities/{id}/members/:
+    get:
+      operationId: social_communities_members_list
+      description: Retrieve community member roster.
+      summary: List community members
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - community
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
@@ -390,42 +803,238 @@ paths:
                 items:
                   $ref: '#/components/schemas/CommunityMember'
           description: ''
-  /api/v1/social/communities/{id}/join/:
-    post:
-      operationId: social_communities_join_create
-      tags:
-      - community
-      parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-      responses:
-        '201':
+        '403':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CommunityMember'
+                type: object
+                additionalProperties: {}
           description: ''
-  /api/v1/social/communities/{id}/leave/:
-    post:
-      operationId: social_communities_leave_create
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/social/profile/:
+    get:
+      operationId: social_my_profile_retrieve
+      description: Endpoints for managing the authenticated user's social profile.
+      summary: Get current user's social profile
       tags:
-      - community
-      parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: integer
+      - social
+      security:
+      - jwtAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
                 type: object
-                additionalProperties: true
+                additionalProperties: {}
+          description: ''
+    post:
+      operationId: social_profile_create
+      description: Endpoints for managing the authenticated user's social profile.
+      summary: Create current user's social profile
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialProfileCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialProfileCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialProfileCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+    put:
+      operationId: social_profile_update
+      description: Endpoints for managing the authenticated user's social profile.
+      summary: Replace current user's social profile
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SocialProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SocialProfileUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+    patch:
+      operationId: social_profile_partial_update
+      description: Endpoints for managing the authenticated user's social profile.
+      summary: Update current user's social profile
+      tags:
+      - social
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSocialProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSocialProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSocialProfileUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/social/profile/{username}/:
+    get:
+      operationId: social_public_profile_retrieve
+      description: Retrieve public social profile by username.
+      summary: Retrieve social profile by username
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+        description: Unique public handle (e.g. iron_lifter99)
+        required: true
+      tags:
+      - social
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialProfile'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/social/search/:
+    get:
+      operationId: social_search_list
+      description: Search for users by username or display name.
+      summary: Search social profiles
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Search term (matches username or display name)
+      tags:
+      - social
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialProfile'
+          description: ''
+  /api/v1/state/:
+    get:
+      operationId: state_retrieve
+      tags:
+      - state
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserState'
+          description: ''
+  /api/v1/sync/:
+    post:
+      operationId: sync_create
+      tags:
+      - sync
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SyncRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncResponse'
           description: ''
   /api/v1/social/communities/{community_pk}/challenges/:
     get:
@@ -573,6 +1182,351 @@ components:
           type: string
       required:
       - min_supported_version
+    BodyState:
+      type: object
+      properties:
+        latest_weight_kg:
+          type: number
+          format: double
+          nullable: true
+        weight_trend_kg_per_week:
+          type: number
+          format: double
+          nullable: true
+        trend_confidence:
+          type: number
+          format: double
+          nullable: true
+        fitness_age:
+          type: number
+          format: double
+          nullable: true
+        fitness_age_inputs:
+          type: object
+          nullable: true
+      required:
+      - fitness_age
+      - fitness_age_inputs
+      - latest_weight_kg
+      - trend_confidence
+      - weight_trend_kg_per_week
+    CommunityCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          minLength: 2
+        description:
+          type: string
+          default: ''
+        visibility:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityEnum'
+          default: public
+      required:
+      - name
+    CommunityDetail:
+      type: object
+      description: Full detail serializer for a community.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        visibility:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityEnum'
+          readOnly: true
+        owner:
+          allOf:
+          - $ref: '#/components/schemas/CommunityMemberUser'
+          readOnly: true
+        members_count:
+          type: integer
+          readOnly: true
+        current_user_role:
+          type: string
+          nullable: true
+          readOnly: true
+        is_member:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - current_user_role
+      - description
+      - id
+      - is_member
+      - members_count
+      - name
+      - owner
+      - updated_at
+      - visibility
+    CommunityList:
+      type: object
+      description: Serializer for community cards and listings.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        visibility:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityEnum'
+          readOnly: true
+        members_count:
+          type: integer
+          readOnly: true
+        current_user_role:
+          type: string
+          nullable: true
+          readOnly: true
+        is_member:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - current_user_role
+      - description
+      - id
+      - is_member
+      - members_count
+      - name
+      - visibility
+    CommunityMember:
+      type: object
+      description: Serializer for a community membership entry.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        joined_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/CommunityMemberUser'
+          readOnly: true
+      required:
+      - id
+      - joined_at
+      - role
+      - user
+    CommunityMemberUser:
+      type: object
+      description: Exposes only public social profile information for community members.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        profile_image:
+          type: string
+          nullable: true
+          readOnly: true
+        bio:
+          type: string
+          readOnly: true
+      required:
+      - bio
+      - display_name
+      - id
+      - profile_image
+      - username
+    CommunityUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          minLength: 2
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+    CycleExport:
+      type: object
+      properties:
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/CycleProfile'
+          nullable: true
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/CycleLogExport'
+        learned_pattern:
+          type: array
+          items:
+            $ref: '#/components/schemas/CyclePatternExport'
+      required:
+      - learned_pattern
+      - logs
+      - profile
+    CycleLogExport:
+      type: object
+      properties:
+        client_uuid:
+          type: string
+          format: uuid
+        occurred_at:
+          type: string
+          format: date-time
+        utc_offset:
+          type: string
+          maxLength: 6
+        source:
+          type: string
+          maxLength: 32
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        date:
+          type: string
+          format: date
+        event:
+          type: string
+          maxLength: 32
+        flow:
+          type: string
+          maxLength: 32
+        symptoms: {}
+        energy_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+      required:
+      - client_uuid
+      - created_at
+      - date
+      - occurred_at
+      - source
+      - utc_offset
+    CyclePatternExport:
+      type: object
+      properties:
+        cycle_day:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        computed_at:
+          type: string
+          format: date-time
+          readOnly: true
+        avg_energy_rating:
+          type: number
+          format: double
+          nullable: true
+        symptom_frequency: {}
+        avg_adherence:
+          type: number
+          format: double
+          nullable: true
+        avg_completed_volume_kg:
+          type: number
+          format: double
+          nullable: true
+        sample_cycles:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        confidence:
+          type: number
+          format: double
+      required:
+      - computed_at
+      - cycle_day
+    CycleProfile:
+      type: object
+      properties:
+        tracking_mode:
+          $ref: '#/components/schemas/TrackingModeEnum'
+        typical_length_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        typical_period_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        confidence:
+          type: number
+          format: double
+          nullable: true
+    CycleState:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        tracking_mode:
+          type: string
+          nullable: true
+        phase:
+          type: string
+          nullable: true
+        cycle_day:
+          type: integer
+          nullable: true
+        confidence:
+          type: number
+          format: double
+          nullable: true
+        days_until_predicted_period:
+          type: integer
+          nullable: true
+        learned_pattern:
+          allOf:
+          - $ref: '#/components/schemas/LearnedPatternState'
+          nullable: true
+        energy_availability_flag:
+          type: string
+          nullable: true
+      required:
+      - confidence
+      - cycle_day
+      - days_until_predicted_period
+      - enabled
+      - energy_availability_flag
+      - learned_pattern
+      - phase
+      - tracking_mode
     EmailTokenObtainPair:
       type: object
       description: Login by email instead of username, on top of the default User
@@ -587,6 +1541,573 @@ components:
       required:
       - email
       - password
+    EnergyDirectionEnum:
+      enum:
+      - cut
+      - maintain
+      - gain
+      - not_tracking
+      type: string
+      description: |-
+        * `cut` - Cut
+        * `maintain` - Maintain
+        * `gain` - Gain
+        * `not_tracking` - Not tracking
+    EnergyState:
+      type: object
+      properties:
+        maintenance_kcal:
+          type: number
+          format: double
+          nullable: true
+        maintenance_source:
+          type: string
+          nullable: true
+        maintenance_confidence:
+          type: number
+          format: double
+          nullable: true
+        target_kcal_today:
+          type: number
+          format: double
+          nullable: true
+        consumed_kcal_today:
+          type: number
+          format: double
+          nullable: true
+        consumed_kcal_today_partial:
+          type: boolean
+        burned_kcal_today:
+          type: number
+          format: double
+          nullable: true
+        burned_kcal_today_partial:
+          type: boolean
+        week_balance_kcal:
+          type: number
+          format: double
+          nullable: true
+        week_balance_kcal_partial:
+          type: boolean
+        data_sufficiency:
+          type: string
+      required:
+      - burned_kcal_today
+      - burned_kcal_today_partial
+      - consumed_kcal_today
+      - consumed_kcal_today_partial
+      - data_sufficiency
+      - maintenance_confidence
+      - maintenance_kcal
+      - maintenance_source
+      - target_kcal_today
+      - week_balance_kcal
+      - week_balance_kcal_partial
+    Exercise:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        instructions: {}
+        primary_muscles: {}
+        secondary_muscles: {}
+        equipment:
+          type: string
+          maxLength: 64
+        movement_pattern:
+          $ref: '#/components/schemas/MovementPatternEnum'
+        form_cues: {}
+        met_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+        is_bodyweight:
+          type: boolean
+        pose_config:
+          type: object
+          nullable: true
+        camera_position:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - instructions
+      - met_value
+      - movement_pattern
+      - name
+      - slug
+    FlagsState:
+      type: object
+      properties:
+        missing_food_days_7d:
+          type: integer
+        missing_weight_days_14d:
+          type: integer
+        goal_recently_changed:
+          type: boolean
+        insufficient_data_for_adaptation:
+          type: boolean
+      required:
+      - goal_recently_changed
+      - insufficient_data_for_adaptation
+      - missing_food_days_7d
+      - missing_weight_days_14d
+    FoodItem:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        kcal_per_100g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        default_portion_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        portion_label:
+          type: string
+          maxLength: 64
+        source:
+          type: string
+          maxLength: 128
+        barcode:
+          type: string
+          nullable: true
+          maxLength: 64
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        item_type:
+          type: string
+          readOnly: true
+      required:
+      - carbs_g
+      - default_portion_g
+      - fat_g
+      - item_type
+      - kcal_per_100g
+      - name
+      - portion_label
+      - protein_g
+      - slug
+      - source
+    FoodLabelRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+      required:
+      - image
+    FoodLabelResponse:
+      type: object
+      properties:
+        candidates:
+          type: array
+          items:
+            type: string
+      required:
+      - candidates
+    Goal:
+      type: object
+      properties:
+        energy_direction:
+          $ref: '#/components/schemas/EnergyDirectionEnum'
+        training_focus:
+          $ref: '#/components/schemas/TrainingFocusEnum'
+        target_rate_kg_per_week:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,2})?$
+        auto_adjust:
+          type: boolean
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ended_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        clamp_reason:
+          type: string
+          nullable: true
+          readOnly: true
+      required:
+      - clamp_reason
+      - ended_at
+      - energy_direction
+      - started_at
+      - training_focus
+    GoalState:
+      type: object
+      properties:
+        energy_direction:
+          type: string
+          nullable: true
+        training_focus:
+          type: string
+          nullable: true
+        target_rate_kg_per_week:
+          type: number
+          format: double
+          nullable: true
+        auto_adjust:
+          type: boolean
+          nullable: true
+      required:
+      - auto_adjust
+      - energy_direction
+      - target_rate_kg_per_week
+      - training_focus
+    LearnedPatternState:
+      type: object
+      description: |-
+        Summary only — sample size and confidence, per §10 ("surface it with
+        sample size and confidence attached"). The full per-cycle-day breakdown
+        is CyclePatternExportSerializer, reachable via GET /api/v1/cycle/data/.
+        Deliberately not a JSONField: a typed schema here means a typed,
+        directly-usable Kotlin model instead of an untyped JSON blob.
+      properties:
+        sample_cycles:
+          type: integer
+        confidence:
+          type: number
+          format: double
+      required:
+      - confidence
+      - sample_cycles
+    Manifest:
+      type: object
+      properties:
+        reference_version:
+          type: integer
+        table_counts:
+          type: object
+          additionalProperties:
+            type: integer
+      required:
+      - reference_version
+      - table_counts
+    MovementPatternEnum:
+      enum:
+      - squat
+      - hinge
+      - lunge
+      - push_horizontal
+      - push_vertical
+      - pull_horizontal
+      - pull_vertical
+      - carry
+      - core
+      - isolation
+      - plyometric
+      - cardio
+      type: string
+      description: |-
+        * `squat` - Squat
+        * `hinge` - Hinge
+        * `lunge` - Lunge
+        * `push_horizontal` - Push (horizontal)
+        * `push_vertical` - Push (vertical)
+        * `pull_horizontal` - Pull (horizontal)
+        * `pull_vertical` - Pull (vertical)
+        * `carry` - Carry
+        * `core` - Core
+        * `isolation` - Isolation
+        * `plyometric` - Plyometric
+        * `cardio` - Cardio
+    PatchedCommunityUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          minLength: 2
+        description:
+          type: string
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+    PatchedCycleProfile:
+      type: object
+      properties:
+        tracking_mode:
+          $ref: '#/components/schemas/TrackingModeEnum'
+        typical_length_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        typical_period_days:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        confidence:
+          type: number
+          format: double
+          nullable: true
+    PatchedSocialProfileUpdate:
+      type: object
+      description: Serializer for updating the authenticated user's social profile.
+      properties:
+        username:
+          type: string
+          description: Unique public handle (3-32 alphanumeric characters and underscores).
+          maxLength: 32
+          minLength: 3
+        display_name:
+          type: string
+          maxLength: 64
+        bio:
+          type: string
+        profile_image:
+          type: string
+          format: uri
+          nullable: true
+        is_private:
+          type: boolean
+    PatchedUserProfile:
+      type: object
+      properties:
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        sex_at_birth:
+          type: string
+          nullable: true
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        current_weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        waist_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        resting_hr:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+        timezone:
+          type: string
+          maxLength: 64
+        unit_preference:
+          $ref: '#/components/schemas/UnitPreferenceEnum'
+        activity_level:
+          type: string
+          nullable: true
+        tracks_cycle:
+          type: boolean
+          nullable: true
+        declined_fields: {}
+        onboarding_completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        field_states:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
+    PlanDelta:
+      type: object
+      properties:
+        target_kcal:
+          type: number
+          format: double
+          nullable: true
+        volume_today_kg:
+          type: number
+          format: double
+          nullable: true
+        readiness_ceiling:
+          type: number
+          format: double
+          nullable: true
+        dropped_sessions:
+          type: integer
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        clamped_by:
+          type: array
+          items:
+            type: string
+      required:
+      - dropped_sessions
+      - readiness_ceiling
+      - reason
+      - target_kcal
+      - volume_today_kg
+    ProfileState:
+      type: object
+      properties:
+        age:
+          type: integer
+          nullable: true
+        sex_at_birth:
+          type: string
+          nullable: true
+        height_cm:
+          type: number
+          format: double
+          nullable: true
+        unit_preference:
+          type: string
+          nullable: true
+        tracks_cycle:
+          type: boolean
+          nullable: true
+        timezone:
+          type: string
+          nullable: true
+      required:
+      - age
+      - height_cm
+      - sex_at_birth
+      - timezone
+      - tracks_cycle
+      - unit_preference
+    Recipe:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 64
+          pattern: ^[-a-zA-Z0-9_]+$
+        name: {}
+        serving_description:
+          type: string
+          maxLength: 128
+        serving_grams_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+          readOnly: true
+        kcal_per_100g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        default_portion_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+          readOnly: true
+        portion_label:
+          type: string
+          readOnly: true
+        source:
+          type: string
+          readOnly: true
+        barcode:
+          type: string
+          nullable: true
+          readOnly: true
+        item_type:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - barcode
+      - carbs_g
+      - default_portion_g
+      - fat_g
+      - ingredients
+      - item_type
+      - kcal_per_100g
+      - name
+      - portion_label
+      - protein_g
+      - serving_description
+      - serving_grams_total
+      - slug
+      - source
+    RecipeIngredient:
+      type: object
+      properties:
+        ingredient_slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        grams_in_serving:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+      required:
+      - grams_in_serving
+      - ingredient_slug
+    RoleEnum:
+      enum:
+      - owner
+      - admin
+      - member
+      type: string
+      description: |-
+        * `owner` - Owner
+        * `admin` - Admin
+        * `member` - Member
     Signup:
       type: object
       properties:
@@ -599,6 +2120,248 @@ components:
       required:
       - email
       - password
+    SocialProfile:
+      type: object
+      description: |-
+        Serializer for reading social profiles.
+
+        Every usage is `SocialProfileSerializer(instance).data` — never used to
+        validate a write. `bio` and `is_private` have model-level defaults
+        (blank="", False) so ModelSerializer marks them not-required for
+        writes, which drf-spectacular reflects by omitting them from the
+        response schema's `required` list too — even though a read response
+        always includes them. That made the generated Kotlin fields nullable
+        (`String?`, `Boolean?`) when they're actually always present, forcing
+        every consumer to null-check values that can't be null. Declaring the
+        whole serializer read-only fixes the schema to match reality.
+        `profile_image` is genuinely nullable (model field has null=True) and
+        deliberately excluded here.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Public unique @handle (e.g. iron_lifter99)
+          pattern: ^[a-zA-Z0-9_]{3,32}$
+          maxLength: 32
+        display_name:
+          type: string
+          maxLength: 64
+        bio:
+          type: string
+          readOnly: true
+        profile_image:
+          type: string
+          format: uri
+          nullable: true
+        is_private:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - bio
+      - created_at
+      - display_name
+      - id
+      - is_private
+      - updated_at
+      - username
+    SocialProfileCreate:
+      type: object
+      description: Serializer for creating a new social profile for the authenticated
+        user.
+      properties:
+        username:
+          type: string
+          description: Unique public handle (3-32 alphanumeric characters and underscores).
+          maxLength: 32
+          minLength: 3
+        display_name:
+          type: string
+          maxLength: 64
+        bio:
+          type: string
+          default: ''
+        profile_image:
+          type: string
+          format: uri
+          nullable: true
+        is_private:
+          type: boolean
+          default: false
+      required:
+      - display_name
+      - username
+    SocialProfileUpdate:
+      type: object
+      description: Serializer for updating the authenticated user's social profile.
+      properties:
+        username:
+          type: string
+          description: Unique public handle (3-32 alphanumeric characters and underscores).
+          maxLength: 32
+          minLength: 3
+        display_name:
+          type: string
+          maxLength: 64
+        bio:
+          type: string
+        profile_image:
+          type: string
+          format: uri
+          nullable: true
+        is_private:
+          type: boolean
+    SyncError:
+      type: object
+      properties:
+        index:
+          type: integer
+        client_uuid:
+          type: string
+          nullable: true
+        error:
+          type: string
+      required:
+      - client_uuid
+      - error
+      - index
+    SyncEvent:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        client_uuid:
+          type: string
+          format: uuid
+        occurred_at:
+          type: string
+          format: date-time
+        utc_offset:
+          type: string
+          default: +00:00
+        source:
+          type: string
+          default: manual
+        supersedes:
+          type: string
+          format: uuid
+          nullable: true
+        planned_session:
+          type: string
+          format: uuid
+          nullable: true
+        duration_minutes:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+        session:
+          type: string
+          format: uuid
+          nullable: true
+        exercise:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        set_index:
+          type: integer
+        reps:
+          type: integer
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+          nullable: true
+        rpe:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
+        is_warmup:
+          type: boolean
+          default: false
+        rom_achieved:
+          type: string
+          nullable: true
+        tempo_ms:
+          type: integer
+          nullable: true
+        log:
+          type: string
+          format: uuid
+          nullable: true
+        food_slug:
+          type: string
+          pattern: ^[-a-zA-Z0-9_]+$
+        quantity:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        calories:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        protein_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        carbs_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        fat_g:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,2})?$
+        date:
+          type: string
+          format: date
+        event:
+          type: string
+        flow:
+          type: string
+        symptoms:
+          type: array
+          items:
+            type: string
+        energy_rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+      required:
+      - client_uuid
+      - occurred_at
+      - type
+    SyncRequest:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncEvent'
+      required:
+      - events
+    SyncResponse:
+      type: object
+      properties:
+        success_count:
+          type: integer
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyncError'
+      required:
+      - errors
+      - success_count
     TokenPair:
       type: object
       properties:
@@ -620,9 +2383,140 @@ components:
       required:
       - access
       - refresh
+    TrackingModeEnum:
+      enum:
+      - natural
+      - hormonal_contraception
+      - pregnant
+      - postpartum
+      - perimenopause
+      - not_cycling
+      - unknown
+      type: string
+      description: |-
+        * `natural` - Natural
+        * `hormonal_contraception` - Hormonal contraception
+        * `pregnant` - Pregnant
+        * `postpartum` - Postpartum
+        * `perimenopause` - Perimenopause
+        * `not_cycling` - Not cycling
+        * `unknown` - Unknown
+    TrainingFocusEnum:
+      enum:
+      - strength
+      - hypertrophy
+      - endurance
+      - general
+      type: string
+      description: |-
+        * `strength` - Strength
+        * `hypertrophy` - Hypertrophy
+        * `endurance` - Endurance
+        * `general` - General
+    TrainingMusicMapping:
+      type: object
+      properties:
+        training_focus:
+          $ref: '#/components/schemas/TrainingFocusEnum'
+        cycle_phase:
+          type: string
+          nullable: true
+        genre:
+          type: string
+          maxLength: 64
+        youtube_playlist_id:
+          type: string
+          maxLength: 64
+        is_active:
+          type: boolean
+        updated_at_version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - genre
+      - training_focus
+      - youtube_playlist_id
+    TrainingState:
+      type: object
+      properties:
+        week_volume_planned:
+          type: number
+          format: double
+          nullable: true
+        week_volume_planned_partial:
+          type: boolean
+        week_volume_completed:
+          type: number
+          format: double
+          nullable: true
+        week_volume_completed_partial:
+          type: boolean
+        volume_by_muscle_group:
+          type: object
+          additionalProperties:
+            type: number
+            format: double
+          nullable: true
+        volume_by_muscle_group_partial:
+          type: boolean
+        adherence_7d:
+          type: number
+          format: double
+          nullable: true
+        adherence_7d_partial:
+          type: boolean
+        readiness_ceiling_today:
+          type: number
+          format: double
+          nullable: true
+        days_since_rest:
+          type: integer
+          nullable: true
+        days_since_rest_partial:
+          type: boolean
+      required:
+      - adherence_7d
+      - adherence_7d_partial
+      - days_since_rest
+      - days_since_rest_partial
+      - readiness_ceiling_today
+      - volume_by_muscle_group
+      - volume_by_muscle_group_partial
+      - week_volume_completed
+      - week_volume_completed_partial
+      - week_volume_planned
+      - week_volume_planned_partial
+    TypeEnum:
+      enum:
+      - planned_session
+      - workout_session
+      - set_log
+      - meal_log
+      - meal_item
+      - weight_log
+      - sleep_log
+      - cycle_log
+      type: string
+      description: |-
+        * `planned_session` - planned_session
+        * `workout_session` - workout_session
+        * `set_log` - set_log
+        * `meal_log` - meal_log
+        * `meal_item` - meal_item
+        * `weight_log` - weight_log
+        * `sleep_log` - sleep_log
+        * `cycle_log` - cycle_log
+    UnitPreferenceEnum:
+      enum:
+      - metric
+      - imperial
+      type: string
+      description: |-
+        * `metric` - Metric
+        * `imperial` - Imperial
     UserProfile:
       type: object
-      description: User profile with three-state optional fields.
       properties:
         date_of_birth:
           type: string
@@ -631,45 +2525,38 @@ components:
         sex_at_birth:
           type: string
           nullable: true
-          enum:
-          - male
-          - female
-          - intersex
         height_cm:
           type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
           nullable: true
         current_weight_kg:
           type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
           nullable: true
         waist_cm:
           type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
           nullable: true
         resting_hr:
           type: integer
+          maximum: 32767
+          minimum: 0
           nullable: true
         timezone:
           type: string
+          maxLength: 64
         unit_preference:
-          type: string
-          enum:
-          - metric
-          - imperial
+          $ref: '#/components/schemas/UnitPreferenceEnum'
         activity_level:
           type: string
           nullable: true
-          enum:
-          - sedentary
-          - lightly_active
-          - moderately_active
-          - very_active
-          - extra_active
         tracks_cycle:
           type: boolean
           nullable: true
-        declined_fields:
-          type: array
-          items:
-            type: string
+        declined_fields: {}
         onboarding_completed_at:
           type: string
           format: date-time
@@ -679,174 +2566,57 @@ components:
           additionalProperties:
             type: string
           readOnly: true
-    PatchedUserProfile:
+      required:
+      - field_states
+    UserState:
       type: object
-      description: Partial update for UserProfile — all fields optional.
       properties:
-        date_of_birth:
+        as_of:
           type: string
           format: date
+        profile:
+          $ref: '#/components/schemas/ProfileState'
+        goal:
+          $ref: '#/components/schemas/GoalState'
+        energy:
+          $ref: '#/components/schemas/EnergyState'
+        training:
+          $ref: '#/components/schemas/TrainingState'
+        plan_delta:
+          allOf:
+          - $ref: '#/components/schemas/PlanDelta'
           nullable: true
-        sex_at_birth:
-          type: string
-          nullable: true
-        height_cm:
-          type: string
-          nullable: true
-        current_weight_kg:
-          type: string
-          nullable: true
-        waist_cm:
-          type: string
-          nullable: true
-        resting_hr:
-          type: integer
-          nullable: true
-        timezone:
-          type: string
-        unit_preference:
-          type: string
-        activity_level:
-          type: string
-          nullable: true
-        tracks_cycle:
-          type: boolean
-          nullable: true
-        declined_fields:
-          type: array
-          items:
-            type: string
-        onboarding_completed_at:
-          type: string
-          format: date-time
-          nullable: true
-    Goal:
-      type: object
-      properties:
-        energy_direction:
-          type: string
-          enum:
-          - cut
-          - maintain
-          - gain
-          - not_tracking
-        training_focus:
-          type: string
-          enum:
-          - strength
-          - hypertrophy
-          - endurance
-          - general
-        target_rate_kg_per_week:
-          type: string
-        auto_adjust:
-          type: boolean
-        started_at:
-          type: string
-          format: date-time
-          readOnly: true
-        ended_at:
-          type: string
-          format: date-time
-          nullable: true
-          readOnly: true
-        clamp_reason:
-          type: string
-          nullable: true
-          readOnly: true
-    GoalRequest:
-      type: object
-      properties:
-        energy_direction:
-          type: string
-          enum:
-          - cut
-          - maintain
-          - gain
-          - not_tracking
-        training_focus:
-          type: string
-          enum:
-          - strength
-          - hypertrophy
-          - endurance
-          - general
-        target_rate_kg_per_week:
-          type: string
-        auto_adjust:
-          type: boolean
+        body:
+          $ref: '#/components/schemas/BodyState'
+        cycle:
+          $ref: '#/components/schemas/CycleState'
+        flags:
+          $ref: '#/components/schemas/FlagsState'
       required:
-      - energy_direction
-      - training_focus
-      - target_rate_kg_per_week
-      - auto_adjust
-    SocialProfile:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        username:
-          type: string
-        display_name:
-          type: string
-        bio:
-          type: string
-        profile_image:
-          type: string
-          nullable: true
-        is_private:
-          type: boolean
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - id
-      - username
-      - display_name
-      - bio
-      - is_private
-      - created_at
-      - updated_at
-    SocialProfileCreate:
-      type: object
-      properties:
-        username:
-          type: string
-        display_name:
-          type: string
-        bio:
-          type: string
-        is_private:
-          type: boolean
-      required:
-      - username
-      - display_name
-    SocialProfileUpdate:
-      type: object
-      properties:
-        username:
-          type: string
-        display_name:
-          type: string
-        bio:
-          type: string
-        is_private:
-          type: boolean
+      - as_of
+      - body
+      - cycle
+      - energy
+      - flags
+      - goal
+      - plan_delta
+      - profile
+      - training
     UsernameCheckResponse:
       type: object
+      description: |-
+        Response shape for CheckUsernameView — declared so drf-spectacular
+        generates a typed model (UsernameCheckResponse) instead of a bare
+        `dict`/`Map<String, Any>` with no accessible fields. Documentation only:
+        the view still builds and returns its own dict; this changes nothing
+        about the actual response body, only what the generated OpenAPI schema
+        (and therefore the Android client) says its shape is.
       properties:
         available:
           type: boolean
-        reason:
-          type: string
-          nullable: true
         message:
+          type: string
+        reason:
           type: string
       required:
       - available
@@ -856,6 +2626,9 @@ components:
       - public
       - private
       type: string
+      description: |-
+        * `public` - Public
+        * `private` - Private
     RoleEnum:
       enum:
       - owner
@@ -1157,6 +2930,3 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
-
-

@@ -42,8 +42,16 @@ android {
         }
         release {
             isMinifyEnabled = false
-            // ponytail: placeholder until a real deployment exists.
-            buildConfigField("String", "BASE_URL", "\"https://api.fitforge.app/\"")
+            // Configurable so CI/local release builds can point at the
+            // deployed Render URL without editing this file — pass
+            // -PRELEASE_API_BASE_URL=... or set the env var of the same
+            // name. Falls back to the confirmed deployed URL — Render
+            // appended "-f7ow" since the bare "fitforge-backend" name was
+            // unavailable; don't assume it matches the service name.
+            val releaseBaseUrl = (project.findProperty("RELEASE_API_BASE_URL") as String?)
+                ?: System.getenv("RELEASE_API_BASE_URL")
+                ?: "https://fitforge-backend-f7ow.onrender.com/"
+            buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
         }
     }
 
@@ -55,6 +63,12 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    // MediaPipe's setModelAssetPath mmaps the .task file directly; AGP's default
+    // asset compression breaks that. Keep these stored, not deflated.
+    androidResources {
+        noCompress += listOf("task", "tflite")
     }
 
     sourceSets {
@@ -83,6 +97,22 @@ tasks.withType<Detekt>().configureEach {
     jvmTarget = "17"
 }
 
+val preparePhoneBackend = tasks.register<Exec>("preparePhoneBackend") {
+    group = "installation"
+    description = "Starts the local backend and configures ADB reverse for debug installs"
+    workingDir(rootDir)
+    commandLine(
+        "bash",
+        rootDir.resolve("../scripts/prepare_phone_backend.sh").absolutePath,
+    )
+}
+
+// A command-line debug install targets a connected device, so prepare the
+// localhost backend bridge first. assembleDebug remains side-effect free for CI.
+tasks.matching { it.name == "installDebug" }.configureEach {
+    dependsOn(preparePhoneBackend)
+}
+
 val openApiGeneratedDir = layout.buildDirectory.dir("generated/openapi").get().asFile
 
 // Retrofit client generated from the backend's OpenAPI schema (see
@@ -98,12 +128,32 @@ tasks.named<GenerateTask>("openApiGenerate") {
         mapOf(
             "serializationLibrary" to "kotlinx_serialization",
             "useCoroutines" to "true",
+            "dateLibrary" to "kotlinx-datetime"
         )
     )
     generateApiTests.set(false)
     generateModelTests.set(false)
     generateApiDocumentation.set(false)
     generateModelDocumentation.set(false)
+
+    // openapi-generator 7.14.0's Kotlin template unconditionally emits
+    // NullEnum.kt as a zero-entry enum whenever the spec has ANY nullable
+    // field, regardless of whether anything actually needs it — and a
+    // zero-entry enum is itself invalid Kotlin syntax, which fails the
+    // whole module's compile. NullEnum is never referenced by any other
+    // generated file (verified: `grep -rl NullEnum` finds only the file
+    // itself), so deleting it removes dead, broken code and nothing else.
+    // No newer generator version exists yet to fix this upstream — this is
+    // a targeted workaround for a confirmed generator bug, not a schema or
+    // behavior change. Revisit when openapi-generator ships a fix.
+    doLast {
+        val nullEnumFile = file(
+            "$openApiGeneratedDir/src/main/kotlin/com/fitforge/app/data/remote/generated/models/NullEnum.kt"
+        )
+        if (nullEnumFile.exists()) {
+            nullEnumFile.delete()
+        }
+    }
 }
 
 // Both the Kotlin compiler and KSP (Hilt/Room) consume the generated
@@ -141,6 +191,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.converter.kotlinx.serialization)
@@ -154,6 +206,15 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.health.connect)
+
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mediapipe.tasks.vision)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

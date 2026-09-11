@@ -1,0 +1,399 @@
+@file:Suppress("LongMethod", "ReturnCount", "TooGenericExceptionCaught")
+
+package com.fitforge.app.data.repository
+
+import com.fitforge.app.core.database.UserStateDao
+import com.fitforge.app.core.database.UserStateEntity
+import com.fitforge.app.data.remote.generated.apis.StateApi
+import com.fitforge.app.data.remote.generated.models.UserState
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlin.time.Clock
+import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import javax.inject.Singleton
+
+// Mirrors apps/engine/service.py's fitness_age_inputs dict shape exactly —
+// displayed verbatim, never recomputed on-device (CLAUDE.md rule 1).
+@Serializable
+private data class FitnessAgeInputsJsonDto(
+    val mets: Double? = null,
+    @SerialName("vo2max_ml_kg_min") val vo2maxMlKgMin: Double? = null,
+    val inputs: FitnessAgeRawInputsDto? = null,
+    @SerialName("model_citation") val modelCitation: String? = null,
+    @SerialName("norms_citation") val normsCitation: String? = null,
+)
+
+@Serializable
+private data class FitnessAgeRawInputsDto(
+    val age: Int? = null,
+    @SerialName("sex_at_birth") val sexAtBirth: String? = null,
+    val bmi: Double? = null,
+    @SerialName("resting_hr") val restingHr: Int? = null,
+    @SerialName("activity_level") val activityLevel: String? = null,
+)
+
+private fun FitnessAgeInputsJsonDto.toDomain() = FitnessAgeInputsDomain(
+    mets = mets,
+    vo2maxMlKgMin = vo2maxMlKgMin,
+    age = inputs?.age,
+    sexAtBirth = inputs?.sexAtBirth,
+    bmi = inputs?.bmi,
+    restingHr = inputs?.restingHr,
+    activityLevel = inputs?.activityLevel,
+    modelCitation = modelCitation,
+    normsCitation = normsCitation,
+)
+
+data class ProfileDomain(
+    val age: Int?,
+    val sexAtBirth: String?,
+    val heightCm: Double?,
+    val unitPreference: String?,
+    val tracksCycle: Boolean?,
+    val timezone: String?,
+)
+
+data class GoalDomain(
+    val energyDirection: String?,
+    val trainingFocus: String?,
+    val targetRateKgPerWeek: Double?,
+    val autoAdjust: Boolean?,
+)
+
+data class EnergyDomain(
+    val maintenanceKcal: Double?,
+    val maintenanceSource: String?,
+    val maintenanceConfidence: Double?,
+    val targetKcalToday: Double?,
+    val consumedKcalToday: Double?,
+    val consumedKcalTodayPartial: Boolean,
+    val burnedKcalToday: Double?,
+    val burnedKcalTodayPartial: Boolean,
+    val weekBalanceKcal: Double?,
+    val weekBalanceKcalPartial: Boolean,
+    val dataSufficiency: String,
+)
+
+data class TrainingDomain(
+    val weekVolumePlanned: Double?,
+    val weekVolumePlannedPartial: Boolean,
+    val weekVolumeCompleted: Double?,
+    val weekVolumeCompletedPartial: Boolean,
+    val volumeByMuscleGroup: Map<String, Double>?,
+    val volumeByMuscleGroupPartial: Boolean,
+    val adherence7d: Double?,
+    val adherence7dPartial: Boolean,
+    val readinessCeilingToday: Double?,
+    val daysSinceRest: Int?,
+    val daysSinceRestPartial: Boolean,
+)
+
+data class PlanDeltaDomain(
+    val targetKcal: Double?,
+    val volumeTodayKg: Double?,
+    val readinessCeiling: Double?,
+    val droppedSessions: Int?,
+    val reason: String?,
+    val clampedBy: List<String>,
+)
+
+data class FitnessAgeInputsDomain(
+    val mets: Double?,
+    val vo2maxMlKgMin: Double?,
+    val age: Int?,
+    val sexAtBirth: String?,
+    val bmi: Double?,
+    val restingHr: Int?,
+    val activityLevel: String?,
+    val modelCitation: String?,
+    val normsCitation: String?,
+)
+
+data class BodyDomain(
+    val latestWeightKg: Double?,
+    val weightTrendKgPerWeek: Double?,
+    val trendConfidence: Double?,
+    val fitnessAge: Double?,
+    val fitnessAgeInputs: FitnessAgeInputsDomain? = null,
+)
+
+data class CycleDomain(
+    val enabled: Boolean,
+    val trackingMode: String?,
+    val phase: String?,
+    val cycleDay: Int?,
+    val confidence: Double?,
+    val daysUntilPredictedPeriod: Int?,
+    val energyAvailabilityFlag: String?,
+    /** Null until enough of her own cycles have been logged — see §10's
+     * pattern-learning requirement: never shown without sample size + confidence. */
+    val learnedPatternSampleCycles: Int?,
+    val learnedPatternConfidence: Double?,
+)
+
+data class FlagsDomain(
+    val missingFoodDays7d: Int,
+    val missingWeightDays14d: Int,
+    val goalRecentlyChanged: Boolean,
+    val insufficientDataForAdaptation: Boolean,
+)
+
+data class CachedUserState(
+    val asOfDate: String,
+    val computedAt: Instant,
+    val profile: ProfileDomain,
+    val goal: GoalDomain,
+    val energy: EnergyDomain,
+    val training: TrainingDomain,
+    val planDelta: PlanDeltaDomain?,
+    val body: BodyDomain,
+    val cycle: CycleDomain,
+    val flags: FlagsDomain,
+)
+
+@Singleton
+class UserStateRepository @Inject constructor(
+    private val userStateDao: UserStateDao,
+    private val stateApi: StateApi,
+) {
+    val userState: Flow<CachedUserState?> = userStateDao.getLatest().map { entity ->
+        entity?.toDomain()
+    }
+
+    suspend fun refresh(): Result<Unit> {
+        return try {
+            val response = stateApi.stateRetrieve()
+            if (!response.isSuccessful) {
+                return Result.failure(Exception("HTTP ${response.code()}: ${response.message()}"))
+            }
+            val body = response.body() ?: return Result.failure(Exception("Empty response body"))
+            val entity = body.toEntity(Clock.System.now())
+            userStateDao.upsert(entity)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
+
+private fun UserStateEntity.toDomain(): CachedUserState {
+    val muscleGroupMap: Map<String, Double>? = trainingVolumeByMuscleGroupJson?.let {
+        try {
+            Json.decodeFromString<Map<String, Double>>(it)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val fitnessAgeInputs: FitnessAgeInputsDomain? = bodyFitnessAgeInputsJson?.let {
+        try {
+            Json.decodeFromString<FitnessAgeInputsJsonDto>(it).toDomain()
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val clampedByList: List<String> = planDeltaClampedByJson?.let {
+        try {
+            Json.decodeFromString<List<String>>(it)
+        } catch (_: Exception) {
+            emptyList()
+        }
+    } ?: emptyList()
+
+    val planDelta = if (hasPlanDelta) {
+        PlanDeltaDomain(
+            targetKcal = planDeltaTargetKcal,
+            volumeTodayKg = planDeltaVolumeTodayKg,
+            readinessCeiling = planDeltaReadinessCeiling,
+            droppedSessions = planDeltaDroppedSessions,
+            reason = planDeltaReason,
+            clampedBy = clampedByList,
+        )
+    } else {
+        null
+    }
+
+    return CachedUserState(
+        asOfDate = asOfDate,
+        computedAt = computedAt,
+        profile = ProfileDomain(
+            age = profileAge,
+            sexAtBirth = profileSexAtBirth,
+            heightCm = profileHeightCm,
+            unitPreference = profileUnitPreference,
+            tracksCycle = profileTracksCycle,
+            timezone = profileTimezone,
+        ),
+        goal = GoalDomain(
+            energyDirection = goalEnergyDirection,
+            trainingFocus = goalTrainingFocus,
+            targetRateKgPerWeek = goalTargetRateKgPerWeek,
+            autoAdjust = goalAutoAdjust,
+        ),
+        energy = EnergyDomain(
+            maintenanceKcal = energyMaintenanceKcal,
+            maintenanceSource = energyMaintenanceSource,
+            maintenanceConfidence = energyMaintenanceConfidence,
+            targetKcalToday = energyTargetKcalToday,
+            consumedKcalToday = energyConsumedKcalToday,
+            consumedKcalTodayPartial = energyConsumedKcalTodayPartial,
+            burnedKcalToday = energyBurnedKcalToday,
+            burnedKcalTodayPartial = energyBurnedKcalTodayPartial,
+            weekBalanceKcal = energyWeekBalanceKcal,
+            weekBalanceKcalPartial = energyWeekBalanceKcalPartial,
+            dataSufficiency = energyDataSufficiency,
+        ),
+        training = TrainingDomain(
+            weekVolumePlanned = trainingWeekVolumePlanned,
+            weekVolumePlannedPartial = trainingWeekVolumePlannedPartial,
+            weekVolumeCompleted = trainingWeekVolumeCompleted,
+            weekVolumeCompletedPartial = trainingWeekVolumeCompletedPartial,
+            volumeByMuscleGroup = muscleGroupMap,
+            volumeByMuscleGroupPartial = trainingVolumeByMuscleGroupPartial,
+            adherence7d = trainingAdherence7d,
+            adherence7dPartial = trainingAdherence7dPartial,
+            readinessCeilingToday = trainingReadinessCeilingToday,
+            daysSinceRest = trainingDaysSinceRest,
+            daysSinceRestPartial = trainingDaysSinceRestPartial,
+        ),
+        planDelta = planDelta,
+        body = BodyDomain(
+            latestWeightKg = bodyLatestWeightKg,
+            weightTrendKgPerWeek = bodyWeightTrendKgPerWeek,
+            trendConfidence = bodyTrendConfidence,
+            fitnessAge = bodyFitnessAge,
+            fitnessAgeInputs = fitnessAgeInputs,
+        ),
+        cycle = CycleDomain(
+            enabled = cycleEnabled,
+            trackingMode = cycleTrackingMode,
+            phase = cyclePhase,
+            cycleDay = cycleDay,
+            confidence = cycleConfidence,
+            daysUntilPredictedPeriod = cycleDaysUntilPredictedPeriod,
+            energyAvailabilityFlag = cycleEnergyAvailabilityFlag,
+            learnedPatternSampleCycles = cycleLearnedPatternSampleCycles,
+            learnedPatternConfidence = cycleLearnedPatternConfidence,
+        ),
+        flags = FlagsDomain(
+            missingFoodDays7d = flagsMissingFoodDays7d,
+            missingWeightDays14d = flagsMissingWeightDays14d,
+            goalRecentlyChanged = flagsGoalRecentlyChanged,
+            insufficientDataForAdaptation = flagsInsufficientDataForAdaptation,
+        ),
+    )
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun UserState.toEntity(computedAt: Instant): UserStateEntity {
+    val muscleJson = training.volumeByMuscleGroup?.let { map ->
+        try {
+            Json.encodeToString(map)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val fitnessAgeInputsMap = body.fitnessAgeInputs as? Map<String, Any?>
+    val fitnessAgeInputsJson = fitnessAgeInputsMap?.let { top ->
+        val rawInputs = top["inputs"] as? Map<String, Any?>
+        val dto = FitnessAgeInputsJsonDto(
+            mets = (top["mets"] as? Number)?.toDouble(),
+            vo2maxMlKgMin = (top["vo2max_ml_kg_min"] as? Number)?.toDouble(),
+            inputs = rawInputs?.let {
+                FitnessAgeRawInputsDto(
+                    age = (it["age"] as? Number)?.toInt(),
+                    sexAtBirth = it["sex_at_birth"] as? String,
+                    bmi = (it["bmi"] as? Number)?.toDouble(),
+                    restingHr = (it["resting_hr"] as? Number)?.toInt(),
+                    activityLevel = it["activity_level"] as? String,
+                )
+            },
+            modelCitation = top["model_citation"] as? String,
+            normsCitation = top["norms_citation"] as? String,
+        )
+        try {
+            Json.encodeToString(dto)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    val delta = planDelta
+    val clampedJson = delta?.clampedBy?.let { list ->
+        try {
+            Json.encodeToString(list)
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    return UserStateEntity(
+        id = 1,
+        computedAt = computedAt,
+        asOfDate = asOf.toString(),
+        profileAge = profile.age,
+        profileSexAtBirth = profile.sexAtBirth,
+        profileHeightCm = profile.heightCm,
+        profileUnitPreference = profile.unitPreference,
+        profileTracksCycle = profile.tracksCycle,
+        profileTimezone = profile.timezone,
+        goalEnergyDirection = goal.energyDirection,
+        goalTrainingFocus = goal.trainingFocus,
+        goalTargetRateKgPerWeek = goal.targetRateKgPerWeek,
+        goalAutoAdjust = goal.autoAdjust,
+        energyMaintenanceKcal = energy.maintenanceKcal,
+        energyMaintenanceSource = energy.maintenanceSource,
+        energyMaintenanceConfidence = energy.maintenanceConfidence,
+        energyTargetKcalToday = energy.targetKcalToday,
+        energyConsumedKcalToday = energy.consumedKcalToday,
+        energyConsumedKcalTodayPartial = energy.consumedKcalTodayPartial,
+        energyBurnedKcalToday = energy.burnedKcalToday,
+        energyBurnedKcalTodayPartial = energy.burnedKcalTodayPartial,
+        energyWeekBalanceKcal = energy.weekBalanceKcal,
+        energyWeekBalanceKcalPartial = energy.weekBalanceKcalPartial,
+        energyDataSufficiency = energy.dataSufficiency,
+        trainingWeekVolumePlanned = training.weekVolumePlanned,
+        trainingWeekVolumePlannedPartial = training.weekVolumePlannedPartial,
+        trainingWeekVolumeCompleted = training.weekVolumeCompleted,
+        trainingWeekVolumeCompletedPartial = training.weekVolumeCompletedPartial,
+        trainingVolumeByMuscleGroupJson = muscleJson,
+        trainingVolumeByMuscleGroupPartial = training.volumeByMuscleGroupPartial,
+        trainingAdherence7d = training.adherence7d,
+        trainingAdherence7dPartial = training.adherence7dPartial,
+        trainingReadinessCeilingToday = training.readinessCeilingToday,
+        trainingDaysSinceRest = training.daysSinceRest,
+        trainingDaysSinceRestPartial = training.daysSinceRestPartial,
+        hasPlanDelta = delta != null,
+        planDeltaTargetKcal = delta?.targetKcal,
+        planDeltaVolumeTodayKg = delta?.volumeTodayKg,
+        planDeltaReadinessCeiling = delta?.readinessCeiling,
+        planDeltaDroppedSessions = delta?.droppedSessions,
+        planDeltaReason = delta?.reason,
+        planDeltaClampedByJson = clampedJson,
+        bodyLatestWeightKg = body.latestWeightKg,
+        bodyWeightTrendKgPerWeek = body.weightTrendKgPerWeek,
+        bodyTrendConfidence = body.trendConfidence,
+        bodyFitnessAge = body.fitnessAge,
+        bodyFitnessAgeInputsJson = fitnessAgeInputsJson,
+        cycleEnabled = cycle.enabled,
+        cycleTrackingMode = cycle.trackingMode,
+        cyclePhase = cycle.phase,
+        cycleDay = cycle.cycleDay,
+        cycleConfidence = cycle.confidence,
+        cycleDaysUntilPredictedPeriod = cycle.daysUntilPredictedPeriod,
+        cycleEnergyAvailabilityFlag = cycle.energyAvailabilityFlag,
+        cycleLearnedPatternSampleCycles = cycle.learnedPattern?.sampleCycles,
+        cycleLearnedPatternConfidence = cycle.learnedPattern?.confidence,
+        flagsMissingFoodDays7d = flags.missingFoodDays7d,
+        flagsMissingWeightDays14d = flags.missingWeightDays14d,
+        flagsGoalRecentlyChanged = flags.goalRecentlyChanged,
+        flagsInsufficientDataForAdaptation = flags.insufficientDataForAdaptation,
+    )
+}

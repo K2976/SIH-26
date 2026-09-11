@@ -11,7 +11,11 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+<<<<<<< HEAD
 import java.math.BigDecimal
+=======
+import kotlinx.serialization.modules.plus
+>>>>>>> master
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -51,6 +55,7 @@ private val OffsetDateTimeSerializer = object : KSerializer<OffsetDateTime> {
     }
 }
 
+<<<<<<< HEAD
 private val BigDecimalSerializer = object : KSerializer<BigDecimal> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.STRING)
 
@@ -71,14 +76,16 @@ private val BigDecimalSerializer = object : KSerializer<BigDecimal> {
     }
 }
 
-private val JavaTimeSerializersModule = SerializersModule {
+private val javaTimeSerializersModule = SerializersModule {
     contextual(LocalDate::class, LocalDateSerializer)
     contextual(OffsetDateTime::class, OffsetDateTimeSerializer)
     contextual(BigDecimal::class, BigDecimalSerializer)
 }
 
-fun createJsonWithJavaTime(): Json = Json {
+fun createJsonWithJavaTime(
+    additionalSerializersModule: SerializersModule = SerializersModule {},
+): Json = Json {
     ignoreUnknownKeys = true
     isLenient = true
-    serializersModule = JavaTimeSerializersModule
+    serializersModule = javaTimeSerializersModule + additionalSerializersModule
 }

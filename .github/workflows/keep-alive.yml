@@ -1,0 +1,31 @@
+name: Render keep-alive
+
+# Pings the free-tier backend's health check every 10 minutes during
+# 05:30-23:30 IST (00:00-18:00 UTC) so it doesn't spin down mid-demo.
+# Deliberately NOT 24/7: Render's free tier grants a shared 750
+# instance-hours/month per workspace, and this window (~19h/day, ~570h/month)
+# leaves comfortable headroom under that cap. It also leaves the actual
+# overnight hours genuinely idle, matching docs/DEPLOYMENT.md's "best-effort,
+# not a guarantee" framing — a service idle outside this window, or idle for
+# an extended stretch (holidays, etc.), still spins down and still pays the
+# cold-start cost on the next real request.
+#
+# Runs on GitHub's infrastructure, not Render's — it doesn't consume any
+# Render resource (paid or free) beyond the request itself. It does count
+# against this repo's GitHub Actions minutes (private repo: 2,000 free
+# min/month on the Free plan); each run is a single bare curl with no
+# checkout step, so the cost here is a few seconds per run — see
+# docs/DEPLOYMENT.md "Free-tier cold starts" for the math.
+on:
+  schedule:
+    - cron: "*/10 0-18 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health check
+        env:
+          HEALTH_URL: ${{ vars.RENDER_HEALTH_URL }}
+        run: curl --fail --silent --show-error --max-time 90 "${HEALTH_URL:-https://fitforge-backend-f7ow.onrender.com/healthz/}"

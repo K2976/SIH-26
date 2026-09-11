@@ -1,0 +1,8146 @@
+{
+  "metadata": {
+    "source": "ifct_2017",
+    "source_package": "@ifct2017/compositions@2.0.9",
+    "source_rows": 542,
+    "source_columns": 421,
+    "source_csv_sha256": "678c9285b01290ad5cc318a560fa5634618ebd413dd9fe3164d5539125c4aeef",
+    "license": "MIT",
+    "energy_methods": [
+      "ifct_energy_kj_converted_to_kcal",
+      "ifct_macros_atwater_4_4_9"
+    ]
+  },
+  "foods": [
+    {
+      "slug": "ifct-a001",
+      "name": {
+        "en": "Amaranth seed, black"
+      },
+      "kcal_per_100g": "356.12",
+      "protein_g": "14.59",
+      "carbs_g": "59.98",
+      "fat_g": "5.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a002",
+      "name": {
+        "en": "Amaranth seed, pale brown"
+      },
+      "kcal_per_100g": "355.88",
+      "protein_g": "13.27",
+      "carbs_g": "61.46",
+      "fat_g": "5.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a003",
+      "name": {
+        "en": "Bajra"
+      },
+      "kcal_per_100g": "347.99",
+      "protein_g": "10.96",
+      "carbs_g": "61.78",
+      "fat_g": "5.43",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a004",
+      "name": {
+        "en": "Barley"
+      },
+      "kcal_per_100g": "315.73",
+      "protein_g": "10.94",
+      "carbs_g": "61.29",
+      "fat_g": "1.3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a005",
+      "name": {
+        "en": "Jowar"
+      },
+      "kcal_per_100g": "334.13",
+      "protein_g": "9.97",
+      "carbs_g": "67.68",
+      "fat_g": "1.73",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a006",
+      "name": {
+        "en": "Maize, dry"
+      },
+      "kcal_per_100g": "334.13",
+      "protein_g": "8.8",
+      "carbs_g": "64.77",
+      "fat_g": "3.77",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a007",
+      "name": {
+        "en": "Maize, tender, local"
+      },
+      "kcal_per_100g": "119.98",
+      "protein_g": "3.57",
+      "carbs_g": "22.69",
+      "fat_g": "1.4",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a008",
+      "name": {
+        "en": "Maize, tender, sweet"
+      },
+      "kcal_per_100g": "96.80",
+      "protein_g": "4.16",
+      "carbs_g": "16.42",
+      "fat_g": "1.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a009",
+      "name": {
+        "en": "Quinoa"
+      },
+      "kcal_per_100g": "328.39",
+      "protein_g": "13.11",
+      "carbs_g": "53.65",
+      "fat_g": "5.5",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a010",
+      "name": {
+        "en": "Ragi"
+      },
+      "kcal_per_100g": "320.75",
+      "protein_g": "7.16",
+      "carbs_g": "66.82",
+      "fat_g": "1.92",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a011",
+      "name": {
+        "en": "Rice flakes"
+      },
+      "kcal_per_100g": "353.73",
+      "protein_g": "7.44",
+      "carbs_g": "76.75",
+      "fat_g": "1.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a012",
+      "name": {
+        "en": "Rice puffed"
+      },
+      "kcal_per_100g": "361.85",
+      "protein_g": "7.47",
+      "carbs_g": "77.68",
+      "fat_g": "1.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a013",
+      "name": {
+        "en": "Rice, raw, brown"
+      },
+      "kcal_per_100g": "353.73",
+      "protein_g": "9.16",
+      "carbs_g": "74.8",
+      "fat_g": "1.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a014",
+      "name": {
+        "en": "Rice, parboiled, milled"
+      },
+      "kcal_per_100g": "351.58",
+      "protein_g": "7.81",
+      "carbs_g": "77.16",
+      "fat_g": "0.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a015",
+      "name": {
+        "en": "Rice, raw, milled"
+      },
+      "kcal_per_100g": "356.36",
+      "protein_g": "7.94",
+      "carbs_g": "78.24",
+      "fat_g": "0.52",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a016",
+      "name": {
+        "en": "Samai"
+      },
+      "kcal_per_100g": "346.32",
+      "protein_g": "10.13",
+      "carbs_g": "65.55",
+      "fat_g": "3.89",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a017",
+      "name": {
+        "en": "Varagu"
+      },
+      "kcal_per_100g": "331.74",
+      "protein_g": "8.92",
+      "carbs_g": "66.19",
+      "fat_g": "2.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a018",
+      "name": {
+        "en": "Wheat flour, refined"
+      },
+      "kcal_per_100g": "351.82",
+      "protein_g": "10.36",
+      "carbs_g": "74.27",
+      "fat_g": "0.76",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a019",
+      "name": {
+        "en": "Wheat flour, atta"
+      },
+      "kcal_per_100g": "320.27",
+      "protein_g": "10.57",
+      "carbs_g": "64.17",
+      "fat_g": "1.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a020",
+      "name": {
+        "en": "Wheat, whole"
+      },
+      "kcal_per_100g": "321.94",
+      "protein_g": "10.59",
+      "carbs_g": "64.72",
+      "fat_g": "1.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a021",
+      "name": {
+        "en": "Wheat, bulgur"
+      },
+      "kcal_per_100g": "341.78",
+      "protein_g": "10.84",
+      "carbs_g": "69.06",
+      "fat_g": "1.45",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a022",
+      "name": {
+        "en": "Wheat, semolina"
+      },
+      "kcal_per_100g": "333.65",
+      "protein_g": "11.38",
+      "carbs_g": "68.43",
+      "fat_g": "0.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a023",
+      "name": {
+        "en": "Wheat, vermicelli"
+      },
+      "kcal_per_100g": "332.70",
+      "protein_g": "9.7",
+      "carbs_g": "70.39",
+      "fat_g": "0.45",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-a024",
+      "name": {
+        "en": "Wheat, vermicelli, roasted"
+      },
+      "kcal_per_100g": "340.11",
+      "protein_g": "10.37",
+      "carbs_g": "71.42",
+      "fat_g": "0.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b001",
+      "name": {
+        "en": "Bengal gram, dal"
+      },
+      "kcal_per_100g": "329.11",
+      "protein_g": "21.55",
+      "carbs_g": "46.72",
+      "fat_g": "5.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b002",
+      "name": {
+        "en": "Bengal gram, whole"
+      },
+      "kcal_per_100g": "287.05",
+      "protein_g": "18.77",
+      "carbs_g": "39.56",
+      "fat_g": "5.11",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b003",
+      "name": {
+        "en": "Black gram, dal"
+      },
+      "kcal_per_100g": "324.09",
+      "protein_g": "23.06",
+      "carbs_g": "51",
+      "fat_g": "1.69",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b004",
+      "name": {
+        "en": "Black gram, whole"
+      },
+      "kcal_per_100g": "291.35",
+      "protein_g": "21.97",
+      "carbs_g": "43.99",
+      "fat_g": "1.58",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b005",
+      "name": {
+        "en": "Cowpea, brown"
+      },
+      "kcal_per_100g": "320.27",
+      "protein_g": "20.36",
+      "carbs_g": "54.62",
+      "fat_g": "1.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b006",
+      "name": {
+        "en": "Cowpea, white"
+      },
+      "kcal_per_100g": "320.27",
+      "protein_g": "21.25",
+      "carbs_g": "53.77",
+      "fat_g": "1.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b007",
+      "name": {
+        "en": "Field bean, black"
+      },
+      "kcal_per_100g": "276.05",
+      "protein_g": "19.93",
+      "carbs_g": "43.46",
+      "fat_g": "0.92",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b008",
+      "name": {
+        "en": "Field bean, brown"
+      },
+      "kcal_per_100g": "282.98",
+      "protein_g": "19.9",
+      "carbs_g": "45.24",
+      "fat_g": "0.98",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b009",
+      "name": {
+        "en": "Field bean, white"
+      },
+      "kcal_per_100g": "280.35",
+      "protein_g": "19.84",
+      "carbs_g": "44.53",
+      "fat_g": "0.94",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b010",
+      "name": {
+        "en": "Green gram, dal"
+      },
+      "kcal_per_100g": "325.76",
+      "protein_g": "23.88",
+      "carbs_g": "52.59",
+      "fat_g": "1.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b011",
+      "name": {
+        "en": "Green gram, whole"
+      },
+      "kcal_per_100g": "293.74",
+      "protein_g": "22.53",
+      "carbs_g": "46.13",
+      "fat_g": "1.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b012",
+      "name": {
+        "en": "Horse gram, whole"
+      },
+      "kcal_per_100g": "329.59",
+      "protein_g": "21.73",
+      "carbs_g": "57.24",
+      "fat_g": "0.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b013",
+      "name": {
+        "en": "Lentil dal"
+      },
+      "kcal_per_100g": "322.42",
+      "protein_g": "24.35",
+      "carbs_g": "52.53",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b014",
+      "name": {
+        "en": "Lentil whole, brown"
+      },
+      "kcal_per_100g": "299.00",
+      "protein_g": "22.49",
+      "carbs_g": "48.47",
+      "fat_g": "0.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b015",
+      "name": {
+        "en": "Lentil whole, yellowish"
+      },
+      "kcal_per_100g": "297.80",
+      "protein_g": "22.87",
+      "carbs_g": "47.91",
+      "fat_g": "0.61",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b016",
+      "name": {
+        "en": "Moth bean"
+      },
+      "kcal_per_100g": "308.56",
+      "protein_g": "19.75",
+      "carbs_g": "52.09",
+      "fat_g": "1.76",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b017",
+      "name": {
+        "en": "Peas, dry"
+      },
+      "kcal_per_100g": "303.30",
+      "protein_g": "20.43",
+      "carbs_g": "48.93",
+      "fat_g": "1.89",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b018",
+      "name": {
+        "en": "Rajmah, black"
+      },
+      "kcal_per_100g": "298.04",
+      "protein_g": "19.01",
+      "carbs_g": "49.59",
+      "fat_g": "1.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b019",
+      "name": {
+        "en": "Rajmah, brown"
+      },
+      "kcal_per_100g": "297.56",
+      "protein_g": "19.5",
+      "carbs_g": "48.83",
+      "fat_g": "1.68",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b020",
+      "name": {
+        "en": "Rajmah, red"
+      },
+      "kcal_per_100g": "299.24",
+      "protein_g": "19.91",
+      "carbs_g": "48.61",
+      "fat_g": "1.77",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b021",
+      "name": {
+        "en": "Red gram, dal"
+      },
+      "kcal_per_100g": "330.78",
+      "protein_g": "21.7",
+      "carbs_g": "55.23",
+      "fat_g": "1.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b022",
+      "name": {
+        "en": "Red gram, whole"
+      },
+      "kcal_per_100g": "273.90",
+      "protein_g": "20.47",
+      "carbs_g": "42.48",
+      "fat_g": "1.38",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b023",
+      "name": {
+        "en": "Ricebean"
+      },
+      "kcal_per_100g": "302.34",
+      "protein_g": "19.97",
+      "carbs_g": "51.26",
+      "fat_g": "0.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b024",
+      "name": {
+        "en": "Soya bean, brown"
+      },
+      "kcal_per_100g": "381.45",
+      "protein_g": "35.58",
+      "carbs_g": "12.79",
+      "fat_g": "19.82",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-b025",
+      "name": {
+        "en": "Soya bean, white"
+      },
+      "kcal_per_100g": "377.39",
+      "protein_g": "37.8",
+      "carbs_g": "10.16",
+      "fat_g": "19.42",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c001",
+      "name": {
+        "en": "Agathi leaves"
+      },
+      "kcal_per_100g": "70.51",
+      "protein_g": "8.01",
+      "carbs_g": "5.21",
+      "fat_g": "1.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c002",
+      "name": {
+        "en": "Amaranth leaves, green"
+      },
+      "kcal_per_100g": "30.59",
+      "protein_g": "3.29",
+      "carbs_g": "2.28",
+      "fat_g": "0.65",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c003",
+      "name": {
+        "en": "Amaranth leaves, red mix"
+      },
+      "kcal_per_100g": "33.46",
+      "protein_g": "3.93",
+      "carbs_g": "2.37",
+      "fat_g": "0.63",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c004",
+      "name": {
+        "en": "Amaranth leaves, red and green mix"
+      },
+      "kcal_per_100g": "31.55",
+      "protein_g": "3.09",
+      "carbs_g": "2.87",
+      "fat_g": "0.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c005",
+      "name": {
+        "en": "Amaranth spinosus, leaves, green mix"
+      },
+      "kcal_per_100g": "26.29",
+      "protein_g": "3.54",
+      "carbs_g": "1.61",
+      "fat_g": "0.36",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c006",
+      "name": {
+        "en": "Amaranth spinosus, leaves, red and green mix"
+      },
+      "kcal_per_100g": "23.66",
+      "protein_g": "2.8",
+      "carbs_g": "1.45",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c007",
+      "name": {
+        "en": "Basella leaves"
+      },
+      "kcal_per_100g": "19.60",
+      "protein_g": "1.57",
+      "carbs_g": "2.01",
+      "fat_g": "0.45",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c008",
+      "name": {
+        "en": "Bathua leaves"
+      },
+      "kcal_per_100g": "27.72",
+      "protein_g": "2.5",
+      "carbs_g": "2.56",
+      "fat_g": "0.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c009",
+      "name": {
+        "en": "Beet greens"
+      },
+      "kcal_per_100g": "34.66",
+      "protein_g": "2.38",
+      "carbs_g": "3.86",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c010",
+      "name": {
+        "en": "Betel leaves, big (kolkata)"
+      },
+      "kcal_per_100g": "48.28",
+      "protein_g": "2.51",
+      "carbs_g": "7.37",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c011",
+      "name": {
+        "en": "Betel leaves, small"
+      },
+      "kcal_per_100g": "43.74",
+      "protein_g": "2.62",
+      "carbs_g": "6.16",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c012",
+      "name": {
+        "en": "Brussels sprouts"
+      },
+      "kcal_per_100g": "44.22",
+      "protein_g": "4.26",
+      "carbs_g": "5.09",
+      "fat_g": "0.5",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c013",
+      "name": {
+        "en": "Cabbage, Chinese"
+      },
+      "kcal_per_100g": "17.93",
+      "protein_g": "1.58",
+      "carbs_g": "2.36",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c014",
+      "name": {
+        "en": "Cabbage, collard greens"
+      },
+      "kcal_per_100g": "30.11",
+      "protein_g": "3.63",
+      "carbs_g": "2.79",
+      "fat_g": "0.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c015",
+      "name": {
+        "en": "Cabbage, green"
+      },
+      "kcal_per_100g": "21.51",
+      "protein_g": "1.36",
+      "carbs_g": "3.25",
+      "fat_g": "0.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c016",
+      "name": {
+        "en": "Cabbage, violet"
+      },
+      "kcal_per_100g": "23.18",
+      "protein_g": "1.39",
+      "carbs_g": "3.54",
+      "fat_g": "0.21",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c017",
+      "name": {
+        "en": "Cauliflower leaves"
+      },
+      "kcal_per_100g": "35.37",
+      "protein_g": "3.9",
+      "carbs_g": "3.39",
+      "fat_g": "0.42",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c018",
+      "name": {
+        "en": "Colocasia leaves, green"
+      },
+      "kcal_per_100g": "43.50",
+      "protein_g": "3.42",
+      "carbs_g": "3.69",
+      "fat_g": "1.38",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c019",
+      "name": {
+        "en": "Drumstick leaves"
+      },
+      "kcal_per_100g": "67.40",
+      "protein_g": "6.41",
+      "carbs_g": "5.62",
+      "fat_g": "1.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c020",
+      "name": {
+        "en": "Fenugreek leaves"
+      },
+      "kcal_per_100g": "34.42",
+      "protein_g": "3.68",
+      "carbs_g": "2.17",
+      "fat_g": "0.83",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c021",
+      "name": {
+        "en": "Garden cress"
+      },
+      "kcal_per_100g": "49.71",
+      "protein_g": "5.62",
+      "carbs_g": "4.48",
+      "fat_g": "0.8",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c022",
+      "name": {
+        "en": "Gogu leaves, green"
+      },
+      "kcal_per_100g": "36.33",
+      "protein_g": "1.86",
+      "carbs_g": "4.06",
+      "fat_g": "1.09",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c023",
+      "name": {
+        "en": "Gogu leaves, red"
+      },
+      "kcal_per_100g": "36.57",
+      "protein_g": "1.85",
+      "carbs_g": "4.24",
+      "fat_g": "1.07",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c024",
+      "name": {
+        "en": "Knol-Khol, leaves"
+      },
+      "kcal_per_100g": "42.54",
+      "protein_g": "3.12",
+      "carbs_g": "6.16",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c025",
+      "name": {
+        "en": "Lettuce"
+      },
+      "kcal_per_100g": "21.75",
+      "protein_g": "1.54",
+      "carbs_g": "3.01",
+      "fat_g": "0.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c026",
+      "name": {
+        "en": "Mustard leaves"
+      },
+      "kcal_per_100g": "30.35",
+      "protein_g": "3.52",
+      "carbs_g": "2.41",
+      "fat_g": "0.51",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c027",
+      "name": {
+        "en": "Pak Choi leaves"
+      },
+      "kcal_per_100g": "16.01",
+      "protein_g": "1.41",
+      "carbs_g": "1.78",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c028",
+      "name": {
+        "en": "Parsley"
+      },
+      "kcal_per_100g": "72.90",
+      "protein_g": "5.55",
+      "carbs_g": "9.43",
+      "fat_g": "1.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c029",
+      "name": {
+        "en": "Ponnaganni"
+      },
+      "kcal_per_100g": "50.91",
+      "protein_g": "5.29",
+      "carbs_g": "5.17",
+      "fat_g": "0.71",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c030",
+      "name": {
+        "en": "Pumpkin leaves, tender"
+      },
+      "kcal_per_100g": "44.22",
+      "protein_g": "4.21",
+      "carbs_g": "4.75",
+      "fat_g": "0.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c031",
+      "name": {
+        "en": "Radish leaves"
+      },
+      "kcal_per_100g": "26.05",
+      "protein_g": "2.22",
+      "carbs_g": "2.77",
+      "fat_g": "0.51",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c032",
+      "name": {
+        "en": "Rumex leaves"
+      },
+      "kcal_per_100g": "19.60",
+      "protein_g": "1.62",
+      "carbs_g": "2.33",
+      "fat_g": "0.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c033",
+      "name": {
+        "en": "Spinach"
+      },
+      "kcal_per_100g": "24.38",
+      "protein_g": "2.14",
+      "carbs_g": "2.05",
+      "fat_g": "0.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-c034",
+      "name": {
+        "en": "Tamarind leaves, tender"
+      },
+      "kcal_per_100g": "71.46",
+      "protein_g": "5.84",
+      "carbs_g": "10.04",
+      "fat_g": "0.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d001",
+      "name": {
+        "en": "Ash gourd"
+      },
+      "kcal_per_100g": "17.45",
+      "protein_g": "0.79",
+      "carbs_g": "2.84",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d002",
+      "name": {
+        "en": "Bamboo shoot, tender"
+      },
+      "kcal_per_100g": "16.25",
+      "protein_g": "1.33",
+      "carbs_g": "1.67",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d003",
+      "name": {
+        "en": "Bean scarlet, tender"
+      },
+      "kcal_per_100g": "42.78",
+      "protein_g": "2.86",
+      "carbs_g": "5.16",
+      "fat_g": "0.99",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d004",
+      "name": {
+        "en": "Bitter gourd, jagged, teeth ridges, elongate"
+      },
+      "kcal_per_100g": "20.79",
+      "protein_g": "1.44",
+      "carbs_g": "2.82",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d005",
+      "name": {
+        "en": "Bitter gourd, jagged, teeth ridges, short"
+      },
+      "kcal_per_100g": "18.88",
+      "protein_g": "1.34",
+      "carbs_g": "2.53",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d006",
+      "name": {
+        "en": "Bitter gourd, jagged, smooth ridges, elongate"
+      },
+      "kcal_per_100g": "19.36",
+      "protein_g": "1.61",
+      "carbs_g": "2.29",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d007",
+      "name": {
+        "en": "Bottle gourd, elongate, pale green"
+      },
+      "kcal_per_100g": "10.99",
+      "protein_g": "0.53",
+      "carbs_g": "1.68",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d008",
+      "name": {
+        "en": "Bottle gourd, round, pale green"
+      },
+      "kcal_per_100g": "13.62",
+      "protein_g": "0.42",
+      "carbs_g": "2.53",
+      "fat_g": "0.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d009",
+      "name": {
+        "en": "Bottle gourd, elongate, dark green"
+      },
+      "kcal_per_100g": "12.91",
+      "protein_g": "0.49",
+      "carbs_g": "2.25",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d010",
+      "name": {
+        "en": "Brinjal-1"
+      },
+      "kcal_per_100g": "27.25",
+      "protein_g": "1.77",
+      "carbs_g": "3.49",
+      "fat_g": "0.39",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d011",
+      "name": {
+        "en": "Brinjal-2"
+      },
+      "kcal_per_100g": "23.66",
+      "protein_g": "1.82",
+      "carbs_g": "2.71",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d012",
+      "name": {
+        "en": "Brinjal-3"
+      },
+      "kcal_per_100g": "24.38",
+      "protein_g": "1.36",
+      "carbs_g": "3.38",
+      "fat_g": "0.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d013",
+      "name": {
+        "en": "Brinjal-4"
+      },
+      "kcal_per_100g": "23.90",
+      "protein_g": "1.51",
+      "carbs_g": "3.19",
+      "fat_g": "0.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d014",
+      "name": {
+        "en": "Brinjal-5"
+      },
+      "kcal_per_100g": "26.53",
+      "protein_g": "1.38",
+      "carbs_g": "4.02",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d015",
+      "name": {
+        "en": "Brinjal-6"
+      },
+      "kcal_per_100g": "23.18",
+      "protein_g": "1.46",
+      "carbs_g": "3.29",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d016",
+      "name": {
+        "en": "Brinjal-7"
+      },
+      "kcal_per_100g": "23.42",
+      "protein_g": "1.4",
+      "carbs_g": "3.1",
+      "fat_g": "0.37",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d017",
+      "name": {
+        "en": "Brinjal-8"
+      },
+      "kcal_per_100g": "27.96",
+      "protein_g": "1.82",
+      "carbs_g": "3.75",
+      "fat_g": "0.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d018",
+      "name": {
+        "en": "Brinjal-9"
+      },
+      "kcal_per_100g": "25.33",
+      "protein_g": "1.47",
+      "carbs_g": "3.52",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d019",
+      "name": {
+        "en": "Brinjal-10"
+      },
+      "kcal_per_100g": "27.72",
+      "protein_g": "1.68",
+      "carbs_g": "4.08",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d020",
+      "name": {
+        "en": "Brinjal-11"
+      },
+      "kcal_per_100g": "25.10",
+      "protein_g": "1.43",
+      "carbs_g": "3.53",
+      "fat_g": "0.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d021",
+      "name": {
+        "en": "Brinjal-12"
+      },
+      "kcal_per_100g": "22.23",
+      "protein_g": "1.6",
+      "carbs_g": "2.73",
+      "fat_g": "0.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d022",
+      "name": {
+        "en": "Brinjal-13"
+      },
+      "kcal_per_100g": "29.64",
+      "protein_g": "1.49",
+      "carbs_g": "4.51",
+      "fat_g": "0.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d023",
+      "name": {
+        "en": "Brinjal-14"
+      },
+      "kcal_per_100g": "25.33",
+      "protein_g": "1.56",
+      "carbs_g": "3.27",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d024",
+      "name": {
+        "en": "Brinjal-15"
+      },
+      "kcal_per_100g": "27.25",
+      "protein_g": "1.58",
+      "carbs_g": "3.96",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d025",
+      "name": {
+        "en": "Brinjal-16"
+      },
+      "kcal_per_100g": "24.62",
+      "protein_g": "1.26",
+      "carbs_g": "3.46",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d026",
+      "name": {
+        "en": "Brinjal-17"
+      },
+      "kcal_per_100g": "21.75",
+      "protein_g": "1.18",
+      "carbs_g": "2.89",
+      "fat_g": "0.36",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d027",
+      "name": {
+        "en": "Brinjal-18"
+      },
+      "kcal_per_100g": "27.72",
+      "protein_g": "1.47",
+      "carbs_g": "4.1",
+      "fat_g": "0.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d028",
+      "name": {
+        "en": "Brinjal-19"
+      },
+      "kcal_per_100g": "23.90",
+      "protein_g": "1.26",
+      "carbs_g": "3.39",
+      "fat_g": "0.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d029",
+      "name": {
+        "en": "Brinjal-20"
+      },
+      "kcal_per_100g": "23.66",
+      "protein_g": "1.44",
+      "carbs_g": "3.15",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d030",
+      "name": {
+        "en": "Brinjal-21"
+      },
+      "kcal_per_100g": "27.01",
+      "protein_g": "1.36",
+      "carbs_g": "3.93",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d031",
+      "name": {
+        "en": "Brinjal - all varieties"
+      },
+      "kcal_per_100g": "25.33",
+      "protein_g": "1.48",
+      "carbs_g": "3.52",
+      "fat_g": "0.32",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d032",
+      "name": {
+        "en": "Broad beans"
+      },
+      "kcal_per_100g": "29.40",
+      "protein_g": "3.85",
+      "carbs_g": "2.11",
+      "fat_g": "0.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d033",
+      "name": {
+        "en": "Capsicum, green"
+      },
+      "kcal_per_100g": "16.25",
+      "protein_g": "1.11",
+      "carbs_g": "1.84",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d034",
+      "name": {
+        "en": "Capsicum, red"
+      },
+      "kcal_per_100g": "19.84",
+      "protein_g": "1.47",
+      "carbs_g": "2.14",
+      "fat_g": "0.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d035",
+      "name": {
+        "en": "Capsicum, yellow"
+      },
+      "kcal_per_100g": "18.64",
+      "protein_g": "1.35",
+      "carbs_g": "1.95",
+      "fat_g": "0.41",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d036",
+      "name": {
+        "en": "Cauliflower"
+      },
+      "kcal_per_100g": "22.94",
+      "protein_g": "2.15",
+      "carbs_g": "2.03",
+      "fat_g": "0.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d037",
+      "name": {
+        "en": "Celery stalk"
+      },
+      "kcal_per_100g": "16.49",
+      "protein_g": "0.98",
+      "carbs_g": "2.33",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d038",
+      "name": {
+        "en": "Cho-cho-marrow"
+      },
+      "kcal_per_100g": "18.88",
+      "protein_g": "0.66",
+      "carbs_g": "3.47",
+      "fat_g": "0.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d039",
+      "name": {
+        "en": "Cluster beans"
+      },
+      "kcal_per_100g": "40.15",
+      "protein_g": "3.55",
+      "carbs_g": "4.91",
+      "fat_g": "0.37",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d040",
+      "name": {
+        "en": "Colocasia, stem, black"
+      },
+      "kcal_per_100g": "23.90",
+      "protein_g": "0.76",
+      "carbs_g": "3.83",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d041",
+      "name": {
+        "en": "Colocasia, stem, green"
+      },
+      "kcal_per_100g": "19.36",
+      "protein_g": "0.91",
+      "carbs_g": "2.86",
+      "fat_g": "0.22",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d042",
+      "name": {
+        "en": "Corn, Baby"
+      },
+      "kcal_per_100g": "73.14",
+      "protein_g": "2.69",
+      "carbs_g": "11.66",
+      "fat_g": "1.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d043",
+      "name": {
+        "en": "Cucumber, green, elongate"
+      },
+      "kcal_per_100g": "19.60",
+      "protein_g": "0.71",
+      "carbs_g": "3.48",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d044",
+      "name": {
+        "en": "Cucumber, green, short"
+      },
+      "kcal_per_100g": "17.45",
+      "protein_g": "0.83",
+      "carbs_g": "2.82",
+      "fat_g": "0.18",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d045",
+      "name": {
+        "en": "Cucumber, orange, round"
+      },
+      "kcal_per_100g": "19.60",
+      "protein_g": "0.98",
+      "carbs_g": "3.01",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d046",
+      "name": {
+        "en": "Drumstick"
+      },
+      "kcal_per_100g": "29.40",
+      "protein_g": "2.62",
+      "carbs_g": "3.76",
+      "fat_g": "0.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d047",
+      "name": {
+        "en": "Field beans, tender, broad"
+      },
+      "kcal_per_100g": "30.83",
+      "protein_g": "3.06",
+      "carbs_g": "2.75",
+      "fat_g": "0.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d048",
+      "name": {
+        "en": "Field beans, tender, lean"
+      },
+      "kcal_per_100g": "33.46",
+      "protein_g": "3.71",
+      "carbs_g": "2.85",
+      "fat_g": "0.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d049",
+      "name": {
+        "en": "French beans, country"
+      },
+      "kcal_per_100g": "24.38",
+      "protein_g": "2.49",
+      "carbs_g": "2.68",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d050",
+      "name": {
+        "en": "French beans, hybrid"
+      },
+      "kcal_per_100g": "22.23",
+      "protein_g": "2.12",
+      "carbs_g": "2.63",
+      "fat_g": "0.19",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d051",
+      "name": {
+        "en": "Jack fruit, raw"
+      },
+      "kcal_per_100g": "26.29",
+      "protein_g": "1.98",
+      "carbs_g": "3.48",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d052",
+      "name": {
+        "en": "Jack fruit, seed, mature"
+      },
+      "kcal_per_100g": "76.96",
+      "protein_g": "5.79",
+      "carbs_g": "11.81",
+      "fat_g": "0.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d053",
+      "name": {
+        "en": "Knol - Khol"
+      },
+      "kcal_per_100g": "16.01",
+      "protein_g": "1.58",
+      "carbs_g": "1.39",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d054",
+      "name": {
+        "en": "Kovai, big"
+      },
+      "kcal_per_100g": "17.45",
+      "protein_g": "1.39",
+      "carbs_g": "2.01",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d055",
+      "name": {
+        "en": "Kovai, small"
+      },
+      "kcal_per_100g": "19.12",
+      "protein_g": "1.22",
+      "carbs_g": "2.41",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d056",
+      "name": {
+        "en": "Ladies finger"
+      },
+      "kcal_per_100g": "27.49",
+      "protein_g": "2.08",
+      "carbs_g": "3.62",
+      "fat_g": "0.22",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d057",
+      "name": {
+        "en": "Mango, green, raw"
+      },
+      "kcal_per_100g": "49.00",
+      "protein_g": "0.69",
+      "carbs_g": "10.59",
+      "fat_g": "0.08",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d058",
+      "name": {
+        "en": "Onion, stalk"
+      },
+      "kcal_per_100g": "25.57",
+      "protein_g": "2.07",
+      "carbs_g": "2.99",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d059",
+      "name": {
+        "en": "Papaya, raw"
+      },
+      "kcal_per_100g": "23.90",
+      "protein_g": "0.5",
+      "carbs_g": "4.4",
+      "fat_g": "0.23",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d060",
+      "name": {
+        "en": "Parwar"
+      },
+      "kcal_per_100g": "24.14",
+      "protein_g": "1.4",
+      "carbs_g": "3.54",
+      "fat_g": "0.3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d061",
+      "name": {
+        "en": "Peas, fresh"
+      },
+      "kcal_per_100g": "81.26",
+      "protein_g": "7.25",
+      "carbs_g": "11.88",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d062",
+      "name": {
+        "en": "Plantain, flower"
+      },
+      "kcal_per_100g": "21.27",
+      "protein_g": "1.47",
+      "carbs_g": "2.15",
+      "fat_g": "0.63",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d063",
+      "name": {
+        "en": "Plantain, green"
+      },
+      "kcal_per_100g": "79.83",
+      "protein_g": "1.18",
+      "carbs_g": "17.58",
+      "fat_g": "0.23",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d064",
+      "name": {
+        "en": "Plantain, stem"
+      },
+      "kcal_per_100g": "39.44",
+      "protein_g": "0.35",
+      "carbs_g": "8.64",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d065",
+      "name": {
+        "en": "Pumpkin, green, cylindrical"
+      },
+      "kcal_per_100g": "24.62",
+      "protein_g": "0.87",
+      "carbs_g": "4.22",
+      "fat_g": "0.18",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d066",
+      "name": {
+        "en": "Pumpkin, orange, round"
+      },
+      "kcal_per_100g": "23.18",
+      "protein_g": "0.84",
+      "carbs_g": "4",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d067",
+      "name": {
+        "en": "Red gram, tender, fresh"
+      },
+      "kcal_per_100g": "124.28",
+      "protein_g": "8.09",
+      "carbs_g": "19.46",
+      "fat_g": "0.92",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d068",
+      "name": {
+        "en": "Ridge gourd"
+      },
+      "kcal_per_100g": "13.15",
+      "protein_g": "0.91",
+      "carbs_g": "1.72",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d069",
+      "name": {
+        "en": "Ridge gourd, smooth skin"
+      },
+      "kcal_per_100g": "15.30",
+      "protein_g": "0.98",
+      "carbs_g": "2.24",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d070",
+      "name": {
+        "en": "Snake gourd, long, pale green"
+      },
+      "kcal_per_100g": "12.43",
+      "protein_g": "0.98",
+      "carbs_g": "1.27",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d071",
+      "name": {
+        "en": "Snake gourd, long, dark green"
+      },
+      "kcal_per_100g": "11.95",
+      "protein_g": "0.89",
+      "carbs_g": "1.23",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d072",
+      "name": {
+        "en": "Snake gourd, short"
+      },
+      "kcal_per_100g": "14.58",
+      "protein_g": "0.54",
+      "carbs_g": "2.15",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d073",
+      "name": {
+        "en": "Tinda, tender"
+      },
+      "kcal_per_100g": "13.86",
+      "protein_g": "1.02",
+      "carbs_g": "1.9",
+      "fat_g": "0.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d074",
+      "name": {
+        "en": "Tomato, green"
+      },
+      "kcal_per_100g": "20.79",
+      "protein_g": "1.12",
+      "carbs_g": "3.18",
+      "fat_g": "0.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d075",
+      "name": {
+        "en": "Tomato, ripe, hybrid"
+      },
+      "kcal_per_100g": "18.88",
+      "protein_g": "0.76",
+      "carbs_g": "3.2",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d076",
+      "name": {
+        "en": "Tomato, ripe, local"
+      },
+      "kcal_per_100g": "19.60",
+      "protein_g": "0.9",
+      "carbs_g": "2.71",
+      "fat_g": "0.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d077",
+      "name": {
+        "en": "Zucchini, green"
+      },
+      "kcal_per_100g": "20.08",
+      "protein_g": "1.1",
+      "carbs_g": "2.33",
+      "fat_g": "0.51",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-d078",
+      "name": {
+        "en": "Zucchini, yellow"
+      },
+      "kcal_per_100g": "18.88",
+      "protein_g": "1.31",
+      "carbs_g": "2.2",
+      "fat_g": "0.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e001",
+      "name": {
+        "en": "Apple, big"
+      },
+      "kcal_per_100g": "62.38",
+      "protein_g": "0.29",
+      "carbs_g": "13.11",
+      "fat_g": "0.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e002",
+      "name": {
+        "en": "Apple, green"
+      },
+      "kcal_per_100g": "51.15",
+      "protein_g": "0.46",
+      "carbs_g": "10.65",
+      "fat_g": "0.5",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e003",
+      "name": {
+        "en": "Apple, small"
+      },
+      "kcal_per_100g": "63.81",
+      "protein_g": "0.31",
+      "carbs_g": "13.95",
+      "fat_g": "0.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e004",
+      "name": {
+        "en": "Apple, small, Kashmir"
+      },
+      "kcal_per_100g": "64.29",
+      "protein_g": "0.27",
+      "carbs_g": "13.99",
+      "fat_g": "0.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e005",
+      "name": {
+        "en": "Apricot, dried"
+      },
+      "kcal_per_100g": "315.73",
+      "protein_g": "3.17",
+      "carbs_g": "72.63",
+      "fat_g": "0.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e006",
+      "name": {
+        "en": "Apricot, processed"
+      },
+      "kcal_per_100g": "56.41",
+      "protein_g": "1.47",
+      "carbs_g": "10.93",
+      "fat_g": "0.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e007",
+      "name": {
+        "en": "Avocado fruit"
+      },
+      "kcal_per_100g": "144.36",
+      "protein_g": "2.95",
+      "carbs_g": "1.75",
+      "fat_g": "13.86",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e008",
+      "name": {
+        "en": "Bael fruit"
+      },
+      "kcal_per_100g": "135.99",
+      "protein_g": "2.63",
+      "carbs_g": "28.21",
+      "fat_g": "0.57",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e009",
+      "name": {
+        "en": "Banana, ripe, montham"
+      },
+      "kcal_per_100g": "110.66",
+      "protein_g": "1.25",
+      "carbs_g": "24.95",
+      "fat_g": "0.32",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e010",
+      "name": {
+        "en": "Banana, ripe, poovam"
+      },
+      "kcal_per_100g": "106.36",
+      "protein_g": "1.49",
+      "carbs_g": "23.41",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e011",
+      "name": {
+        "en": "Banana, ripe, red"
+      },
+      "kcal_per_100g": "111.62",
+      "protein_g": "1.29",
+      "carbs_g": "25.21",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e012",
+      "name": {
+        "en": "Banana, ripe, robusta"
+      },
+      "kcal_per_100g": "105.16",
+      "protein_g": "1.23",
+      "carbs_g": "23.63",
+      "fat_g": "0.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e013",
+      "name": {
+        "en": "Black berry"
+      },
+      "kcal_per_100g": "54.25",
+      "protein_g": "0.92",
+      "carbs_g": "10.64",
+      "fat_g": "0.63",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e014",
+      "name": {
+        "en": "Cherries, red"
+      },
+      "kcal_per_100g": "59.75",
+      "protein_g": "1.49",
+      "carbs_g": "11.87",
+      "fat_g": "0.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e015",
+      "name": {
+        "en": "Currants, black"
+      },
+      "kcal_per_100g": "54.25",
+      "protein_g": "1.51",
+      "carbs_g": "9.93",
+      "fat_g": "0.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e016",
+      "name": {
+        "en": "Custard apple"
+      },
+      "kcal_per_100g": "98.95",
+      "protein_g": "1.62",
+      "carbs_g": "20.38",
+      "fat_g": "0.67",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e017",
+      "name": {
+        "en": "Dates, dry, pale brown"
+      },
+      "kcal_per_100g": "320.27",
+      "protein_g": "2.45",
+      "carbs_g": "74.91",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e018",
+      "name": {
+        "en": "Dates, dry, dark brown"
+      },
+      "kcal_per_100g": "310.95",
+      "protein_g": "2.38",
+      "carbs_g": "72.67",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e019",
+      "name": {
+        "en": "Dates, processed"
+      },
+      "kcal_per_100g": "286.09",
+      "protein_g": "1.18",
+      "carbs_g": "67.95",
+      "fat_g": "0.41",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e020",
+      "name": {
+        "en": "Fig"
+      },
+      "kcal_per_100g": "81.50",
+      "protein_g": "2.03",
+      "carbs_g": "16.28",
+      "fat_g": "0.37",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e021",
+      "name": {
+        "en": "Goosberry"
+      },
+      "kcal_per_100g": "23.66",
+      "protein_g": "0.34",
+      "carbs_g": "4.39",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e022",
+      "name": {
+        "en": "Grapes, seeded, round, black"
+      },
+      "kcal_per_100g": "60.71",
+      "protein_g": "0.76",
+      "carbs_g": "13.23",
+      "fat_g": "0.32",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e023",
+      "name": {
+        "en": "Grapes, seeded, round, green"
+      },
+      "kcal_per_100g": "56.17",
+      "protein_g": "0.77",
+      "carbs_g": "12.19",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e024",
+      "name": {
+        "en": "Grapes, seeded, round, red"
+      },
+      "kcal_per_100g": "58.32",
+      "protein_g": "0.95",
+      "carbs_g": "12.55",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e025",
+      "name": {
+        "en": "Grapes, seedless, oval, black"
+      },
+      "kcal_per_100g": "94.41",
+      "protein_g": "1.41",
+      "carbs_g": "20.48",
+      "fat_g": "0.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e026",
+      "name": {
+        "en": "Grapes, seedless, round, green"
+      },
+      "kcal_per_100g": "53.54",
+      "protein_g": "0.62",
+      "carbs_g": "11.81",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e027",
+      "name": {
+        "en": "Grapes, seedless, round, black"
+      },
+      "kcal_per_100g": "89.39",
+      "protein_g": "1.24",
+      "carbs_g": "19.86",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e028",
+      "name": {
+        "en": "Guava, white flesh"
+      },
+      "kcal_per_100g": "32.27",
+      "protein_g": "1.44",
+      "carbs_g": "5.13",
+      "fat_g": "0.32",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e029",
+      "name": {
+        "en": "Guava, pink flesh"
+      },
+      "kcal_per_100g": "46.61",
+      "protein_g": "1.19",
+      "carbs_g": "9.14",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e030",
+      "name": {
+        "en": "Jack fruit, ripe"
+      },
+      "kcal_per_100g": "72.18",
+      "protein_g": "2.74",
+      "carbs_g": "14.01",
+      "fat_g": "0.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e031",
+      "name": {
+        "en": "Jambu fruit, ripe"
+      },
+      "kcal_per_100g": "56.17",
+      "protein_g": "0.82",
+      "carbs_g": "12.3",
+      "fat_g": "0.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e032",
+      "name": {
+        "en": "Karonda fruit"
+      },
+      "kcal_per_100g": "33.70",
+      "protein_g": "1.15",
+      "carbs_g": "2.87",
+      "fat_g": "1.67",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e033",
+      "name": {
+        "en": "Lemon, juice"
+      },
+      "kcal_per_100g": "36.57",
+      "protein_g": "0.41",
+      "carbs_g": "0",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e034",
+      "name": {
+        "en": "Lime, sweet, pulp"
+      },
+      "kcal_per_100g": "27.25",
+      "protein_g": "0.76",
+      "carbs_g": "5.18",
+      "fat_g": "0.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e035",
+      "name": {
+        "en": "Litchi"
+      },
+      "kcal_per_100g": "53.78",
+      "protein_g": "0.99",
+      "carbs_g": "11.41",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e036",
+      "name": {
+        "en": "Mango, ripe, banganapalli"
+      },
+      "kcal_per_100g": "41.83",
+      "protein_g": "0.54",
+      "carbs_g": "8.18",
+      "fat_g": "0.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e037",
+      "name": {
+        "en": "Mango, ripe, gulabkhas"
+      },
+      "kcal_per_100g": "49.95",
+      "protein_g": "0.52",
+      "carbs_g": "10.32",
+      "fat_g": "0.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e038",
+      "name": {
+        "en": "Mango, ripe, himsagar"
+      },
+      "kcal_per_100g": "44.69",
+      "protein_g": "0.46",
+      "carbs_g": "9.03",
+      "fat_g": "0.54",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e039",
+      "name": {
+        "en": "Mango, ripe, kesar"
+      },
+      "kcal_per_100g": "55.21",
+      "protein_g": "0.54",
+      "carbs_g": "11.36",
+      "fat_g": "0.57",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e040",
+      "name": {
+        "en": "Mango, ripe, neelam"
+      },
+      "kcal_per_100g": "42.54",
+      "protein_g": "0.68",
+      "carbs_g": "8.21",
+      "fat_g": "0.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e041",
+      "name": {
+        "en": "Mango, ripe, paheri"
+      },
+      "kcal_per_100g": "44.93",
+      "protein_g": "0.68",
+      "carbs_g": "8.67",
+      "fat_g": "0.58",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e042",
+      "name": {
+        "en": "Mango, ripe, totapari"
+      },
+      "kcal_per_100g": "59.27",
+      "protein_g": "0.41",
+      "carbs_g": "12.75",
+      "fat_g": "0.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e043",
+      "name": {
+        "en": "Mangosteen"
+      },
+      "kcal_per_100g": "52.34",
+      "protein_g": "0.63",
+      "carbs_g": "11.41",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e044",
+      "name": {
+        "en": "Manila tamarind"
+      },
+      "kcal_per_100g": "81.74",
+      "protein_g": "3.56",
+      "carbs_g": "13.54",
+      "fat_g": "1.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e045",
+      "name": {
+        "en": "Musk melon, orange flesh"
+      },
+      "kcal_per_100g": "23.18",
+      "protein_g": "0.42",
+      "carbs_g": "4.24",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e046",
+      "name": {
+        "en": "Musk melon, yellow flesh"
+      },
+      "kcal_per_100g": "27.72",
+      "protein_g": "0.53",
+      "carbs_g": "5.4",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e047",
+      "name": {
+        "en": "Orange, pulp"
+      },
+      "kcal_per_100g": "37.28",
+      "protein_g": "0.7",
+      "carbs_g": "7.92",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e048",
+      "name": {
+        "en": "Palm fruit, tender"
+      },
+      "kcal_per_100g": "24.14",
+      "protein_g": "0.5",
+      "carbs_g": "4.92",
+      "fat_g": "0.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e049",
+      "name": {
+        "en": "Papaya, ripe"
+      },
+      "kcal_per_100g": "23.90",
+      "protein_g": "0.42",
+      "carbs_g": "4.61",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e050",
+      "name": {
+        "en": "Peach"
+      },
+      "kcal_per_100g": "40.15",
+      "protein_g": "0.86",
+      "carbs_g": "7.82",
+      "fat_g": "0.37",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e051",
+      "name": {
+        "en": "Pear"
+      },
+      "kcal_per_100g": "37.52",
+      "protein_g": "0.36",
+      "carbs_g": "8.09",
+      "fat_g": "0.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e052",
+      "name": {
+        "en": "Phalsa"
+      },
+      "kcal_per_100g": "71.46",
+      "protein_g": "1.66",
+      "carbs_g": "15.09",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e053",
+      "name": {
+        "en": "Pineapple"
+      },
+      "kcal_per_100g": "43.02",
+      "protein_g": "0.52",
+      "carbs_g": "9.42",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e054",
+      "name": {
+        "en": "Plum"
+      },
+      "kcal_per_100g": "56.88",
+      "protein_g": "0.64",
+      "carbs_g": "12.1",
+      "fat_g": "0.4",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e055",
+      "name": {
+        "en": "Pomegranate, maroon seeds"
+      },
+      "kcal_per_100g": "54.73",
+      "protein_g": "1.33",
+      "carbs_g": "11.58",
+      "fat_g": "0.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e056",
+      "name": {
+        "en": "Pummelo"
+      },
+      "kcal_per_100g": "50.19",
+      "protein_g": "0.68",
+      "carbs_g": "10.64",
+      "fat_g": "0.42",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e057",
+      "name": {
+        "en": "Raisins, dried, black"
+      },
+      "kcal_per_100g": "305.69",
+      "protein_g": "2.57",
+      "carbs_g": "71.29",
+      "fat_g": "0.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e058",
+      "name": {
+        "en": "Raisins, dried, golden"
+      },
+      "kcal_per_100g": "296.61",
+      "protein_g": "2.76",
+      "carbs_g": "68.79",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e059",
+      "name": {
+        "en": "Rambutan"
+      },
+      "kcal_per_100g": "73.14",
+      "protein_g": "0.68",
+      "carbs_g": "16.84",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e060",
+      "name": {
+        "en": "Sapota"
+      },
+      "kcal_per_100g": "73.37",
+      "protein_g": "0.92",
+      "carbs_g": "13.9",
+      "fat_g": "1.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e061",
+      "name": {
+        "en": "Soursop"
+      },
+      "kcal_per_100g": "62.14",
+      "protein_g": "0.74",
+      "carbs_g": "11.94",
+      "fat_g": "0.94",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e062",
+      "name": {
+        "en": "Star fruit"
+      },
+      "kcal_per_100g": "26.29",
+      "protein_g": "0.79",
+      "carbs_g": "4.51",
+      "fat_g": "0.39",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e063",
+      "name": {
+        "en": "Strawberry"
+      },
+      "kcal_per_100g": "24.62",
+      "protein_g": "0.97",
+      "carbs_g": "3.4",
+      "fat_g": "0.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e064",
+      "name": {
+        "en": "Tamarind, pulp"
+      },
+      "kcal_per_100g": "288.48",
+      "protein_g": "2.92",
+      "carbs_g": "67.35",
+      "fat_g": "0.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e065",
+      "name": {
+        "en": "Water melon, dark green (sugar baby)"
+      },
+      "kcal_per_100g": "20.32",
+      "protein_g": "0.6",
+      "carbs_g": "3.86",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e066",
+      "name": {
+        "en": "Water melon, pale green"
+      },
+      "kcal_per_100g": "16.73",
+      "protein_g": "0.59",
+      "carbs_g": "3.02",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e067",
+      "name": {
+        "en": "Wood Apple"
+      },
+      "kcal_per_100g": "78.15",
+      "protein_g": "3.14",
+      "carbs_g": "7.52",
+      "fat_g": "3.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-e068",
+      "name": {
+        "en": "Zizyphus"
+      },
+      "kcal_per_100g": "48.76",
+      "protein_g": "1.34",
+      "carbs_g": "9.4",
+      "fat_g": "0.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f001",
+      "name": {
+        "en": "Beet root"
+      },
+      "kcal_per_100g": "35.61",
+      "protein_g": "1.95",
+      "carbs_g": "6.18",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f002",
+      "name": {
+        "en": "Carrot, orange"
+      },
+      "kcal_per_100g": "33.22",
+      "protein_g": "0.95",
+      "carbs_g": "5.55",
+      "fat_g": "0.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f003",
+      "name": {
+        "en": "Carrot, red"
+      },
+      "kcal_per_100g": "38.24",
+      "protein_g": "1.04",
+      "carbs_g": "6.71",
+      "fat_g": "0.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f004",
+      "name": {
+        "en": "Colocasia"
+      },
+      "kcal_per_100g": "88.91",
+      "protein_g": "3.31",
+      "carbs_g": "17.85",
+      "fat_g": "0.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f005",
+      "name": {
+        "en": "Lotus root"
+      },
+      "kcal_per_100g": "79.35",
+      "protein_g": "1.94",
+      "carbs_g": "14.67",
+      "fat_g": "0.93",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f006",
+      "name": {
+        "en": "Potato, brown skin, big"
+      },
+      "kcal_per_100g": "69.79",
+      "protein_g": "1.54",
+      "carbs_g": "14.89",
+      "fat_g": "0.23",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f007",
+      "name": {
+        "en": "Potato, brown skin, small"
+      },
+      "kcal_per_100g": "60.95",
+      "protein_g": "1.35",
+      "carbs_g": "12.9",
+      "fat_g": "0.22",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f008",
+      "name": {
+        "en": "Potato, red skin"
+      },
+      "kcal_per_100g": "73.14",
+      "protein_g": "1.83",
+      "carbs_g": "15.43",
+      "fat_g": "0.22",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f009",
+      "name": {
+        "en": "Radish, elongate, red skin"
+      },
+      "kcal_per_100g": "32.03",
+      "protein_g": "0.67",
+      "carbs_g": "6.71",
+      "fat_g": "0.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f010",
+      "name": {
+        "en": "Radish, elongate, white skin"
+      },
+      "kcal_per_100g": "32.27",
+      "protein_g": "0.77",
+      "carbs_g": "6.56",
+      "fat_g": "0.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f011",
+      "name": {
+        "en": "Radish, round, red skin"
+      },
+      "kcal_per_100g": "31.07",
+      "protein_g": "0.89",
+      "carbs_g": "6.07",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f012",
+      "name": {
+        "en": "Radish, round, white skin"
+      },
+      "kcal_per_100g": "30.83",
+      "protein_g": "0.8",
+      "carbs_g": "6.13",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f013",
+      "name": {
+        "en": "Sweet potato, brown skin"
+      },
+      "kcal_per_100g": "108.99",
+      "protein_g": "1.33",
+      "carbs_g": "24.25",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f014",
+      "name": {
+        "en": "Sweet potato, pink skin"
+      },
+      "kcal_per_100g": "108.03",
+      "protein_g": "1.27",
+      "carbs_g": "23.93",
+      "fat_g": "0.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f015",
+      "name": {
+        "en": "Tapioca"
+      },
+      "kcal_per_100g": "79.83",
+      "protein_g": "1.03",
+      "carbs_g": "17.81",
+      "fat_g": "0.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f016",
+      "name": {
+        "en": "Water Chestnut"
+      },
+      "kcal_per_100g": "95.60",
+      "protein_g": "0.86",
+      "carbs_g": "21.46",
+      "fat_g": "0.37",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f017",
+      "name": {
+        "en": "Yam, elephant"
+      },
+      "kcal_per_100g": "84.37",
+      "protein_g": "2.56",
+      "carbs_g": "17.46",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f018",
+      "name": {
+        "en": "Yam, ordinary"
+      },
+      "kcal_per_100g": "83.41",
+      "protein_g": "2.18",
+      "carbs_g": "17.65",
+      "fat_g": "0.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-f019",
+      "name": {
+        "en": "Yam, wild"
+      },
+      "kcal_per_100g": "102.77",
+      "protein_g": "3.07",
+      "carbs_g": "20.95",
+      "fat_g": "0.3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g001",
+      "name": {
+        "en": "Chillies, green-1"
+      },
+      "kcal_per_100g": "45.65",
+      "protein_g": "2.62",
+      "carbs_g": "6.32",
+      "fat_g": "0.73",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g002",
+      "name": {
+        "en": "Chillies, green-2"
+      },
+      "kcal_per_100g": "39.91",
+      "protein_g": "2.28",
+      "carbs_g": "5.27",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g003",
+      "name": {
+        "en": "Chillies, green-3"
+      },
+      "kcal_per_100g": "40.39",
+      "protein_g": "2.38",
+      "carbs_g": "5.23",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g004",
+      "name": {
+        "en": "Chillies, green-4"
+      },
+      "kcal_per_100g": "45.41",
+      "protein_g": "2.33",
+      "carbs_g": "6.63",
+      "fat_g": "0.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g005",
+      "name": {
+        "en": "Chillies, green-5"
+      },
+      "kcal_per_100g": "43.02",
+      "protein_g": "2.01",
+      "carbs_g": "6.64",
+      "fat_g": "0.65",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g006",
+      "name": {
+        "en": "Chillies, green-6"
+      },
+      "kcal_per_100g": "41.83",
+      "protein_g": "3.01",
+      "carbs_g": "5.31",
+      "fat_g": "0.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g007",
+      "name": {
+        "en": "Chillies, green-7"
+      },
+      "kcal_per_100g": "38.96",
+      "protein_g": "2.12",
+      "carbs_g": "5.61",
+      "fat_g": "0.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g008",
+      "name": {
+        "en": "Chillies, green - all varieties"
+      },
+      "kcal_per_100g": "42.30",
+      "protein_g": "2.36",
+      "carbs_g": "5.86",
+      "fat_g": "0.72",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g009",
+      "name": {
+        "en": "Coriander leaves"
+      },
+      "kcal_per_100g": "31.07",
+      "protein_g": "3.52",
+      "carbs_g": "1.93",
+      "fat_g": "0.7",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g010",
+      "name": {
+        "en": "Curry leaves"
+      },
+      "kcal_per_100g": "63.58",
+      "protein_g": "7.41",
+      "carbs_g": "4.51",
+      "fat_g": "1.06",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g011",
+      "name": {
+        "en": "Garlic, big clove"
+      },
+      "kcal_per_100g": "123.80",
+      "protein_g": "6.92",
+      "carbs_g": "21.93",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g012",
+      "name": {
+        "en": "Garlic, small clove"
+      },
+      "kcal_per_100g": "122.85",
+      "protein_g": "6.75",
+      "carbs_g": "21.84",
+      "fat_g": "0.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g013",
+      "name": {
+        "en": "Garlic, single clove, Kashmir"
+      },
+      "kcal_per_100g": "125.00",
+      "protein_g": "6.12",
+      "carbs_g": "23.46",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g014",
+      "name": {
+        "en": "Ginger, fresh"
+      },
+      "kcal_per_100g": "54.97",
+      "protein_g": "2.22",
+      "carbs_g": "8.97",
+      "fat_g": "0.85",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g015",
+      "name": {
+        "en": "Mango ginger"
+      },
+      "kcal_per_100g": "42.30",
+      "protein_g": "1.45",
+      "carbs_g": "6.98",
+      "fat_g": "0.7",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g016",
+      "name": {
+        "en": "Mint leaves"
+      },
+      "kcal_per_100g": "37.05",
+      "protein_g": "4.66",
+      "carbs_g": "2.39",
+      "fat_g": "0.65",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g017",
+      "name": {
+        "en": "Onion, big"
+      },
+      "kcal_per_100g": "48.04",
+      "protein_g": "1.5",
+      "carbs_g": "9.56",
+      "fat_g": "0.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g018",
+      "name": {
+        "en": "Onion, small"
+      },
+      "kcal_per_100g": "56.64",
+      "protein_g": "1.82",
+      "carbs_g": "11.58",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g019",
+      "name": {
+        "en": "Asafoetida"
+      },
+      "kcal_per_100g": "331.50",
+      "protein_g": "6.34",
+      "carbs_g": "71.95",
+      "fat_g": "1.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g020",
+      "name": {
+        "en": "Cardamom, green"
+      },
+      "kcal_per_100g": "255.02",
+      "protein_g": "8.1",
+      "carbs_g": "47.76",
+      "fat_g": "2.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g021",
+      "name": {
+        "en": "Cardamom, black"
+      },
+      "kcal_per_100g": "270.55",
+      "protein_g": "6.69",
+      "carbs_g": "52.53",
+      "fat_g": "2.8",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g022",
+      "name": {
+        "en": "Chillies, red"
+      },
+      "kcal_per_100g": "236.62",
+      "protein_g": "12.69",
+      "carbs_g": "29.46",
+      "fat_g": "6.4",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g023",
+      "name": {
+        "en": "Cloves"
+      },
+      "kcal_per_100g": "186.66",
+      "protein_g": "5.86",
+      "carbs_g": "18.73",
+      "fat_g": "8.41",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g024",
+      "name": {
+        "en": "Coriander seeds"
+      },
+      "kcal_per_100g": "268.88",
+      "protein_g": "10.66",
+      "carbs_g": "12.98",
+      "fat_g": "17.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g025",
+      "name": {
+        "en": "Cumin seeds"
+      },
+      "kcal_per_100g": "304.49",
+      "protein_g": "13.91",
+      "carbs_g": "22.62",
+      "fat_g": "16.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g026",
+      "name": {
+        "en": "Fenugreek seeds"
+      },
+      "kcal_per_100g": "234.94",
+      "protein_g": "25.41",
+      "carbs_g": "10.57",
+      "fat_g": "5.72",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g027",
+      "name": {
+        "en": "Mace"
+      },
+      "kcal_per_100g": "355.64",
+      "protein_g": "6.24",
+      "carbs_g": "26.51",
+      "fat_g": "24.41",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g028",
+      "name": {
+        "en": "Nutmeg"
+      },
+      "kcal_per_100g": "463.67",
+      "protein_g": "6.3",
+      "carbs_g": "27.64",
+      "fat_g": "36.52",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g029",
+      "name": {
+        "en": "Omum"
+      },
+      "kcal_per_100g": "357.31",
+      "protein_g": "15.89",
+      "carbs_g": "24.53",
+      "fat_g": "21.11",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g030",
+      "name": {
+        "en": "Pippali"
+      },
+      "kcal_per_100g": "216.54",
+      "protein_g": "10.53",
+      "carbs_g": "35.7",
+      "fat_g": "2.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g031",
+      "name": {
+        "en": "Pepper, black"
+      },
+      "kcal_per_100g": "217.50",
+      "protein_g": "10.12",
+      "carbs_g": "36.22",
+      "fat_g": "2.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g032",
+      "name": {
+        "en": "Poppy seeds"
+      },
+      "kcal_per_100g": "422.56",
+      "protein_g": "20.31",
+      "carbs_g": "12.37",
+      "fat_g": "30.38",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-g033",
+      "name": {
+        "en": "Turmeric powder"
+      },
+      "kcal_per_100g": "280.59",
+      "protein_g": "7.66",
+      "carbs_g": "49.22",
+      "fat_g": "5.03",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h001",
+      "name": {
+        "en": "Almond"
+      },
+      "kcal_per_100g": "609.23",
+      "protein_g": "18.41",
+      "carbs_g": "3.04",
+      "fat_g": "58.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h002",
+      "name": {
+        "en": "Arecanut, dried, brown"
+      },
+      "kcal_per_100g": "350.62",
+      "protein_g": "5.78",
+      "carbs_g": "70.42",
+      "fat_g": "4.35",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h003",
+      "name": {
+        "en": "Arecanut, dried, red color"
+      },
+      "kcal_per_100g": "353.01",
+      "protein_g": "6.46",
+      "carbs_g": "70.27",
+      "fat_g": "4.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h004",
+      "name": {
+        "en": "Arecanut, fresh"
+      },
+      "kcal_per_100g": "244.74",
+      "protein_g": "2.73",
+      "carbs_g": "45",
+      "fat_g": "5.51",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h005",
+      "name": {
+        "en": "Cashew nut"
+      },
+      "kcal_per_100g": "582.70",
+      "protein_g": "18.78",
+      "carbs_g": "25.46",
+      "fat_g": "45.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h006",
+      "name": {
+        "en": "Coconut, kernal, dry"
+      },
+      "kcal_per_100g": "624.04",
+      "protein_g": "7.27",
+      "carbs_g": "8.01",
+      "fat_g": "63.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h007",
+      "name": {
+        "en": "Coconut, kernel, fresh"
+      },
+      "kcal_per_100g": "408.94",
+      "protein_g": "3.84",
+      "carbs_g": "6.3",
+      "fat_g": "41.38",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h008",
+      "name": {
+        "en": "Garden cress, seeds"
+      },
+      "kcal_per_100g": "445.27",
+      "protein_g": "23.36",
+      "carbs_g": "33.66",
+      "fat_g": "23.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h009",
+      "name": {
+        "en": "Gingelly seeds, black"
+      },
+      "kcal_per_100g": "507.65",
+      "protein_g": "19.17",
+      "carbs_g": "10.29",
+      "fat_g": "43.1",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h010",
+      "name": {
+        "en": "Gingelly seeds, brown"
+      },
+      "kcal_per_100g": "516.49",
+      "protein_g": "21.61",
+      "carbs_g": "9.76",
+      "fat_g": "43.22",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h011",
+      "name": {
+        "en": "Gingelly seeds, white"
+      },
+      "kcal_per_100g": "519.60",
+      "protein_g": "21.7",
+      "carbs_g": "10.83",
+      "fat_g": "43.05",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h012",
+      "name": {
+        "en": "Ground nut"
+      },
+      "kcal_per_100g": "520.08",
+      "protein_g": "23.65",
+      "carbs_g": "17.27",
+      "fat_g": "39.63",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h013",
+      "name": {
+        "en": "Mustard seeds"
+      },
+      "kcal_per_100g": "509.56",
+      "protein_g": "19.51",
+      "carbs_g": "16.8",
+      "fat_g": "40.19",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h014",
+      "name": {
+        "en": "Linseeds"
+      },
+      "kcal_per_100g": "443.83",
+      "protein_g": "18.55",
+      "carbs_g": "10.99",
+      "fat_g": "35.67",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h015",
+      "name": {
+        "en": "Niger seeds, black"
+      },
+      "kcal_per_100g": "512.43",
+      "protein_g": "18.92",
+      "carbs_g": "22.98",
+      "fat_g": "38.61",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h016",
+      "name": {
+        "en": "Niger seeds, gray"
+      },
+      "kcal_per_100g": "508.60",
+      "protein_g": "18.34",
+      "carbs_g": "20.59",
+      "fat_g": "39.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h017",
+      "name": {
+        "en": "Pine seed"
+      },
+      "kcal_per_100g": "594.17",
+      "protein_g": "12.55",
+      "carbs_g": "26.77",
+      "fat_g": "48.79",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h018",
+      "name": {
+        "en": "Pistachio nuts"
+      },
+      "kcal_per_100g": "539.44",
+      "protein_g": "23.35",
+      "carbs_g": "15.82",
+      "fat_g": "42.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h019",
+      "name": {
+        "en": "Safflower seeds"
+      },
+      "kcal_per_100g": "473.47",
+      "protein_g": "17.66",
+      "carbs_g": "30.18",
+      "fat_g": "30.87",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h020",
+      "name": {
+        "en": "Sunflower seeds"
+      },
+      "kcal_per_100g": "586.28",
+      "protein_g": "23.53",
+      "carbs_g": "6.85",
+      "fat_g": "51.85",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-h021",
+      "name": {
+        "en": "Walnut"
+      },
+      "kcal_per_100g": "671.37",
+      "protein_g": "14.92",
+      "carbs_g": "10.14",
+      "fat_g": "64.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-i001",
+      "name": {
+        "en": "Jaggery, cane"
+      },
+      "kcal_per_100g": "353.73",
+      "protein_g": "1.85",
+      "carbs_g": "84.87",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-i002",
+      "name": {
+        "en": "Sugarcane, juice"
+      },
+      "kcal_per_100g": "57.84",
+      "protein_g": "0.16",
+      "carbs_g": "13.11",
+      "fat_g": "0.4",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-j001",
+      "name": {
+        "en": "Button mushroom, fresh"
+      },
+      "kcal_per_100g": "27.49",
+      "protein_g": "3.68",
+      "carbs_g": "1.98",
+      "fat_g": "0.42",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-j002",
+      "name": {
+        "en": "Chicken mushroom, fresh"
+      },
+      "kcal_per_100g": "21.27",
+      "protein_g": "1.84",
+      "carbs_g": "2.76",
+      "fat_g": "0.25",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-j003",
+      "name": {
+        "en": "Shiitake mushroom, fresh"
+      },
+      "kcal_per_100g": "58.08",
+      "protein_g": "3.19",
+      "carbs_g": "8.98",
+      "fat_g": "0.76",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-j004",
+      "name": {
+        "en": "Oyster mushroom, dried"
+      },
+      "kcal_per_100g": "243.55",
+      "protein_g": "19.04",
+      "carbs_g": "33.07",
+      "fat_g": "2.86",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-k001",
+      "name": {
+        "en": "Toddy"
+      },
+      "kcal_per_100g": "24.14",
+      "protein_g": "0.18",
+      "carbs_g": "5.72",
+      "fat_g": "0.03",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-k002",
+      "name": {
+        "en": "Coconut Water"
+      },
+      "kcal_per_100g": "15.30",
+      "protein_g": "0.26",
+      "carbs_g": "3.16",
+      "fat_g": "0.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-l001",
+      "name": {
+        "en": "Milk, whole, Buffalo"
+      },
+      "kcal_per_100g": "107.31",
+      "protein_g": "3.68",
+      "carbs_g": "8.39",
+      "fat_g": "6.58",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-l002",
+      "name": {
+        "en": "Milk, whole, Cow"
+      },
+      "kcal_per_100g": "72.90",
+      "protein_g": "3.26",
+      "carbs_g": "4.94",
+      "fat_g": "4.48",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-l003",
+      "name": {
+        "en": "Paneer"
+      },
+      "kcal_per_100g": "257.89",
+      "protein_g": "18.86",
+      "carbs_g": "12.41",
+      "fat_g": "14.78",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-l004",
+      "name": {
+        "en": "Khoa"
+      },
+      "kcal_per_100g": "315.97",
+      "protein_g": "16.34",
+      "carbs_g": "16.53",
+      "fat_g": "20.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m001",
+      "name": {
+        "en": "Egg, poultry, whole, raw"
+      },
+      "kcal_per_100g": "134.80",
+      "protein_g": "13.28",
+      "carbs_g": "0",
+      "fat_g": "9.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m002",
+      "name": {
+        "en": "Egg, poultry, white, raw"
+      },
+      "kcal_per_100g": "44.69",
+      "protein_g": "10.84",
+      "carbs_g": "0",
+      "fat_g": "0.06",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m003",
+      "name": {
+        "en": "Egg, poultry, yolk, raw"
+      },
+      "kcal_per_100g": "296.85",
+      "protein_g": "15.74",
+      "carbs_g": "0",
+      "fat_g": "26.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m004",
+      "name": {
+        "en": "Egg, poultry, whole, boiled"
+      },
+      "kcal_per_100g": "147.71",
+      "protein_g": "13.43",
+      "carbs_g": "0",
+      "fat_g": "10.54",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m005",
+      "name": {
+        "en": "Egg, poultry, white, boiled"
+      },
+      "kcal_per_100g": "52.58",
+      "protein_g": "12.37",
+      "carbs_g": "0",
+      "fat_g": "0.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m006",
+      "name": {
+        "en": "Egg, poultry, yolk, boiled"
+      },
+      "kcal_per_100g": "308.32",
+      "protein_g": "16.13",
+      "carbs_g": "0",
+      "fat_g": "27.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m007",
+      "name": {
+        "en": "Egg, poultry, omlet"
+      },
+      "kcal_per_100g": "169.69",
+      "protein_g": "16.53",
+      "carbs_g": "0",
+      "fat_g": "11.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m008",
+      "name": {
+        "en": "Egg, country hen, whole, raw"
+      },
+      "kcal_per_100g": "168.26",
+      "protein_g": "13.14",
+      "carbs_g": "0",
+      "fat_g": "13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m009",
+      "name": {
+        "en": "Egg, country hen, whole, boiled"
+      },
+      "kcal_per_100g": "183.32",
+      "protein_g": "14.43",
+      "carbs_g": "0",
+      "fat_g": "14.1",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m010",
+      "name": {
+        "en": "Egg, country hen, omlet"
+      },
+      "kcal_per_100g": "204.35",
+      "protein_g": "14.8",
+      "carbs_g": "0",
+      "fat_g": "16.3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m011",
+      "name": {
+        "en": "Egg, duck, whole, boiled"
+      },
+      "kcal_per_100g": "176.39",
+      "protein_g": "13.8",
+      "carbs_g": "0",
+      "fat_g": "13.61",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m012",
+      "name": {
+        "en": "Egg, duck, whole, raw"
+      },
+      "kcal_per_100g": "181.64",
+      "protein_g": "14.6",
+      "carbs_g": "0",
+      "fat_g": "13.83",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m013",
+      "name": {
+        "en": "Egg, duck, whole, omlet"
+      },
+      "kcal_per_100g": "192.16",
+      "protein_g": "15.1",
+      "carbs_g": "0",
+      "fat_g": "14.8",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m014",
+      "name": {
+        "en": "Egg, quial, whole, raw"
+      },
+      "kcal_per_100g": "151.77",
+      "protein_g": "12.39",
+      "carbs_g": "0",
+      "fat_g": "11.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-m015",
+      "name": {
+        "en": "Egg, quial, whole, boiled"
+      },
+      "kcal_per_100g": "154.64",
+      "protein_g": "13.03",
+      "carbs_g": "0",
+      "fat_g": "11.5",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n001",
+      "name": {
+        "en": "Chicken, poultry, leg, skinless"
+      },
+      "kcal_per_100g": "383.60",
+      "protein_g": "19.44",
+      "carbs_g": "0",
+      "fat_g": "12.64",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n002",
+      "name": {
+        "en": "Chicken, poultry, thigh, skinless"
+      },
+      "kcal_per_100g": "199.81",
+      "protein_g": "18.18",
+      "carbs_g": "0",
+      "fat_g": "14.23",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n003",
+      "name": {
+        "en": "Chicken, poultry, breast, skinless"
+      },
+      "kcal_per_100g": "168.26",
+      "protein_g": "21.81",
+      "carbs_g": "0",
+      "fat_g": "9",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n004",
+      "name": {
+        "en": "Chicken, poultry, wing, skinless"
+      },
+      "kcal_per_100g": "192.88",
+      "protein_g": "17.42",
+      "carbs_g": "0",
+      "fat_g": "13.81",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n005",
+      "name": {
+        "en": "Poultry, chicken, liver"
+      },
+      "kcal_per_100g": "123.80",
+      "protein_g": "21.57",
+      "carbs_g": "0",
+      "fat_g": "4.08",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n006",
+      "name": {
+        "en": "Poultry, chicken, gizzard"
+      },
+      "kcal_per_100g": "92.26",
+      "protein_g": "18.22",
+      "carbs_g": "0",
+      "fat_g": "2.07",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n007",
+      "name": {
+        "en": "Country hen, leg, with skin"
+      },
+      "kcal_per_100g": "172.80",
+      "protein_g": "17.01",
+      "carbs_g": "0",
+      "fat_g": "11.73",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n008",
+      "name": {
+        "en": "Country hen, thigh, with skin"
+      },
+      "kcal_per_100g": "187.62",
+      "protein_g": "18.29",
+      "carbs_g": "0",
+      "fat_g": "12.82",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n009",
+      "name": {
+        "en": "Country hen, breast, with skin"
+      },
+      "kcal_per_100g": "179.97",
+      "protein_g": "22.08",
+      "carbs_g": "0",
+      "fat_g": "10.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n010",
+      "name": {
+        "en": "Country hen, wing, with skin"
+      },
+      "kcal_per_100g": "182.60",
+      "protein_g": "18.65",
+      "carbs_g": "0",
+      "fat_g": "12.09",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n011",
+      "name": {
+        "en": "Duck, meat, with skin"
+      },
+      "kcal_per_100g": "130.74",
+      "protein_g": "19.07",
+      "carbs_g": "0",
+      "fat_g": "6.03",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n012",
+      "name": {
+        "en": "Emu, meat, skinless"
+      },
+      "kcal_per_100g": "132.89",
+      "protein_g": "22.65",
+      "carbs_g": "0",
+      "fat_g": "4.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n013",
+      "name": {
+        "en": "Guinea fowl, meat, with skin"
+      },
+      "kcal_per_100g": "112.09",
+      "protein_g": "20.52",
+      "carbs_g": "0",
+      "fat_g": "3.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n014",
+      "name": {
+        "en": "Pigeon, meat, with skin"
+      },
+      "kcal_per_100g": "126.20",
+      "protein_g": "17.94",
+      "carbs_g": "0",
+      "fat_g": "6.03",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n015",
+      "name": {
+        "en": "Quail, meat, skinless"
+      },
+      "kcal_per_100g": "137.67",
+      "protein_g": "20.92",
+      "carbs_g": "0",
+      "fat_g": "5.95",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n016",
+      "name": {
+        "en": "Turkey, leg, with skin"
+      },
+      "kcal_per_100g": "154.64",
+      "protein_g": "20.3",
+      "carbs_g": "0",
+      "fat_g": "8.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n017",
+      "name": {
+        "en": "Turkey, thigh, with skin"
+      },
+      "kcal_per_100g": "138.86",
+      "protein_g": "20.46",
+      "carbs_g": "0",
+      "fat_g": "6.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n018",
+      "name": {
+        "en": "Turkey, breast, with skin"
+      },
+      "kcal_per_100g": "160.37",
+      "protein_g": "21.96",
+      "carbs_g": "0",
+      "fat_g": "8.04",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-n019",
+      "name": {
+        "en": "Turkey, wing, with skin"
+      },
+      "kcal_per_100g": "184.27",
+      "protein_g": "21.91",
+      "carbs_g": "0",
+      "fat_g": "10.77",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o001",
+      "name": {
+        "en": "Goat, shoulder, meat"
+      },
+      "kcal_per_100g": "188.10",
+      "protein_g": "20.33",
+      "carbs_g": "0",
+      "fat_g": "11.94",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o002",
+      "name": {
+        "en": "Goat, chops"
+      },
+      "kcal_per_100g": "135.76",
+      "protein_g": "20.39",
+      "carbs_g": "0",
+      "fat_g": "5.98",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o003",
+      "name": {
+        "en": "Goat, legs"
+      },
+      "kcal_per_100g": "159.89",
+      "protein_g": "22.07",
+      "carbs_g": "0",
+      "fat_g": "7.94",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o004",
+      "name": {
+        "en": "Goat, brain"
+      },
+      "kcal_per_100g": "127.39",
+      "protein_g": "13.82",
+      "carbs_g": "0",
+      "fat_g": "8.06",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o005",
+      "name": {
+        "en": "Goat, tongue"
+      },
+      "kcal_per_100g": "188.58",
+      "protein_g": "16.63",
+      "carbs_g": "0",
+      "fat_g": "13.68",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o006",
+      "name": {
+        "en": "Goat, lungs"
+      },
+      "kcal_per_100g": "95.84",
+      "protein_g": "16.86",
+      "carbs_g": "0",
+      "fat_g": "3.09",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o007",
+      "name": {
+        "en": "Goat, heart"
+      },
+      "kcal_per_100g": "117.59",
+      "protein_g": "19.38",
+      "carbs_g": "0",
+      "fat_g": "4.4",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o008",
+      "name": {
+        "en": "Goat, liver"
+      },
+      "kcal_per_100g": "125.72",
+      "protein_g": "20.32",
+      "carbs_g": "0",
+      "fat_g": "4.88",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o009",
+      "name": {
+        "en": "Goat, tripe"
+      },
+      "kcal_per_100g": "92.26",
+      "protein_g": "15.36",
+      "carbs_g": "0",
+      "fat_g": "3.36",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o010",
+      "name": {
+        "en": "Goat, spleen"
+      },
+      "kcal_per_100g": "95.84",
+      "protein_g": "18.45",
+      "carbs_g": "0",
+      "fat_g": "2.37",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o011",
+      "name": {
+        "en": "Goat, kidneys"
+      },
+      "kcal_per_100g": "89.39",
+      "protein_g": "15.6",
+      "carbs_g": "0",
+      "fat_g": "2.93",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o012",
+      "name": {
+        "en": "Goat, tube (small intestine)"
+      },
+      "kcal_per_100g": "125.48",
+      "protein_g": "12.92",
+      "carbs_g": "0",
+      "fat_g": "8.26",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o013",
+      "name": {
+        "en": "Goat, testis"
+      },
+      "kcal_per_100g": "71.22",
+      "protein_g": "12.32",
+      "carbs_g": "0",
+      "fat_g": "2.39",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o014",
+      "name": {
+        "en": "Sheep, shoulder"
+      },
+      "kcal_per_100g": "200.76",
+      "protein_g": "18.24",
+      "carbs_g": "0",
+      "fat_g": "14.31",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o015",
+      "name": {
+        "en": "Sheep, chops"
+      },
+      "kcal_per_100g": "118.55",
+      "protein_g": "18",
+      "carbs_g": "0",
+      "fat_g": "5.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o016",
+      "name": {
+        "en": "Sheep, leg"
+      },
+      "kcal_per_100g": "163.96",
+      "protein_g": "21.42",
+      "carbs_g": "0",
+      "fat_g": "8.69",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o017",
+      "name": {
+        "en": "Sheep, brain"
+      },
+      "kcal_per_100g": "117.59",
+      "protein_g": "13.05",
+      "carbs_g": "0",
+      "fat_g": "7.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o018",
+      "name": {
+        "en": "Sheep, tongue"
+      },
+      "kcal_per_100g": "187.14",
+      "protein_g": "16.61",
+      "carbs_g": "0",
+      "fat_g": "13.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o019",
+      "name": {
+        "en": "Sheep, lungs"
+      },
+      "kcal_per_100g": "86.76",
+      "protein_g": "16.12",
+      "carbs_g": "0",
+      "fat_g": "2.41",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o020",
+      "name": {
+        "en": "Sheep, heart"
+      },
+      "kcal_per_100g": "106.36",
+      "protein_g": "18.19",
+      "carbs_g": "0",
+      "fat_g": "3.66",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o021",
+      "name": {
+        "en": "Sheep, liver"
+      },
+      "kcal_per_100g": "133.60",
+      "protein_g": "22.26",
+      "carbs_g": "0",
+      "fat_g": "4.87",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o022",
+      "name": {
+        "en": "Sheep, tripe"
+      },
+      "kcal_per_100g": "103.97",
+      "protein_g": "16.76",
+      "carbs_g": "0",
+      "fat_g": "4.05",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o023",
+      "name": {
+        "en": "Sheep, spleen"
+      },
+      "kcal_per_100g": "91.78",
+      "protein_g": "16.02",
+      "carbs_g": "0",
+      "fat_g": "3.02",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o024",
+      "name": {
+        "en": "Sheep, kidneys"
+      },
+      "kcal_per_100g": "91.78",
+      "protein_g": "16.22",
+      "carbs_g": "0",
+      "fat_g": "2.92",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o025",
+      "name": {
+        "en": "Beef, shoulder"
+      },
+      "kcal_per_100g": "212.48",
+      "protein_g": "20.56",
+      "carbs_g": "0",
+      "fat_g": "14.59",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o026",
+      "name": {
+        "en": "Beef, chops"
+      },
+      "kcal_per_100g": "139.82",
+      "protein_g": "19.82",
+      "carbs_g": "0",
+      "fat_g": "6.71",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o027",
+      "name": {
+        "en": "Beef, round (leg)"
+      },
+      "kcal_per_100g": "157.27",
+      "protein_g": "22.64",
+      "carbs_g": "0",
+      "fat_g": "7.38",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o028",
+      "name": {
+        "en": "Beef, brain"
+      },
+      "kcal_per_100g": "125.00",
+      "protein_g": "10.55",
+      "carbs_g": "0",
+      "fat_g": "9.28",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o029",
+      "name": {
+        "en": "Beef, tongue"
+      },
+      "kcal_per_100g": "174.71",
+      "protein_g": "15.63",
+      "carbs_g": "0",
+      "fat_g": "12.57",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o030",
+      "name": {
+        "en": "Beef, lungs"
+      },
+      "kcal_per_100g": "83.89",
+      "protein_g": "15.66",
+      "carbs_g": "0",
+      "fat_g": "2.28",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o031",
+      "name": {
+        "en": "Beef, heart"
+      },
+      "kcal_per_100g": "103.49",
+      "protein_g": "17.68",
+      "carbs_g": "0",
+      "fat_g": "3.57",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o032",
+      "name": {
+        "en": "Beef, liver"
+      },
+      "kcal_per_100g": "119.26",
+      "protein_g": "20.73",
+      "carbs_g": "0",
+      "fat_g": "3.96",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o033",
+      "name": {
+        "en": "Beef, tripe"
+      },
+      "kcal_per_100g": "75.53",
+      "protein_g": "13.1",
+      "carbs_g": "0",
+      "fat_g": "2.51",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o034",
+      "name": {
+        "en": "Beef, spleen"
+      },
+      "kcal_per_100g": "90.34",
+      "protein_g": "17.42",
+      "carbs_g": "0",
+      "fat_g": "2.22",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o035",
+      "name": {
+        "en": "Beef, kidneys"
+      },
+      "kcal_per_100g": "104.92",
+      "protein_g": "17.09",
+      "carbs_g": "0",
+      "fat_g": "4.01",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o036",
+      "name": {
+        "en": "Calf, shoulder"
+      },
+      "kcal_per_100g": "151.29",
+      "protein_g": "20.98",
+      "carbs_g": "0",
+      "fat_g": "7.47",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o037",
+      "name": {
+        "en": "Calf, chops"
+      },
+      "kcal_per_100g": "125.24",
+      "protein_g": "22.47",
+      "carbs_g": "0",
+      "fat_g": "3.85",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o038",
+      "name": {
+        "en": "Calf, round (leg)"
+      },
+      "kcal_per_100g": "146.99",
+      "protein_g": "21.1",
+      "carbs_g": "0",
+      "fat_g": "6.92",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o039",
+      "name": {
+        "en": "Calf, brain"
+      },
+      "kcal_per_100g": "107.07",
+      "protein_g": "9.84",
+      "carbs_g": "0",
+      "fat_g": "7.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o040",
+      "name": {
+        "en": "Calf, tongue"
+      },
+      "kcal_per_100g": "176.15",
+      "protein_g": "17.78",
+      "carbs_g": "0",
+      "fat_g": "11.76",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o041",
+      "name": {
+        "en": "Calf, heart"
+      },
+      "kcal_per_100g": "109.70",
+      "protein_g": "18.84",
+      "carbs_g": "0",
+      "fat_g": "3.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o042",
+      "name": {
+        "en": "Calf, liver"
+      },
+      "kcal_per_100g": "120.22",
+      "protein_g": "21.02",
+      "carbs_g": "0",
+      "fat_g": "3.95",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o043",
+      "name": {
+        "en": "Calf, spleen"
+      },
+      "kcal_per_100g": "90.58",
+      "protein_g": "17.71",
+      "carbs_g": "0",
+      "fat_g": "2.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o044",
+      "name": {
+        "en": "Calf, kidneys"
+      },
+      "kcal_per_100g": "92.50",
+      "protein_g": "15.16",
+      "carbs_g": "0",
+      "fat_g": "3.5",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o045",
+      "name": {
+        "en": "Mithun, shoulder"
+      },
+      "kcal_per_100g": "175.91",
+      "protein_g": "19.05",
+      "carbs_g": "0",
+      "fat_g": "11.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o046",
+      "name": {
+        "en": "Mithun, chops"
+      },
+      "kcal_per_100g": "128.11",
+      "protein_g": "18.19",
+      "carbs_g": "0",
+      "fat_g": "6.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o047",
+      "name": {
+        "en": "Mithun, round (leg)"
+      },
+      "kcal_per_100g": "115.92",
+      "protein_g": "19.61",
+      "carbs_g": "0",
+      "fat_g": "4.1",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o048",
+      "name": {
+        "en": "Pork, shoulder"
+      },
+      "kcal_per_100g": "237.33",
+      "protein_g": "17.41",
+      "carbs_g": "0",
+      "fat_g": "18.83",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o049",
+      "name": {
+        "en": "Pork, chops"
+      },
+      "kcal_per_100g": "178.78",
+      "protein_g": "19.41",
+      "carbs_g": "0",
+      "fat_g": "11.3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o050",
+      "name": {
+        "en": "Pork, ham"
+      },
+      "kcal_per_100g": "240.44",
+      "protein_g": "18.83",
+      "carbs_g": "0",
+      "fat_g": "18.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o051",
+      "name": {
+        "en": "Pork, lungs"
+      },
+      "kcal_per_100g": "85.56",
+      "protein_g": "15.13",
+      "carbs_g": "0",
+      "fat_g": "2.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o052",
+      "name": {
+        "en": "Pork, heart"
+      },
+      "kcal_per_100g": "109.23",
+      "protein_g": "16.31",
+      "carbs_g": "0",
+      "fat_g": "4.87",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o053",
+      "name": {
+        "en": "Pork, liver"
+      },
+      "kcal_per_100g": "115.68",
+      "protein_g": "19.89",
+      "carbs_g": "0",
+      "fat_g": "3.94",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o054",
+      "name": {
+        "en": "Pork, stomach"
+      },
+      "kcal_per_100g": "131.45",
+      "protein_g": "15.36",
+      "carbs_g": "0",
+      "fat_g": "7.81",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o055",
+      "name": {
+        "en": "Pork, spleen"
+      },
+      "kcal_per_100g": "85.33",
+      "protein_g": "15.13",
+      "carbs_g": "0",
+      "fat_g": "2.71",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o056",
+      "name": {
+        "en": "Pork, kidneys"
+      },
+      "kcal_per_100g": "90.58",
+      "protein_g": "14.35",
+      "carbs_g": "0",
+      "fat_g": "3.65",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o057",
+      "name": {
+        "en": "Pork, tube (small intestine)"
+      },
+      "kcal_per_100g": "140.30",
+      "protein_g": "14.96",
+      "carbs_g": "0",
+      "fat_g": "8.98",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o058",
+      "name": {
+        "en": "Hare, shoulder"
+      },
+      "kcal_per_100g": "144.12",
+      "protein_g": "21.13",
+      "carbs_g": "0",
+      "fat_g": "6.58",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o059",
+      "name": {
+        "en": "Hare, chops"
+      },
+      "kcal_per_100g": "106.36",
+      "protein_g": "20.62",
+      "carbs_g": "0",
+      "fat_g": "2.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o060",
+      "name": {
+        "en": "Hare, leg"
+      },
+      "kcal_per_100g": "120.22",
+      "protein_g": "20.52",
+      "carbs_g": "0",
+      "fat_g": "4.16",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o061",
+      "name": {
+        "en": "Rabbit, shoulder"
+      },
+      "kcal_per_100g": "151.77",
+      "protein_g": "20.01",
+      "carbs_g": "0",
+      "fat_g": "7.96",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o062",
+      "name": {
+        "en": "Rabbit, chops"
+      },
+      "kcal_per_100g": "135.04",
+      "protein_g": "22.61",
+      "carbs_g": "0",
+      "fat_g": "4.88",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-o063",
+      "name": {
+        "en": "Rabbit, leg"
+      },
+      "kcal_per_100g": "139.58",
+      "protein_g": "21.31",
+      "carbs_g": "0",
+      "fat_g": "5.99",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p001",
+      "name": {
+        "en": "Allathi"
+      },
+      "kcal_per_100g": "97.04",
+      "protein_g": "21.77",
+      "carbs_g": "0",
+      "fat_g": "0.98",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p002",
+      "name": {
+        "en": "Aluva"
+      },
+      "kcal_per_100g": "103.73",
+      "protein_g": "21.63",
+      "carbs_g": "0",
+      "fat_g": "1.8",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p003",
+      "name": {
+        "en": "Anchovy"
+      },
+      "kcal_per_100g": "87.72",
+      "protein_g": "19.88",
+      "carbs_g": "0",
+      "fat_g": "0.78",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p004",
+      "name": {
+        "en": "Ari fish"
+      },
+      "kcal_per_100g": "99.19",
+      "protein_g": "22.01",
+      "carbs_g": "0",
+      "fat_g": "1.11",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p005",
+      "name": {
+        "en": "Betki"
+      },
+      "kcal_per_100g": "67.88",
+      "protein_g": "15.28",
+      "carbs_g": "0",
+      "fat_g": "0.29",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p006",
+      "name": {
+        "en": "Black snapper"
+      },
+      "kcal_per_100g": "90.11",
+      "protein_g": "19.5",
+      "carbs_g": "0",
+      "fat_g": "1.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p007",
+      "name": {
+        "en": "Bombay duck"
+      },
+      "kcal_per_100g": "68.59",
+      "protein_g": "13.53",
+      "carbs_g": "0",
+      "fat_g": "1.03",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p008",
+      "name": {
+        "en": "Bommuralu"
+      },
+      "kcal_per_100g": "115.92",
+      "protein_g": "22.3",
+      "carbs_g": "0",
+      "fat_g": "2.87",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p009",
+      "name": {
+        "en": "Cat fish"
+      },
+      "kcal_per_100g": "108.99",
+      "protein_g": "22.18",
+      "carbs_g": "0",
+      "fat_g": "2.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p010",
+      "name": {
+        "en": "Chakla"
+      },
+      "kcal_per_100g": "97.04",
+      "protein_g": "20.21",
+      "carbs_g": "0",
+      "fat_g": "1.68",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p011",
+      "name": {
+        "en": "Chappal"
+      },
+      "kcal_per_100g": "75.76",
+      "protein_g": "17.17",
+      "carbs_g": "0",
+      "fat_g": "0.67",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p012",
+      "name": {
+        "en": "Chelu"
+      },
+      "kcal_per_100g": "87.48",
+      "protein_g": "20.02",
+      "carbs_g": "0",
+      "fat_g": "0.7",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p013",
+      "name": {
+        "en": "Chembali"
+      },
+      "kcal_per_100g": "97.04",
+      "protein_g": "20.06",
+      "carbs_g": "0",
+      "fat_g": "1.77",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p014",
+      "name": {
+        "en": "Eri meen"
+      },
+      "kcal_per_100g": "108.51",
+      "protein_g": "22.3",
+      "carbs_g": "0",
+      "fat_g": "2.02",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p015",
+      "name": {
+        "en": "Gobro"
+      },
+      "kcal_per_100g": "86.52",
+      "protein_g": "19.37",
+      "carbs_g": "0",
+      "fat_g": "0.88",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p016",
+      "name": {
+        "en": "Guitar fish"
+      },
+      "kcal_per_100g": "95.60",
+      "protein_g": "22.56",
+      "carbs_g": "0",
+      "fat_g": "0.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p017",
+      "name": {
+        "en": "Hilsa"
+      },
+      "kcal_per_100g": "258.84",
+      "protein_g": "21.8",
+      "carbs_g": "0",
+      "fat_g": "18.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p018",
+      "name": {
+        "en": "Jallal"
+      },
+      "kcal_per_100g": "100.38",
+      "protein_g": "21.55",
+      "carbs_g": "0",
+      "fat_g": "1.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p019",
+      "name": {
+        "en": "Jathi vela meen"
+      },
+      "kcal_per_100g": "108.27",
+      "protein_g": "22.45",
+      "carbs_g": "0",
+      "fat_g": "1.92",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p020",
+      "name": {
+        "en": "Kadal bral"
+      },
+      "kcal_per_100g": "87.95",
+      "protein_g": "18.72",
+      "carbs_g": "0",
+      "fat_g": "1.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p021",
+      "name": {
+        "en": "Kadali"
+      },
+      "kcal_per_100g": "126.67",
+      "protein_g": "22.07",
+      "carbs_g": "0",
+      "fat_g": "4.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p022",
+      "name": {
+        "en": "Kalamaara"
+      },
+      "kcal_per_100g": "125.00",
+      "protein_g": "20.89",
+      "carbs_g": "0",
+      "fat_g": "4.54",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p023",
+      "name": {
+        "en": "Kalava"
+      },
+      "kcal_per_100g": "89.39",
+      "protein_g": "19.38",
+      "carbs_g": "0",
+      "fat_g": "1.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p024",
+      "name": {
+        "en": "Kanamayya"
+      },
+      "kcal_per_100g": "87.72",
+      "protein_g": "20.19",
+      "carbs_g": "0",
+      "fat_g": "0.65",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p025",
+      "name": {
+        "en": "Kannadi paarai"
+      },
+      "kcal_per_100g": "101.10",
+      "protein_g": "22.09",
+      "carbs_g": "0",
+      "fat_g": "1.27",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p026",
+      "name": {
+        "en": "Karimeen"
+      },
+      "kcal_per_100g": "92.26",
+      "protein_g": "19.68",
+      "carbs_g": "0",
+      "fat_g": "1.38",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p027",
+      "name": {
+        "en": "Karnagawala"
+      },
+      "kcal_per_100g": "86.76",
+      "protein_g": "19.52",
+      "carbs_g": "0",
+      "fat_g": "0.84",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p028",
+      "name": {
+        "en": "Kayrai"
+      },
+      "kcal_per_100g": "108.51",
+      "protein_g": "20.15",
+      "carbs_g": "0",
+      "fat_g": "3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p029",
+      "name": {
+        "en": "Kiriyan"
+      },
+      "kcal_per_100g": "132.89",
+      "protein_g": "22.49",
+      "carbs_g": "0",
+      "fat_g": "4.7",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p030",
+      "name": {
+        "en": "Kite fish"
+      },
+      "kcal_per_100g": "98.71",
+      "protein_g": "23.07",
+      "carbs_g": "0",
+      "fat_g": "0.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p031",
+      "name": {
+        "en": "Korka"
+      },
+      "kcal_per_100g": "126.20",
+      "protein_g": "23.72",
+      "carbs_g": "0",
+      "fat_g": "3.36",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p032",
+      "name": {
+        "en": "Kulam paarai"
+      },
+      "kcal_per_100g": "119.74",
+      "protein_g": "21.62",
+      "carbs_g": "0",
+      "fat_g": "3.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p033",
+      "name": {
+        "en": "Maagaa"
+      },
+      "kcal_per_100g": "87.48",
+      "protein_g": "20.11",
+      "carbs_g": "0",
+      "fat_g": "0.67",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p034",
+      "name": {
+        "en": "Mackerel"
+      },
+      "kcal_per_100g": "101.10",
+      "protein_g": "21.51",
+      "carbs_g": "0",
+      "fat_g": "1.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p035",
+      "name": {
+        "en": "Manda clathi"
+      },
+      "kcal_per_100g": "95.12",
+      "protein_g": "21.27",
+      "carbs_g": "0",
+      "fat_g": "1",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p036",
+      "name": {
+        "en": "Matha"
+      },
+      "kcal_per_100g": "92.97",
+      "protein_g": "21.17",
+      "carbs_g": "0",
+      "fat_g": "0.79",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p037",
+      "name": {
+        "en": "Milk fish"
+      },
+      "kcal_per_100g": "105.64",
+      "protein_g": "23.66",
+      "carbs_g": "0",
+      "fat_g": "1.09",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p038",
+      "name": {
+        "en": "Moon fish"
+      },
+      "kcal_per_100g": "125.72",
+      "protein_g": "20.74",
+      "carbs_g": "0",
+      "fat_g": "4.69",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p039",
+      "name": {
+        "en": "Mullet"
+      },
+      "kcal_per_100g": "93.93",
+      "protein_g": "20.23",
+      "carbs_g": "0",
+      "fat_g": "1.32",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p040",
+      "name": {
+        "en": "Mural"
+      },
+      "kcal_per_100g": "82.46",
+      "protein_g": "19.04",
+      "carbs_g": "0",
+      "fat_g": "0.58",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p041",
+      "name": {
+        "en": "Myil meen"
+      },
+      "kcal_per_100g": "97.99",
+      "protein_g": "22.89",
+      "carbs_g": "0",
+      "fat_g": "0.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p042",
+      "name": {
+        "en": "Nalla bontha"
+      },
+      "kcal_per_100g": "87.00",
+      "protein_g": "19.82",
+      "carbs_g": "0",
+      "fat_g": "0.72",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p043",
+      "name": {
+        "en": "Narba"
+      },
+      "kcal_per_100g": "103.25",
+      "protein_g": "21.95",
+      "carbs_g": "0",
+      "fat_g": "1.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p044",
+      "name": {
+        "en": "Paarai"
+      },
+      "kcal_per_100g": "103.97",
+      "protein_g": "21.58",
+      "carbs_g": "0",
+      "fat_g": "1.84",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p045",
+      "name": {
+        "en": "Padayappa"
+      },
+      "kcal_per_100g": "86.04",
+      "protein_g": "19.7",
+      "carbs_g": "0",
+      "fat_g": "0.69",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p046",
+      "name": {
+        "en": "Pali kora"
+      },
+      "kcal_per_100g": "94.17",
+      "protein_g": "19.25",
+      "carbs_g": "0",
+      "fat_g": "1.81",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p047",
+      "name": {
+        "en": "Pambada"
+      },
+      "kcal_per_100g": "128.35",
+      "protein_g": "21.95",
+      "carbs_g": "0",
+      "fat_g": "4.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p048",
+      "name": {
+        "en": "Pandukopa"
+      },
+      "kcal_per_100g": "86.04",
+      "protein_g": "19.73",
+      "carbs_g": "0",
+      "fat_g": "0.65",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p049",
+      "name": {
+        "en": "Parava"
+      },
+      "kcal_per_100g": "111.62",
+      "protein_g": "21.5",
+      "carbs_g": "0",
+      "fat_g": "2.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p050",
+      "name": {
+        "en": "Parcus"
+      },
+      "kcal_per_100g": "86.28",
+      "protein_g": "19.87",
+      "carbs_g": "0",
+      "fat_g": "0.62",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p051",
+      "name": {
+        "en": "Parrot fish"
+      },
+      "kcal_per_100g": "89.63",
+      "protein_g": "20.82",
+      "carbs_g": "0",
+      "fat_g": "0.57",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p052",
+      "name": {
+        "en": "Perinkilichai"
+      },
+      "kcal_per_100g": "92.50",
+      "protein_g": "20.89",
+      "carbs_g": "0",
+      "fat_g": "0.87",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p053",
+      "name": {
+        "en": "Phopat"
+      },
+      "kcal_per_100g": "101.34",
+      "protein_g": "22.05",
+      "carbs_g": "0",
+      "fat_g": "1.33",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p054",
+      "name": {
+        "en": "Piranha"
+      },
+      "kcal_per_100g": "131.21",
+      "protein_g": "20.46",
+      "carbs_g": "0",
+      "fat_g": "5.43",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p055",
+      "name": {
+        "en": "Pomfret, black"
+      },
+      "kcal_per_100g": "123.09",
+      "protein_g": "18.91",
+      "carbs_g": "0",
+      "fat_g": "4.83",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p056",
+      "name": {
+        "en": "Pomfret, snub nose"
+      },
+      "kcal_per_100g": "89.63",
+      "protein_g": "21.05",
+      "carbs_g": "0",
+      "fat_g": "0.46",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p057",
+      "name": {
+        "en": "Pomfret, white"
+      },
+      "kcal_per_100g": "122.61",
+      "protein_g": "19.02",
+      "carbs_g": "0",
+      "fat_g": "5.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p058",
+      "name": {
+        "en": "Pranel"
+      },
+      "kcal_per_100g": "96.80",
+      "protein_g": "19.69",
+      "carbs_g": "0",
+      "fat_g": "1.89",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p059",
+      "name": {
+        "en": "Pulli paarai"
+      },
+      "kcal_per_100g": "95.36",
+      "protein_g": "20.06",
+      "carbs_g": "0",
+      "fat_g": "1.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p060",
+      "name": {
+        "en": "Queen fish"
+      },
+      "kcal_per_100g": "95.60",
+      "protein_g": "20.97",
+      "carbs_g": "0",
+      "fat_g": "1.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p061",
+      "name": {
+        "en": "Raai fish"
+      },
+      "kcal_per_100g": "102.77",
+      "protein_g": "21.61",
+      "carbs_g": "0",
+      "fat_g": "1.69",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p062",
+      "name": {
+        "en": "Raai vanthu"
+      },
+      "kcal_per_100g": "97.99",
+      "protein_g": "19.39",
+      "carbs_g": "0",
+      "fat_g": "2.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p063",
+      "name": {
+        "en": "Rani"
+      },
+      "kcal_per_100g": "90.11",
+      "protein_g": "18.83",
+      "carbs_g": "0",
+      "fat_g": "1.49",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p064",
+      "name": {
+        "en": "Ray fish, bow head, spotted"
+      },
+      "kcal_per_100g": "83.41",
+      "protein_g": "19.03",
+      "carbs_g": "0",
+      "fat_g": "0.7",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p065",
+      "name": {
+        "en": "Red snapper"
+      },
+      "kcal_per_100g": "104.45",
+      "protein_g": "22.79",
+      "carbs_g": "0",
+      "fat_g": "1.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p066",
+      "name": {
+        "en": "Red snapper, small"
+      },
+      "kcal_per_100g": "107.79",
+      "protein_g": "21.5",
+      "carbs_g": "0",
+      "fat_g": "2.3",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p067",
+      "name": {
+        "en": "Sadaya"
+      },
+      "kcal_per_100g": "110.42",
+      "protein_g": "20.68",
+      "carbs_g": "0",
+      "fat_g": "2.97",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p068",
+      "name": {
+        "en": "Salmon"
+      },
+      "kcal_per_100g": "172.32",
+      "protein_g": "20.97",
+      "carbs_g": "0",
+      "fat_g": "9.86",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p069",
+      "name": {
+        "en": "Sangada"
+      },
+      "kcal_per_100g": "105.88",
+      "protein_g": "20.26",
+      "carbs_g": "0",
+      "fat_g": "2.67",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p070",
+      "name": {
+        "en": "Sankata paarai"
+      },
+      "kcal_per_100g": "103.73",
+      "protein_g": "21.87",
+      "carbs_g": "0",
+      "fat_g": "1.68",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p071",
+      "name": {
+        "en": "Sardine"
+      },
+      "kcal_per_100g": "152.25",
+      "protein_g": "17.91",
+      "carbs_g": "0",
+      "fat_g": "8.99",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p072",
+      "name": {
+        "en": "Shark"
+      },
+      "kcal_per_100g": "95.12",
+      "protein_g": "21.6",
+      "carbs_g": "0",
+      "fat_g": "0.83",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p073",
+      "name": {
+        "en": "Shark, hammer head"
+      },
+      "kcal_per_100g": "103.25",
+      "protein_g": "23.4",
+      "carbs_g": "0",
+      "fat_g": "0.8",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p074",
+      "name": {
+        "en": "Shark, spotted"
+      },
+      "kcal_per_100g": "91.78",
+      "protein_g": "20.95",
+      "carbs_g": "0",
+      "fat_g": "0.75",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p075",
+      "name": {
+        "en": "Shelavu"
+      },
+      "kcal_per_100g": "106.60",
+      "protein_g": "22.46",
+      "carbs_g": "0",
+      "fat_g": "1.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p076",
+      "name": {
+        "en": "Silan"
+      },
+      "kcal_per_100g": "151.29",
+      "protein_g": "22.72",
+      "carbs_g": "0",
+      "fat_g": "6.68",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p077",
+      "name": {
+        "en": "Silk fish"
+      },
+      "kcal_per_100g": "97.51",
+      "protein_g": "20.65",
+      "carbs_g": "0",
+      "fat_g": "1.53",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p078",
+      "name": {
+        "en": "Silver carp"
+      },
+      "kcal_per_100g": "132.65",
+      "protein_g": "21.71",
+      "carbs_g": "0",
+      "fat_g": "5.17",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p079",
+      "name": {
+        "en": "Sole fish"
+      },
+      "kcal_per_100g": "87.72",
+      "protein_g": "19.05",
+      "carbs_g": "0",
+      "fat_g": "1.18",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p080",
+      "name": {
+        "en": "Stingray"
+      },
+      "kcal_per_100g": "97.51",
+      "protein_g": "23.98",
+      "carbs_g": "0",
+      "fat_g": "0.68",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p081",
+      "name": {
+        "en": "Tarlava"
+      },
+      "kcal_per_100g": "98.95",
+      "protein_g": "21.72",
+      "carbs_g": "0",
+      "fat_g": "1.2",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p082",
+      "name": {
+        "en": "Tholam"
+      },
+      "kcal_per_100g": "103.25",
+      "protein_g": "20.78",
+      "carbs_g": "0",
+      "fat_g": "2.13",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p083",
+      "name": {
+        "en": "Tilapia"
+      },
+      "kcal_per_100g": "83.41",
+      "protein_g": "18.48",
+      "carbs_g": "0",
+      "fat_g": "1.08",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p084",
+      "name": {
+        "en": "Tuna"
+      },
+      "kcal_per_100g": "112.33",
+      "protein_g": "24.5",
+      "carbs_g": "0",
+      "fat_g": "1.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p085",
+      "name": {
+        "en": "Tuna, striped"
+      },
+      "kcal_per_100g": "96.32",
+      "protein_g": "21.28",
+      "carbs_g": "0",
+      "fat_g": "1.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p086",
+      "name": {
+        "en": "Valava"
+      },
+      "kcal_per_100g": "97.99",
+      "protein_g": "21.8",
+      "carbs_g": "0",
+      "fat_g": "1.06",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p087",
+      "name": {
+        "en": "Vanjaram"
+      },
+      "kcal_per_100g": "136.23",
+      "protein_g": "22.28",
+      "carbs_g": "0",
+      "fat_g": "5.18",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p088",
+      "name": {
+        "en": "Vela meen"
+      },
+      "kcal_per_100g": "128.35",
+      "protein_g": "22.16",
+      "carbs_g": "0",
+      "fat_g": "4.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p089",
+      "name": {
+        "en": "Vora"
+      },
+      "kcal_per_100g": "100.86",
+      "protein_g": "20.14",
+      "carbs_g": "0",
+      "fat_g": "2.14",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p090",
+      "name": {
+        "en": "Whale shark"
+      },
+      "kcal_per_100g": "95.84",
+      "protein_g": "21.83",
+      "carbs_g": "0",
+      "fat_g": "0.82",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p091",
+      "name": {
+        "en": "Xiphinis"
+      },
+      "kcal_per_100g": "88.43",
+      "protein_g": "19.82",
+      "carbs_g": "0",
+      "fat_g": "0.88",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-p092",
+      "name": {
+        "en": "Eggs, Cat fish"
+      },
+      "kcal_per_100g": "143.40",
+      "protein_g": "24.68",
+      "carbs_g": "0",
+      "fat_g": "5.28",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q001",
+      "name": {
+        "en": "Crab"
+      },
+      "kcal_per_100g": "81.98",
+      "protein_g": "10.23",
+      "carbs_g": "0",
+      "fat_g": "1.41",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q002",
+      "name": {
+        "en": "Crab, sea"
+      },
+      "kcal_per_100g": "67.64",
+      "protein_g": "15.36",
+      "carbs_g": "0",
+      "fat_g": "0.6",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q003",
+      "name": {
+        "en": "Lobster, brown"
+      },
+      "kcal_per_100g": "69.79",
+      "protein_g": "15.96",
+      "carbs_g": "0",
+      "fat_g": "0.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q004",
+      "name": {
+        "en": "Lobster, king size"
+      },
+      "kcal_per_100g": "89.63",
+      "protein_g": "18.54",
+      "carbs_g": "0",
+      "fat_g": "0.78",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q005",
+      "name": {
+        "en": "Mud crab"
+      },
+      "kcal_per_100g": "45.41",
+      "protein_g": "10",
+      "carbs_g": "0",
+      "fat_g": "0.55",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q006",
+      "name": {
+        "en": "Oyster"
+      },
+      "kcal_per_100g": "60.23",
+      "protein_g": "9.51",
+      "carbs_g": "0",
+      "fat_g": "2.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q007",
+      "name": {
+        "en": "Tiger prawns, brown"
+      },
+      "kcal_per_100g": "65.25",
+      "protein_g": "14.85",
+      "carbs_g": "0",
+      "fat_g": "0.56",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-q008",
+      "name": {
+        "en": "Tiger Prawns, orange"
+      },
+      "kcal_per_100g": "64.53",
+      "protein_g": "14.25",
+      "carbs_g": "0",
+      "fat_g": "0.74",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r001",
+      "name": {
+        "en": "Clam, green shell"
+      },
+      "kcal_per_100g": "58.08",
+      "protein_g": "12.14",
+      "carbs_g": "0",
+      "fat_g": "0.98",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r002",
+      "name": {
+        "en": "Clam, white shell, ribbed"
+      },
+      "kcal_per_100g": "59.75",
+      "protein_g": "11.82",
+      "carbs_g": "0",
+      "fat_g": "1.34",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r003",
+      "name": {
+        "en": "Octopus"
+      },
+      "kcal_per_100g": "79.83",
+      "protein_g": "14.71",
+      "carbs_g": "0",
+      "fat_g": "1.12",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r004",
+      "name": {
+        "en": "Squid, black"
+      },
+      "kcal_per_100g": "80.07",
+      "protein_g": "16.1",
+      "carbs_g": "0",
+      "fat_g": "1.07",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r005",
+      "name": {
+        "en": "Squid, hard shell"
+      },
+      "kcal_per_100g": "76.48",
+      "protein_g": "16.82",
+      "carbs_g": "0",
+      "fat_g": "0.93",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r006",
+      "name": {
+        "en": "Squid, red"
+      },
+      "kcal_per_100g": "78.63",
+      "protein_g": "16.25",
+      "carbs_g": "0",
+      "fat_g": "1.44",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-r007",
+      "name": {
+        "en": "Squid, white, small"
+      },
+      "kcal_per_100g": "84.37",
+      "protein_g": "17.41",
+      "carbs_g": "0",
+      "fat_g": "1.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s001",
+      "name": {
+        "en": "Cat fish"
+      },
+      "kcal_per_100g": "123.80",
+      "protein_g": "15.86",
+      "carbs_g": "0",
+      "fat_g": "6.24",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s002",
+      "name": {
+        "en": "Catla"
+      },
+      "kcal_per_100g": "94.17",
+      "protein_g": "17.94",
+      "carbs_g": "0",
+      "fat_g": "2.15",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s003",
+      "name": {
+        "en": "Freshwater Eel"
+      },
+      "kcal_per_100g": "107.79",
+      "protein_g": "20.41",
+      "carbs_g": "0",
+      "fat_g": "2.63",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s004",
+      "name": {
+        "en": "Gold fish"
+      },
+      "kcal_per_100g": "94.65",
+      "protein_g": "16.91",
+      "carbs_g": "0",
+      "fat_g": "2.94",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s005",
+      "name": {
+        "en": "Pangas"
+      },
+      "kcal_per_100g": "203.63",
+      "protein_g": "17.12",
+      "carbs_g": "0",
+      "fat_g": "16.77",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s006",
+      "name": {
+        "en": "Rohu"
+      },
+      "kcal_per_100g": "102.29",
+      "protein_g": "19.71",
+      "carbs_g": "0",
+      "fat_g": "2.39",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s007",
+      "name": {
+        "en": "Crab"
+      },
+      "kcal_per_100g": "78.15",
+      "protein_g": "13.23",
+      "carbs_g": "0",
+      "fat_g": "0.89",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s008",
+      "name": {
+        "en": "Prawns, big"
+      },
+      "kcal_per_100g": "90.82",
+      "protein_g": "19.24",
+      "carbs_g": "0",
+      "fat_g": "0.52",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s009",
+      "name": {
+        "en": "Prawns, small"
+      },
+      "kcal_per_100g": "70.98",
+      "protein_g": "13.07",
+      "carbs_g": "0",
+      "fat_g": "0.78",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-s010",
+      "name": {
+        "en": "Tiger prawns"
+      },
+      "kcal_per_100g": "67.88",
+      "protein_g": "14.24",
+      "carbs_g": "0",
+      "fat_g": "0.66",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t001",
+      "name": {
+        "en": "Coconut oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t002",
+      "name": {
+        "en": "Corn oil"
+      },
+      "kcal_per_100g": "900.09",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100.01",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t003",
+      "name": {
+        "en": "Cotton seed oil"
+      },
+      "kcal_per_100g": "899.91",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "99.99",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t004",
+      "name": {
+        "en": "Gingelly oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t005",
+      "name": {
+        "en": "Groundnut oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t006",
+      "name": {
+        "en": "Mustard oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t007",
+      "name": {
+        "en": "Palm oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t008",
+      "name": {
+        "en": "Rice bran oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t009",
+      "name": {
+        "en": "Safflower oil"
+      },
+      "kcal_per_100g": "900.09",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100.01",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t010",
+      "name": {
+        "en": "Safflower oil (blended)"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t011",
+      "name": {
+        "en": "Soyabean oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t012",
+      "name": {
+        "en": "Sunflower oil"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t013",
+      "name": {
+        "en": "Ghee"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    },
+    {
+      "slug": "ifct-t014",
+      "name": {
+        "en": "Vanaspati"
+      },
+      "kcal_per_100g": "900.00",
+      "protein_g": "0",
+      "carbs_g": "0",
+      "fat_g": "100",
+      "default_portion_g": "100.00",
+      "portion_label": "100 g",
+      "source": "ifct_2017",
+      "barcode": null,
+      "is_active": true
+    }
+  ]
+}

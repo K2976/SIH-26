@@ -8,9 +8,90 @@
     <string name="nav_profile">Profile</string>
 
     <string name="dashboard_placeholder">Dashboard</string>
-    <string name="log_placeholder">Log</string>
     <string name="coach_placeholder">Coach</string>
     <string name="profile_placeholder">Profile</string>
+
+    <!-- Logbook — home -->
+    <string name="log_start_workout">Start workout</string>
+    <string name="log_history_title">History</string>
+    <string name="log_history_empty">No workouts logged yet.</string>
+    <string name="log_session_row">%1$s — %2$d min</string>
+
+    <!-- Logbook — active session -->
+    <string name="log_finish_session">Finish workout</string>
+    <string name="log_add_exercise">Add exercise</string>
+    <string name="log_elapsed_label">Elapsed: %1$s min</string>
+    <string name="log_volume_label">Volume: %1$.1f kg</string>
+    <string name="log_volume_label_lb">Volume: %1$.1f lb</string>
+    <string name="log_burn_label">Est. burn: %1$.0f kcal</string>
+    <string name="log_burn_unavailable">Est. burn unavailable — no bodyweight on file</string>
+    <string name="log_set_row">Set %1$d: %2$d × %3$.1f kg</string>
+    <string name="log_set_row_lb">Set %1$d: %2$d × %3$.1f lb</string>
+    <string name="log_set_row_bodyweight">Set %1$d: %2$d reps</string>
+
+    <!-- Logbook — exercise picker -->
+    <string name="log_picker_title">Pick an exercise</string>
+    <string name="log_picker_search_hint">Search exercises</string>
+    <string name="log_picker_empty">No exercises found.</string>
+
+    <!-- Logbook — add set -->
+    <string name="log_reps_label">Reps</string>
+    <string name="log_weight_label">Weight (kg)</string>
+    <string name="log_weight_label_lb">Weight (lb)</string>
+    <string name="log_warmup_label">Warm-up set</string>
+    <string name="log_log_set">Log set</string>
+    <string name="log_rest_timer_label">Rest: %1$d:%2$02d</string>
+    <string name="log_skip_rest">Skip rest</string>
+    <string name="log_done_exercise">Done with this exercise</string>
+    <string name="log_use_camera">Count reps with camera</string>
+
+    <!-- Logbook — session detail -->
+    <string name="log_session_detail_title">Workout</string>
+
+    <!-- Logbook — exercise history -->
+    <string name="log_exercise_history_title">%1$s</string>
+    <string name="log_pr_label">Personal record: %1$.1f kg</string>
+    <string name="log_pr_label_lb">Personal record: %1$.1f lb</string>
+    <string name="log_pr_none">No personal record yet</string>
+    <string name="log_exercise_history_empty">No sets logged for this exercise yet.</string>
+
+    <!-- Food logging — label → portion → nutrition -->
+    <string name="food_log_meal">Log food</string>
+    <string name="food_log_title">Log food</string>
+    <string name="food_photo">Take a food photo</string>
+    <string name="food_search">Search foods</string>
+    <string name="food_barcode">Enter barcode</string>
+    <string name="food_cancel">Cancel</string>
+    <string name="food_step_label">Label</string>
+    <string name="food_step_portion">Portion</string>
+    <string name="food_step_nutrition">Nutrition</string>
+    <string name="food_step_title">%1$d. %2$s</string>
+    <string name="food_choose_label">What food is this?</string>
+    <string name="food_search_instead">Search instead</string>
+    <string name="food_gemini_not_configured">Photo labels need GEMINI_API_KEY in backend/.env.</string>
+    <string name="food_recognition_unavailable">Food recognition is unavailable.</string>
+    <string name="food_none_of_these">None of these — search foods</string>
+    <string name="food_label_fallback">We couldn’t identify the food confidently. Search the local food table.</string>
+    <string name="food_search_hint">Food name</string>
+    <string name="food_barcode_intro">Enter the digits printed under the barcode.</string>
+    <string name="food_barcode_hint">Barcode</string>
+    <string name="food_find_barcode">Find food</string>
+    <string name="food_barcode_not_found">No food found for that barcode.</string>
+    <string name="food_portion_default">Suggested portion: %1$s</string>
+    <string name="food_portion_grams">Portion (g)</string>
+    <string name="food_confirm_portion">Confirm portion</string>
+    <string name="food_invalid_portion">Enter a portion greater than zero.</string>
+    <string name="food_nutrition_portion">For %1$.0f g</string>
+    <string name="food_calories">%1$.0f kcal</string>
+    <string name="food_protein">Protein %1$.1f g</string>
+    <string name="food_carbs">Carbs %1$.1f g</string>
+    <string name="food_fat">Fat %1$.1f g</string>
+    <string name="food_nutrition_source">Source: %1$s</string>
+    <string name="food_log_confirm">Log meal</string>
+    <string name="food_logged">Meal logged.</string>
+    <string name="food_done">Done</string>
+
+    <string name="backend_waking_up">Waking up the server — this can take up to a minute…</string>
 
     <string name="update_required_title">Update required</string>
     <string name="update_required_body">A new version of FitForge is required to continue. Please update the app from the Play Store.</string>
@@ -22,6 +103,7 @@
     <string name="login_button">Log in</string>
     <string name="login_error">Couldn\'t log in. Check your email and password and try again.</string>
     <string name="login_go_to_signup">Don\'t have an account? Sign up</string>
+    <string name="login_try_demo">Try demo</string>
 
     <string name="signup_title">Create account</string>
     <string name="signup_button">Sign up</string>
@@ -101,6 +183,62 @@
     <string name="onboarding_completion_body">Your targets are live immediately. They\'ll become more accurate as you log meals, workouts, and weight.</string>
     <string name="onboarding_get_started">Get started</string>
 
+    <!-- Dashboard -->
+    <string name="dashboard_section_today">Today</string>
+    <string name="dashboard_section_plan_delta">Adaptive Plan</string>
+    <string name="dashboard_section_week">This Week</string>
+    <string name="dashboard_section_trends">Trends</string>
+
+    <string name="dashboard_target">Target</string>
+    <string name="dashboard_consumed">Consumed</string>
+    <string name="dashboard_burned">Burned</string>
+    <string name="dashboard_remaining">Remaining</string>
+    <string name="dashboard_over">Over</string>
+    <string name="dashboard_kcal_value">%1$.0f kcal</string>
+    <string name="dashboard_kcal_unit">kcal</string>
+
+    <string name="dashboard_source_equation">Estimate (formula)</string>
+    <string name="dashboard_source_blended">Blended (measured)</string>
+    <string name="dashboard_confidence_low">Low confidence</string>
+    <string name="dashboard_confidence_high">High confidence</string>
+    <string name="dashboard_partial_badge">Partial</string>
+
+    <string name="dashboard_session_title">Today\'s Workout</string>
+    <string name="dashboard_session_status_pending">Pending</string>
+    <string name="dashboard_session_status_completed">Completed</string>
+    <string name="dashboard_session_status_skipped">Skipped</string>
+
+    <string name="dashboard_plan_delta_active_title">Engine Adjustments</string>
+    <string name="dashboard_plan_delta_clamped_label">Safety limits applied:</string>
+
+    <string name="dashboard_week_adherence">Adherence</string>
+    <string name="dashboard_week_adherence_format">%1$d%%</string>
+    <string name="dashboard_week_volume">Training Volume</string>
+    <string name="dashboard_week_volume_format">%1$.0f / %2$.0f kg</string>
+    <string name="dashboard_week_volume_completed_only">%1$.0f kg completed</string>
+    <string name="dashboard_week_balance">Energy Balance</string>
+    <string name="dashboard_week_balance_surplus">+%1$.0f kcal</string>
+    <string name="dashboard_week_balance_deficit">−%1$.0f kcal</string>
+    <string name="dashboard_week_balance_neutral">Even</string>
+
+    <string name="dashboard_trend_weight">Weight Trend</string>
+    <string name="dashboard_trend_weight_rate">%1$+.2f kg/wk</string>
+    <string name="dashboard_trend_confidence">%1$.0f%% confidence</string>
+    <string name="dashboard_trend_muscle_volume">Volume by Muscle Group</string>
+    <string name="dashboard_trend_latest_weight">Latest: %1$.1f kg</string>
+
+    <string name="dashboard_synced_just_now">Synced just now</string>
+    <string name="dashboard_synced_ago">%1$d min ago</string>
+    <string name="dashboard_synced_hours_ago">%1$d hr ago</string>
+    <string name="dashboard_offline_cached">Offline — showing cached data</string>
+
+    <string name="dashboard_empty_today_title">No energy targets yet</string>
+    <string name="dashboard_empty_today_desc">Set a goal in your profile and log meals to see your daily calorie and burn targets.</string>
+    <string name="dashboard_empty_plan_delta">No active adjustments. Targets are running on your baseline plan.</string>
+    <string name="dashboard_empty_week">No weekly data recorded yet. Completed workouts and logged meals will show progress here.</string>
+    <string name="dashboard_empty_trends">No trend data available. Consistently log weight and workouts over multiple days to generate trends.</string>
+    <string name="dashboard_empty_session">No session scheduled for today.</string>
+
     <!-- Communities -->
     <string name="nav_communities">Communities</string>
     <string name="communities_title">Communities</string>
@@ -160,4 +298,61 @@
     <string name="progress_label">Your Progress</string>
     <string name="progress_derived_explainer">Progress is automatically tracked from your verified activity.</string>
     <string name="empty_challenges">No challenges in this category yet.\nCommunity leaders can create one!</string>
+
+    <!-- Cycle module -->
+    <string name="cycle_quick_log_prompt">How are you feeling today?</string>
+    <string name="cycle_quick_log_logged">Logged for today</string>
+    <string name="cycle_quick_log_add_symptoms">Add symptoms</string>
+    <string name="cycle_quick_log_symptoms_done">Done</string>
+    <string name="cycle_quick_log_skip">Not now</string>
+    <string name="cycle_energy_1">Very low</string>
+    <string name="cycle_energy_2">Low</string>
+    <string name="cycle_energy_3">Okay</string>
+    <string name="cycle_energy_4">Good</string>
+    <string name="cycle_energy_5">Great</string>
+    <string name="cycle_symptom_cramps">Cramps</string>
+    <string name="cycle_symptom_fatigue">Fatigue</string>
+    <string name="cycle_symptom_headache">Headache</string>
+    <string name="cycle_symptom_bloating">Bloating</string>
+    <string name="cycle_symptom_mood_swings">Mood swings</string>
+    <string name="cycle_symptom_tender_breasts">Tender breasts</string>
+    <string name="cycle_symptom_acne">Acne</string>
+    <string name="cycle_symptom_back_pain">Back pain</string>
+    <string name="nav_cycle">Cycle</string>
+    <string name="cycle_title">Cycle</string>
+    <string name="cycle_section_calendar">Calendar</string>
+    <string name="cycle_section_forecast">Forecast</string>
+    <string name="cycle_section_pattern">Your pattern</string>
+    <string name="cycle_forecast_days_until">%1$d days until predicted period</string>
+    <string name="cycle_forecast_unavailable">Not enough history yet to forecast — keep logging period starts.</string>
+    <string name="cycle_phase_label">Phase: %1$s</string>
+    <string name="cycle_phase_unavailable">Phase unavailable for your tracking mode or history so far.</string>
+    <string name="cycle_pattern_sample_size">Based on %1$d cycle(s) · %2$d%% confidence</string>
+    <string name="cycle_pattern_empty">Log a few cycles and your own patterns will show up here — never from a textbook, always from your data.</string>
+    <string name="cycle_log_period_start">Log period start</string>
+    <string name="cycle_log_period_end">Log period end</string>
+    <string name="cycle_log_spotting">Log spotting</string>
+    <string name="cycle_discreet_mode_title">Discreet mode</string>
+    <string name="cycle_discreet_mode_desc">Hide the cycle module from the home screen. Some users share a phone.</string>
+    <string name="cycle_tracking_mode_label">Tracking mode</string>
+    <string name="cycle_export_data">Export cycle data</string>
+    <string name="cycle_delete_data">Delete all cycle data</string>
+    <string name="cycle_delete_data_confirm">This permanently deletes every period, symptom, and pattern entry. This cannot be undone.</string>
+    <string name="cycle_energy_availability_suggestion">Your logged patterns suggest it may be worth speaking to a doctor.</string>
+    <string name="cycle_tracking_mode_natural">Natural</string>
+    <string name="cycle_tracking_mode_hormonal_contraception">Hormonal contraception</string>
+    <string name="cycle_tracking_mode_pregnant">Pregnant</string>
+    <string name="cycle_tracking_mode_postpartum">Postpartum</string>
+    <string name="cycle_tracking_mode_perimenopause">Perimenopause</string>
+    <string name="cycle_tracking_mode_not_cycling">Not cycling</string>
+    <string name="cycle_tracking_mode_unknown">Prefer not to say</string>
+    <string name="cycle_calendar_no_periods_logged">No period starts logged yet.</string>
+    <string name="cycle_calendar_period_start_on">Period started %1$s</string>
+    <string name="cycle_export_success">Cycle data exported.</string>
+    <string name="cycle_export_failure">Couldn\'t export cycle data: %1$s</string>
+    <string name="cycle_delete_success">All cycle data deleted.</string>
+    <string name="cycle_delete_failure">Couldn\'t delete cycle data: %1$s</string>
+    <string name="cycle_delete_cancel">Cancel</string>
+    <string name="cycle_delete_confirm_button">Delete everything</string>
+    <string name="music_open_youtube">Open in YouTube</string>
 </resources>

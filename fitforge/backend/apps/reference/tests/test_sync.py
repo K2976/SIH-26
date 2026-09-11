@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 from rest_framework.test import APIClient
 
-from apps.reference.models import Exercise
+from apps.reference.models import Exercise, FoodItem, Recipe, RecipeIngredient
 
 pytestmark = pytest.mark.django_db
 
@@ -32,6 +32,9 @@ class TestManifest:
         assert resp.status_code == 200
         assert resp.data["reference_version"] == 2
         assert resp.data["table_counts"]["exercises"] == 2
+        assert resp.data["table_counts"]["foods"] == 0
+        assert resp.data["table_counts"]["recipes"] == 0
+        assert resp.data["table_counts"]["recipe_ingredients"] == 0
 
     def test_does_not_require_auth(self, client):
         resp = client.get("/api/v1/reference/manifest/")
@@ -102,3 +105,96 @@ class TestExerciseDelta:
     def test_does_not_require_auth(self, client):
         resp = client.get("/api/v1/reference/exercises/")
         assert resp.status_code == 200
+
+
+class TestFoodDelta:
+    def test_foods_are_available_for_offline_sync(self, client):
+        food = FoodItem.objects.create(
+            slug="banana",
+            name={"en": "Banana"},
+            kcal_per_100g=Decimal("89"),
+            protein_g=Decimal("1.09"),
+            carbs_g=Decimal("22.84"),
+            fat_g=Decimal("0.33"),
+            default_portion_g=Decimal("118"),
+            portion_label="1 medium banana ~118g",
+            source="IFCT 2017",
+            barcode="8900000000001",
+        )
+        resp = client.get("/api/v1/reference/foods/")
+        assert resp.status_code == 200
+        assert resp.data[0]["slug"] == food.slug
+        assert resp.data[0]["default_portion_g"] == "118.00"
+        assert resp.data[0]["barcode"] == "8900000000001"
+        assert resp.data[0]["item_type"] == "ingredient"
+        assert "id" not in resp.data[0]
+
+
+class TestRecipeDelta:
+    def test_recipe_response_computes_macros_and_uses_serving_as_default(self, client):
+        ingredient = FoodItem.objects.create(
+            slug="ifct-a015",
+            name={"en": "Rice, raw, milled"},
+            kcal_per_100g=Decimal("350.00"),
+            protein_g=Decimal("8.00"),
+            carbs_g=Decimal("75.00"),
+            fat_g=Decimal("1.00"),
+            default_portion_g=Decimal("100.00"),
+            portion_label="100 g",
+            source="ifct_2017",
+        )
+        recipe = Recipe.objects.create(
+            slug="plain-rice",
+            name={"en": "Plain rice"},
+            serving_description="1 bowl, ~270g",
+            serving_grams_total=Decimal("270.00"),
+        )
+        RecipeIngredient.objects.create(
+            recipe=recipe,
+            ingredient=ingredient,
+            grams_in_serving=Decimal("90.00"),
+        )
+
+        response = client.get("/api/v1/reference/recipes/")
+
+        assert response.status_code == 200
+        row = response.data[0]
+        assert row["item_type"] == "recipe"
+        assert row["default_portion_g"] == "270.00"
+        assert row["portion_label"] == "1 bowl, ~270g"
+        assert row["kcal_per_100g"] == "116.67"
+        assert row["ingredients"] == [{"ingredient_slug": "ifct-a015", "grams_in_serving": "90.00"}]
+
+    def test_ingredient_change_republishes_recipe_with_new_computation(self, client):
+        ingredient = FoodItem.objects.create(
+            slug="ifct-b010",
+            name={"en": "Green gram, dal"},
+            kcal_per_100g=Decimal("300.00"),
+            protein_g=Decimal("20.00"),
+            carbs_g=Decimal("50.00"),
+            fat_g=Decimal("1.00"),
+            default_portion_g=Decimal("100.00"),
+            portion_label="100 g",
+            source="ifct_2017",
+        )
+        recipe = Recipe.objects.create(
+            slug="moong-dal",
+            name={"en": "Moong dal"},
+            serving_description="1 katori, ~200g",
+            serving_grams_total=Decimal("200.00"),
+        )
+        RecipeIngredient.objects.create(
+            recipe=recipe,
+            ingredient=ingredient,
+            grams_in_serving=Decimal("50.00"),
+        )
+        recipe.refresh_from_db()
+        watermark = recipe.updated_at_version
+
+        ingredient.kcal_per_100g = Decimal("400.00")
+        ingredient.save()
+        response = client.get(f"/api/v1/reference/recipes/?since={watermark}")
+
+        assert len(response.data) == 1
+        assert response.data[0]["slug"] == "moong-dal"
+        assert response.data[0]["kcal_per_100g"] == "100.00"

@@ -1,3 +1,5 @@
+@file:Suppress("CyclomaticComplexMethod", "LongMethod", "LongParameterList", "UnusedParameter")
+
 package com.fitforge.app.feature.community
 
 import androidx.compose.foundation.background
@@ -257,7 +259,8 @@ fun CommunityDetailScreen(
             text = {
                 Text(
                     if (isOwner && currentDetail.membersCount > 1) {
-                        "As the owner, you cannot leave while other members remain. Please transfer ownership or delete the community."
+                        "As the owner, you cannot leave while other members remain. " +
+                            "Please transfer ownership or delete the community."
                     } else if (isOwner) {
                         "Leaving as the sole member will permanently delete this community. Are you sure?"
                     } else {
@@ -403,7 +406,13 @@ private fun CommunityOverviewContent(
                                             modifier = Modifier.size(12.dp),
                                         )
                                         Text(
-                                            text = if (community.visibility == VisibilityEnum.`public`) "Public" else "Private",
+                                            text = if (
+                                                community.visibility == VisibilityEnum.`public`
+                                            ) {
+                                                "Public"
+                                            } else {
+                                                "Private"
+                                            },
                                             style = MaterialTheme.typography.labelSmall,
                                         )
                                     }

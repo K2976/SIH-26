@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "LongParameterList")
+
 package com.fitforge.app.feature.community
 
 import androidx.compose.foundation.clickable
