@@ -157,9 +157,13 @@ def derive_phase(
 
 
 def forecast_next_period(
-    period_starts: Sequence[date], as_of: date, tracking_mode: str
+    period_starts: Sequence[date],
+    as_of: date,
+    tracking_mode: str,
+    typical_length_days: int | None = None,
+    typical_length_confidence: float | None = None,
 ) -> ForecastResult:
-    """Predict the next period start from her own cycle-length history.
+    """Predict the next period start from observed or directly reported history.
 
     Gated to tracking_mode == "natural" for the same reason as phase: a
     forecast built on hormonal-contraception or perimenopause history would
@@ -169,7 +173,14 @@ def forecast_next_period(
         return ForecastResult(None, None, None)
 
     typical = infer_typical_length(period_starts)
-    if typical.typical_length_days is None:
+    observed_length = typical.typical_length_days
+    # CycleProfile is a direct onboarding/settings input, not a fabricated
+    # population default.  It lets a new tracker get an honestly lower-
+    # confidence forecast before the three period starts required to infer a
+    # personal median.  As soon as enough starts exist, observed history
+    # takes precedence.
+    length = observed_length if observed_length is not None else typical_length_days
+    if length is None:
         return ForecastResult(None, None, None)
 
     starts_before = [d for d in period_starts if d <= as_of]
@@ -177,8 +188,9 @@ def forecast_next_period(
         return ForecastResult(None, None, None)
 
     last_start = max(starts_before)
-    predicted = last_start + timedelta(days=round(typical.typical_length_days))
-    return ForecastResult(predicted, (predicted - as_of).days, typical.confidence)
+    predicted = last_start + timedelta(days=round(length))
+    confidence = typical.confidence if observed_length is not None else typical_length_confidence
+    return ForecastResult(predicted, (predicted - as_of).days, confidence)
 
 
 def energy_availability_flag(

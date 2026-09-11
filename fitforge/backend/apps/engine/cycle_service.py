@@ -71,7 +71,14 @@ def self_reported_cycle_inputs(user, as_of: datetime.date) -> tuple[int | None, 
 
 def _days_period_overdue(user, as_of: datetime.date, tracking_mode: str) -> int | None:
     starts = _all_period_starts(user)
-    forecast = cycle.forecast_next_period(starts, as_of, tracking_mode)
+    profile = _cycle_profile(user)
+    forecast = cycle.forecast_next_period(
+        starts,
+        as_of,
+        tracking_mode,
+        typical_length_days=profile.typical_length_days if profile else None,
+        typical_length_confidence=profile.confidence if profile else None,
+    )
     if forecast.predicted_date is None:
         return None
     overdue = (as_of - forecast.predicted_date).days
@@ -146,7 +153,13 @@ def build_cycle_state(
 
     starts = _all_period_starts(user)
     phase_result = cycle.derive_phase(starts, as_of, tracking_mode, typical_period_days)
-    forecast = cycle.forecast_next_period(starts, as_of, tracking_mode)
+    forecast = cycle.forecast_next_period(
+        starts,
+        as_of,
+        tracking_mode,
+        typical_length_days=cycle_profile.typical_length_days if cycle_profile else None,
+        typical_length_confidence=cycle_profile.confidence if cycle_profile else None,
+    )
 
     return {
         "enabled": True,
