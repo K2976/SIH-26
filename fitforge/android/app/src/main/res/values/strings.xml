@@ -9,6 +9,7 @@
 
     <string name="dashboard_placeholder">Dashboard</string>
     <string name="coach_placeholder">Coach</string>
+    <string name="coach_placeholder_subtitle">Your AI coach is coming soon — plan-aware chat and check-ins will live here.</string>
     <string name="profile_placeholder">Profile</string>
 
     <!-- Logbook — home -->
@@ -59,8 +60,11 @@
     <string name="food_log_meal">Log food</string>
     <string name="food_log_title">Log food</string>
     <string name="food_photo">Take a food photo</string>
+    <string name="food_photo_subtitle">Instant AI recognition from a photo</string>
     <string name="food_search">Search foods</string>
+    <string name="food_search_subtitle">Look up an item in the food table</string>
     <string name="food_barcode">Enter barcode</string>
+    <string name="food_barcode_subtitle">Find a packaged food by its barcode</string>
     <string name="food_cancel">Cancel</string>
     <string name="food_step_label">Label</string>
     <string name="food_step_portion">Portion</string>

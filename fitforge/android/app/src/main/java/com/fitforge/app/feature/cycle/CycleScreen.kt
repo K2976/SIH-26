@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fitforge.app.R
+import com.fitforge.app.core.theme.WomensWellnessTheme
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -64,6 +65,7 @@ fun CycleScreen(viewModel: CycleScreenViewModel = hiltViewModel()) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var statusMessage by remember { mutableStateOf<String?>(null) }
 
+    WomensWellnessTheme {
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.cycle_title)) }) },
     ) { innerPadding ->
@@ -157,6 +159,7 @@ fun CycleScreen(viewModel: CycleScreenViewModel = hiltViewModel()) {
                 }
             },
         )
+    }
     }
 }
 
