@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fitforge.app.feature.coach.CoachScreen
+import com.fitforge.app.feature.community.ChallengeDetailScreen
 import com.fitforge.app.feature.community.CommunityDetailScreen
 import com.fitforge.app.feature.community.CommunityHomeScreen
 import com.fitforge.app.feature.dashboard.DashboardScreen
@@ -49,6 +50,20 @@ fun FitForgeNavHost() {
                 if (communityId != null) {
                     CommunityDetailScreen(
                         communityId = communityId,
+                        onBackClick = { navController.popBackStack() },
+                        onChallengeClick = { challengeId ->
+                            navController.navigate("community/$communityId/challenge/$challengeId")
+                        },
+                    )
+                }
+            }
+            composable("community/{communityId}/challenge/{challengeId}") { backStackEntry ->
+                val communityId = backStackEntry.arguments?.getString("communityId")?.toIntOrNull()
+                val challengeId = backStackEntry.arguments?.getString("challengeId")?.toIntOrNull()
+                if (communityId != null && challengeId != null) {
+                    ChallengeDetailScreen(
+                        communityId = communityId,
+                        challengeId = challengeId,
                         onBackClick = { navController.popBackStack() },
                     )
                 }

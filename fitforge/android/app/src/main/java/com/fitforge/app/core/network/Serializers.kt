@@ -7,8 +7,11 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -48,12 +51,34 @@ private val OffsetDateTimeSerializer = object : KSerializer<OffsetDateTime> {
     }
 }
 
+private val BigDecimalSerializer = object : KSerializer<BigDecimal> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: BigDecimal) {
+        encoder.encodeString(value.toPlainString())
+    }
+
+    override fun deserialize(decoder: Decoder): BigDecimal {
+        return try {
+            if (decoder is JsonDecoder) {
+                BigDecimal(decoder.decodeJsonElement().jsonPrimitive.content)
+            } else {
+                BigDecimal(decoder.decodeString())
+            }
+        } catch (e: Exception) {
+            throw kotlinx.serialization.SerializationException("Invalid BigDecimal format: ${e.message}", e)
+        }
+    }
+}
+
 private val JavaTimeSerializersModule = SerializersModule {
     contextual(LocalDate::class, LocalDateSerializer)
     contextual(OffsetDateTime::class, OffsetDateTimeSerializer)
+    contextual(BigDecimal::class, BigDecimalSerializer)
 }
 
 fun createJsonWithJavaTime(): Json = Json {
     ignoreUnknownKeys = true
+    isLenient = true
     serializersModule = JavaTimeSerializersModule
 }

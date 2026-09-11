@@ -427,6 +427,143 @@ paths:
                 type: object
                 additionalProperties: true
           description: ''
+  /api/v1/social/communities/{community_pk}/challenges/:
+    get:
+      operationId: social_communities_challenges_list
+      tags:
+      - challenge
+      parameters:
+      - in: path
+        name: community_pk
+        required: true
+        schema:
+          type: integer
+      - in: query
+        name: status
+        required: false
+        schema:
+          type: string
+        description: Filter by status
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChallengeList'
+          description: ''
+    post:
+      operationId: social_communities_challenges_create
+      tags:
+      - challenge
+      parameters:
+      - in: path
+        name: community_pk
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeCreate'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeDetail'
+          description: ''
+  /api/v1/social/communities/{community_pk}/challenges/{id}/:
+    get:
+      operationId: social_communities_challenges_retrieve
+      tags:
+      - challenge
+      parameters:
+      - in: path
+        name: community_pk
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeDetail'
+          description: ''
+    delete:
+      operationId: social_communities_challenges_destroy
+      tags:
+      - challenge
+      parameters:
+      - in: path
+        name: community_pk
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: No response body
+  /api/v1/social/communities/{community_pk}/challenges/{id}/join/:
+    post:
+      operationId: social_communities_challenges_join_create
+      tags:
+      - challenge
+      parameters:
+      - in: path
+        name: community_pk
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChallengeParticipant'
+          description: ''
+  /api/v1/social/communities/{community_pk}/challenges/{id}/leave/:
+    post:
+      operationId: social_communities_challenges_leave_create
+      tags:
+      - challenge
+      parameters:
+      - in: path
+        name: community_pk
+        required: true
+        schema:
+          type: integer
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+          description: ''
 components:
   schemas:
     AppConfig:
@@ -847,9 +984,179 @@ components:
           type: string
         visibility:
           $ref: '#/components/schemas/VisibilityEnum'
+    ChallengeTypeEnum:
+      enum:
+      - workout_count
+      - workout_minutes
+      - steps
+      - calories_burned
+      - distance_km
+      type: string
+    StatusEnum:
+      enum:
+      - upcoming
+      - active
+      - completed
+      - cancelled
+      type: string
+    ChallengeList:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        challenge_type:
+          $ref: '#/components/schemas/ChallengeTypeEnum'
+        target_value:
+          type: number
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        participants_count:
+          type: integer
+        created_by:
+          $ref: '#/components/schemas/CommunityMemberUser'
+        is_participant:
+          type: boolean
+      required:
+      - id
+      - title
+      - challenge_type
+      - target_value
+      - start_date
+      - end_date
+      - status
+      - participants_count
+      - is_participant
+    ChallengeDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        community:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        challenge_type:
+          $ref: '#/components/schemas/ChallengeTypeEnum'
+        target_value:
+          type: number
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        created_by:
+          $ref: '#/components/schemas/CommunityMemberUser'
+        participants_count:
+          type: integer
+        is_participant:
+          type: boolean
+        user_progress:
+          $ref: '#/components/schemas/ChallengeProgress'
+          nullable: true
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChallengeParticipant'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - title
+      - description
+      - challenge_type
+      - target_value
+      - start_date
+      - end_date
+      - status
+      - created_by
+      - participants_count
+      - is_participant
+      - participants
+      - created_at
+      - updated_at
+    ChallengeCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+          default: ''
+        challenge_type:
+          $ref: '#/components/schemas/ChallengeTypeEnum'
+        target_value:
+          type: number
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+      required:
+      - title
+      - challenge_type
+      - target_value
+      - start_date
+      - end_date
+    ChallengeParticipant:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/CommunityMemberUser'
+        joined_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        progress:
+          $ref: '#/components/schemas/ChallengeProgress'
+          nullable: true
+      required:
+      - id
+      - user
+      - joined_at
+    ChallengeProgress:
+      type: object
+      properties:
+        current:
+          type: number
+        target:
+          type: number
+        percentage:
+          type: number
+        completed:
+          type: boolean
+      required:
+      - current
+      - target
+      - percentage
+      - completed
   securitySchemes:
     jwtAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
+
 
