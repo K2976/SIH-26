@@ -38,7 +38,6 @@ fun representativeAngle(sample: AngleSample): Double? = when {
 // (how far back toward rest they actually got) separately is what makes
 // lockout a real, independent measurement.
 private const val RESTING_BAND = 0.3
-private const val DEPTH_MIN = 0.5
 private const val DEPTH_FULL = 0.8
 private const val LOCKOUT_FULL = 0.15
 
@@ -65,6 +64,8 @@ private const val CONFIDENCE_LOSS_TOLERANCE_MS = 500
 
 enum class RejectionReason {
     INSUFFICIENT_DEPTH,
+    INCOMPLETE_LOCKOUT,
+    ASYMMETRIC_FORM,
     TOO_FAST,
     TOO_SLOW,
     LOST_TRACKING,
@@ -292,38 +293,52 @@ fun finalizeRepStateMachine(state: RepMachineState, config: ExercisePoseConfig):
     return closeRep(state, config, endMs)
 }
 
+/**
+ * A rep only counts when it's the real thing: full depth, a full return to
+ * lockout, and (where assessable) both sides moving together. Anything short
+ * of that is rejected rather than counted-but-flagged-partial — half reps and
+ * lopsided/swinging reps must not advance the set counter. See DECISIONS.md.
+ */
 private fun closeRep(state: RepMachineState, config: ExercisePoseConfig, endMs: Long): RepEvent {
     val startMs = state.excursionStartMs ?: endMs
     val tempoMs = endMs - startMs
+    val depthReached = state.peakProgress >= DEPTH_FULL
+    val lockoutReached = state.troughProgress <= LOCKOUT_FULL
+    val symmetryDeviationDeg =
+        if (
+            config.cameraPosition != CameraPosition.SIDE &&
+            state.peakLeftDeg != null &&
+            state.peakRightDeg != null
+        ) {
+            abs(state.peakLeftDeg - state.peakRightDeg)
+        } else {
+            null
+        }
+
     return when {
-        state.peakProgress < DEPTH_MIN ->
+        !depthReached ->
             RepEvent.Rejected(RejectedRep(startMs, endMs, RejectionReason.INSUFFICIENT_DEPTH))
+
+        !lockoutReached ->
+            RepEvent.Rejected(RejectedRep(startMs, endMs, RejectionReason.INCOMPLETE_LOCKOUT))
 
         tempoMs < (config.minRepSeconds * 1000).toLong() ->
             RepEvent.Rejected(RejectedRep(startMs, endMs, RejectionReason.TOO_FAST))
 
-        else -> {
-            val symmetryDeviationDeg =
-                if (
-                    config.cameraPosition != CameraPosition.SIDE &&
-                    state.peakLeftDeg != null &&
-                    state.peakRightDeg != null
-                ) {
-                    abs(state.peakLeftDeg - state.peakRightDeg)
-                } else {
-                    null
-                }
+        symmetryDeviationDeg != null && symmetryDeviationDeg > config.symmetryToleranceDeg ->
+            RepEvent.Rejected(RejectedRep(startMs, endMs, RejectionReason.ASYMMETRIC_FORM))
+
+        else ->
             RepEvent.Completed(
                 CompletedRep(
                     startMs = startMs,
                     endMs = endMs,
                     tempoMs = tempoMs,
-                    depthReached = state.peakProgress >= DEPTH_FULL,
-                    lockoutReached = state.troughProgress <= LOCKOUT_FULL,
+                    depthReached = depthReached,
+                    lockoutReached = lockoutReached,
                     symmetryDeviationDeg = symmetryDeviationDeg,
                 ),
             )
-        }
     }
 }
 

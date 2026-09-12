@@ -362,3 +362,44 @@ they cannot prove `MIN_VELOCITY_PER_SEC`, `CONFIDENCE_LOSS_TOLERANCE_MS`, or
 the calibration flow feel right to an actual lifter. Do not treat this
 slice as tuned until that session happens.
 
+## 2026-09-12 — Rep counter: half reps and asymmetric reps were being counted
+
+**Reported bug: the counter increments on wrong-form and half reps.** Root
+cause was `closeRep` in `RepStateMachine.kt` gating acceptance on
+`peakProgress >= DEPTH_MIN` (`0.5`, half the calibrated range) instead of
+`DEPTH_FULL` (`0.8`), and never gating on `troughProgress`/lockout or
+`symmetryDeviationDeg` at all — depth and lockout were tracked and exposed as
+`depthReached`/`lockoutReached` flags, but a rep reaching only 50–80% depth,
+or never returning to lockout, or with either side moving well outside
+`symmetryToleranceDeg`, still produced `RepEvent.Completed` (just labeled
+`romAchieved = "partial"`). `RepStateMachineTest.kt` had a test asserting this
+as intended behavior (`a rep that returns only partway counts but is flagged
+as partial lockout`).
+
+- **Fix: a rep only counts on full depth AND full lockout AND (where
+  assessable) symmetry within tolerance — otherwise it's rejected, not
+  counted-but-flagged.** `closeRep` now checks `depthReached`,
+  `lockoutReached`, and `symmetryDeviationDeg > config.symmetryToleranceDeg`
+  in sequence, each producing a distinct rejection instead of a completed
+  rep: `INSUFFICIENT_DEPTH` (now the `DEPTH_FULL` threshold, `DEPTH_MIN`
+  removed as redundant), the new `INCOMPLETE_LOCKOUT`, and the new
+  `ASYMMETRIC_FORM`. This applies to every exercise on the shared engine, not
+  just biceps curls — the engine has no per-exercise branch, and the reported
+  half-rep/wrong-form behavior wasn't curl-specific.
+- **Symmetry moves from informational-only to a gate**, reversing the
+  2026-09-10 decision above that kept it "purely informational." That
+  decision's own rationale — averaging was the phantom-rep bug, not the lack
+  of a symmetry gate — still holds; this change is additive on top of it, not
+  a reversal of the both-joint-agreement fix.
+- **`form_score` remains absent.** This still scores only depth, lockout,
+  tempo, and symmetry, each independently and explicitly, per `CLAUDE.md` —
+  no new composite score field was added.
+- Updated `RepStateMachineTest.kt`: the old "partial counts" test now asserts
+  `INCOMPLETE_LOCKOUT` rejection instead; the symmetry test now asserts
+  `ASYMMETRIC_FORM` rejection for a 15°-deviation curl (front camera, exceeds
+  the fixture's `10°` tolerance) and adds a same-shape 5°-deviation case that
+  still completes.
+- Not covered by synthetic tests: real-world tolerance tuning for
+  `symmetryToleranceDeg` per exercise — a real lifter's natural asymmetry may
+  need a per-exercise value wider than the `10°` test fixture.
+
