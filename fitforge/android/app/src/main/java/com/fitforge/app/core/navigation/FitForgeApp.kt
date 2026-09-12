@@ -86,7 +86,12 @@ fun FitForgeApp(viewModel: AppStartupViewModel = hiltViewModel()) {
                         needsOnboarding -> OnboardingScreen(
                             onOnboardingComplete = { needsOnboarding = false },
                         )
-                        else -> FitForgeNavHost()
+                        else -> FitForgeNavHost(
+                            onLogout = {
+                                isLoggedIn = false
+                                showSignup = false
+                            },
+                        )
                     }
                 }
             }

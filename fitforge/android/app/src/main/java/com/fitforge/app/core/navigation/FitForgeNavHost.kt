@@ -18,7 +18,7 @@ import com.fitforge.app.feature.profile.ProfileScreen
 
 /** The logged-in shell: bottom bar plus its tabs and sub-routes. */
 @Composable
-fun FitForgeNavHost() {
+fun FitForgeNavHost(onLogout: () -> Unit = {}) {
     val navController = rememberNavController()
 
     Scaffold(
@@ -46,6 +46,7 @@ fun FitForgeNavHost() {
                     onCommunityClick = { communityId ->
                         navController.navigate("community/$communityId")
                     },
+                    onLogout = onLogout,
                 )
             }
             composable("cycle") { CycleScreen() }

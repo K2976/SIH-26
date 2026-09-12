@@ -12,4 +12,8 @@ interface CalibrationProfileDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: CalibrationProfileEntity)
+
+    /** Cleared on logout — a calibration is body-specific and must not carry over to the next account. */
+    @Query("DELETE FROM calibration_profiles")
+    suspend fun deleteAll()
 }
