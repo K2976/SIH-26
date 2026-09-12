@@ -34,11 +34,17 @@ android {
 
     buildTypes {
         debug {
-            // localhost + `adb reverse tcp:8000 tcp:8000` works for both the
-            // emulator and a USB-connected physical device; 10.0.2.2 only
-            // works for the emulator. No /api/v1/ suffix here — the
-            // generated API interfaces already carry it in each @GET/@POST path.
-            buildConfigField("String", "BASE_URL", "\"http://localhost:8000/\"")
+            // Defaults to localhost (needs a local Django server + `adb
+            // reverse tcp:8000 tcp:8000` on a physical device; the emulator
+            // maps localhost on its own). Pass -PDEBUG_API_BASE_URL=... or
+            // set the env var of the same name to point a debug build at
+            // Render instead, e.g. when no local backend is running.
+            // No /api/v1/ suffix here — the generated API interfaces already
+            // carry it in each @GET/@POST path.
+            val debugBaseUrl = (project.findProperty("DEBUG_API_BASE_URL") as String?)
+                ?: System.getenv("DEBUG_API_BASE_URL")
+                ?: "http://localhost:8000/"
+            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
         release {
             isMinifyEnabled = false
