@@ -34,11 +34,17 @@ android {
 
     buildTypes {
         debug {
-            // localhost + `adb reverse tcp:8000 tcp:8000` works for both the
-            // emulator and a USB-connected physical device; 10.0.2.2 only
-            // works for the emulator. No /api/v1/ suffix here — the
-            // generated API interfaces already carry it in each @GET/@POST path.
-            buildConfigField("String", "BASE_URL", "\"http://localhost:8000/\"")
+            // Defaults to the deployed Render backend so a debug build works
+            // over Wi-Fi/mobile data with no cable and no local server. Pass
+            // -PDEBUG_API_BASE_URL=http://<laptop-lan-ip>:8000/ (find it via
+            // `ipconfig getifaddr en0`) to test against a local
+            // `runserver 0.0.0.0:8000` instead — same-Wi-Fi only. No
+            // /api/v1/ suffix here — the generated API interfaces already
+            // carry it in each @GET/@POST path.
+            val debugBaseUrl = (project.findProperty("DEBUG_API_BASE_URL") as String?)
+                ?: System.getenv("DEBUG_API_BASE_URL")
+                ?: "https://fitforge-backend-f7ow.onrender.com/"
+            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
         release {
             isMinifyEnabled = false
