@@ -257,6 +257,8 @@ private fun feedbackText(feedback: RepFeedback): String {
     if (feedback.rejectionReason != null) {
         return when (feedback.rejectionReason) {
             RejectionReason.INSUFFICIENT_DEPTH -> "Rep not counted — didn't reach full depth."
+            RejectionReason.INCOMPLETE_LOCKOUT -> "Rep not counted — didn't fully return to lockout."
+            RejectionReason.ASYMMETRIC_FORM -> "Rep not counted — one side moved differently than the other."
             RejectionReason.TOO_FAST -> "Rep not counted — too fast to measure."
             RejectionReason.TOO_SLOW -> "Rep timed out — reset."
             RejectionReason.LOST_TRACKING -> "Rep not counted — can't see you clearly. Reposition and try again."

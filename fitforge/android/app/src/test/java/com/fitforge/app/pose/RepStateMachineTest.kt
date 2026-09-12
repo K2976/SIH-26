@@ -1,7 +1,6 @@
 package com.fitforge.app.pose
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -67,39 +66,55 @@ class RepStateMachineTest {
     }
 
     @Test
-    fun `a rep that returns only partway counts but is flagged as partial lockout`() {
+    fun `a rep that returns only partway is rejected as incomplete lockout, not counted`() {
         val samples = rampAngles(170.0, 90.0, startMs = 0, durationMs = 500) +
             rampAngles(90.0, 154.0, startMs = 500, durationMs = 500)
 
         val result = runRepStateMachine(SQUAT_CONFIG, SQUAT_CALIBRATION, samples)
 
-        assertEquals(1, result.completed.size)
-        assertTrue(result.rejected.isEmpty())
-        val rep = result.completed.single()
-        assertTrue(rep.depthReached)
-        assertFalse(rep.lockoutReached)
-        assertEquals("partial", rep.romAchieved)
+        assertTrue(result.completed.isEmpty())
+        assertEquals(1, result.rejected.size)
+        assertEquals(RejectionReason.INCOMPLETE_LOCKOUT, result.rejected.single().reason)
     }
 
     @Test
-    fun `left-right symmetry deviation is measured from the front but not from the side`() {
+    fun `an asymmetric curl beyond tolerance is rejected from the front but not from the side`() {
         val curlCalibration = CalibrationProfile(
             "dumbbell-bicep-curl",
             restAngleDeg = 170.0,
             peakAngleDeg = 45.0,
             calibratedAtMs = 0,
         )
+        // 15deg of left/right deviation, beyond CURL_CONFIG's 10deg symmetryToleranceDeg —
+        // e.g. one arm swinging/cheating with momentum while the other curls properly.
         val samples = twoSidedRamp(170.0, 40.0, 170.0, 55.0, startMs = 0, durationMs = 500) +
             twoSidedRamp(40.0, 170.0, 55.0, 170.0, startMs = 500, durationMs = 500)
 
         val fromFront = runRepStateMachine(CURL_CONFIG, curlCalibration, samples)
-        assertEquals(1, fromFront.completed.size)
-        assertEquals(15.0, fromFront.completed.single().symmetryDeviationDeg!!, 3.0)
+        assertTrue("front camera can measure the deviation and must reject it", fromFront.completed.isEmpty())
+        assertEquals(RejectionReason.ASYMMETRIC_FORM, fromFront.rejected.single().reason)
 
         val sideConfig = CURL_CONFIG.copy(cameraPosition = CameraPosition.SIDE)
         val fromSide = runRepStateMachine(sideConfig, curlCalibration, samples)
         assertEquals(1, fromSide.completed.size)
         assertNull("symmetry can't be assessed from a side angle", fromSide.completed.single().symmetryDeviationDeg)
+    }
+
+    @Test
+    fun `a symmetric curl within tolerance counts normally`() {
+        val curlCalibration = CalibrationProfile(
+            "dumbbell-bicep-curl",
+            restAngleDeg = 170.0,
+            peakAngleDeg = 45.0,
+            calibratedAtMs = 0,
+        )
+        val samples = twoSidedRamp(170.0, 45.0, 170.0, 50.0, startMs = 0, durationMs = 500) +
+            twoSidedRamp(45.0, 170.0, 50.0, 170.0, startMs = 500, durationMs = 500)
+
+        val result = runRepStateMachine(CURL_CONFIG, curlCalibration, samples)
+
+        assertEquals(1, result.completed.size)
+        assertTrue(result.rejected.isEmpty())
     }
 
     @Test
