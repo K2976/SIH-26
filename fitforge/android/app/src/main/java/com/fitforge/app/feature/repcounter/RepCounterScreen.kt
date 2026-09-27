@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,40 +79,56 @@ private fun CameraPreviewWithOverlay(viewModel: RepCounterViewModel) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val overlayFrame by viewModel.overlayFrame.collectAsStateWithLifecycle()
+    val isFrontCamera by viewModel.isFrontCamera.collectAsStateWithLifecycle()
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     DisposableEffect(Unit) { onDispose { analysisExecutor.shutdown() } }
+
+    var previewViewRef by remember { mutableStateOf<PreviewView?>(null) }
+
+    LaunchedEffect(isFrontCamera, previewViewRef) {
+        val previewView = previewViewRef ?: return@LaunchedEffect
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener(
+            {
+                val cameraProvider = cameraProviderFuture.get()
+                val preview = Preview.Builder().build().also {
+                    it.surfaceProvider = previewView.surfaceProvider
+                }
+                val analysis = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                    .also { it.setAnalyzer(analysisExecutor, viewModel) }
+
+                val cameraSelector = if (isFrontCamera) {
+                    CameraSelector.DEFAULT_FRONT_CAMERA
+                } else {
+                    CameraSelector.DEFAULT_BACK_CAMERA
+                }
+
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    analysis,
+                )
+            },
+            ContextCompat.getMainExecutor(context),
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { ctx ->
-                val previewView = PreviewView(ctx)
-                val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-                cameraProviderFuture.addListener(
-                    {
-                        val cameraProvider = cameraProviderFuture.get()
-                        val preview = Preview.Builder().build().also {
-                            it.surfaceProvider = previewView.surfaceProvider
-                        }
-                        val analysis = ImageAnalysis.Builder()
-                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                            .build()
-                            .also { it.setAnalyzer(analysisExecutor, viewModel) }
-
-                        cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            CameraSelector.DEFAULT_FRONT_CAMERA,
-                            preview,
-                            analysis,
-                        )
-                    },
-                    ContextCompat.getMainExecutor(ctx),
-                )
-                previewView
+                PreviewView(ctx).also { previewViewRef = it }
             },
             modifier = Modifier.fillMaxSize(),
         )
-        PoseOverlay(frame = overlayFrame, modifier = Modifier.fillMaxSize())
+        PoseOverlay(
+            frame = overlayFrame,
+            modifier = Modifier.fillMaxSize(),
+            mirror = isFrontCamera,
+        )
     }
 }
 
@@ -123,6 +140,7 @@ private fun RepCounterControls(
     onRequestPermission: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isFrontCamera by viewModel.isFrontCamera.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
@@ -168,6 +186,12 @@ private fun RepCounterControls(
                 Button(onClick = viewModel::onPositioned, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                     Text("I'm in position")
                 }
+                OutlinedButton(
+                    onClick = viewModel::toggleCameraLens,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                ) {
+                    Text(if (isFrontCamera) "Switch to Back Camera" else "Switch to Front Camera")
+                }
                 CancelButton(onDone)
             }
 
@@ -195,6 +219,18 @@ private fun RepCounterControls(
                 Text("Ready. Start when you are.", color = Color.White, style = MaterialTheme.typography.bodyLarge)
                 Button(onClick = viewModel::startSet, modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
                     Text("Start set")
+                }
+                OutlinedButton(
+                    onClick = viewModel::recalibrate,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                ) {
+                    Text("Recalibrate range of motion")
+                }
+                OutlinedButton(
+                    onClick = viewModel::toggleCameraLens,
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                ) {
+                    Text(if (isFrontCamera) "Switch to Back Camera" else "Switch to Front Camera")
                 }
                 CancelButton(onDone)
             }

@@ -12,4 +12,7 @@ interface CalibrationProfileDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: CalibrationProfileEntity)
+
+    @Query("DELETE FROM calibration_profiles WHERE exerciseSlug = :slug")
+    suspend fun deleteForExercise(slug: String)
 }

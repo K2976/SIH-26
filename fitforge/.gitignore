@@ -108,3 +108,6 @@ android/.cxx/
 # OS
 .DS_Store
 
+# Serena MCP
+.serena/
+

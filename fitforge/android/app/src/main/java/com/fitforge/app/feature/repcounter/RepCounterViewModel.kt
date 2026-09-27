@@ -17,6 +17,7 @@ import com.fitforge.app.feature.repcounter.camera.ModelVariant
 import com.fitforge.app.feature.repcounter.camera.PoseLandmarkerHelper
 import com.fitforge.app.pose.AngleSample
 import com.fitforge.app.pose.CalibrationProfile
+import com.fitforge.app.feature.repcounter.feedback.RepAudioHapticNotifier
 import com.fitforge.app.pose.CalibrationResult
 import com.fitforge.app.pose.CompletedRep
 import com.fitforge.app.pose.ExercisePoseConfig
@@ -25,6 +26,7 @@ import com.fitforge.app.pose.PoseLandmark
 import com.fitforge.app.pose.RepEvent
 import com.fitforge.app.pose.RepMachineState
 import com.fitforge.app.pose.VisibilityResult
+import com.fitforge.app.pose.adaptiveSmoothAngleSample
 import com.fitforge.app.pose.averageRestAngle
 import com.fitforge.app.pose.checkVisibility
 import com.fitforge.app.pose.computeAngleSample
@@ -90,6 +92,30 @@ class RepCounterViewModel @Inject constructor(
     private var previousSmoothed: AngleSample? = null
     private var machineState = RepMachineState()
     private val completedReps = mutableListOf<CompletedRep>()
+
+    private val feedbackNotifier = RepAudioHapticNotifier(context)
+    private var hasSignaledDepthThisRep = false
+
+    private val _isFrontCamera = MutableStateFlow(true)
+    val isFrontCamera: StateFlow<Boolean> = _isFrontCamera.asStateFlow()
+
+    fun toggleCameraLens() {
+        _isFrontCamera.value = !_isFrontCamera.value
+    }
+
+    /** Wipes stored calibration profile for this exercise and restarts the demo rep flow. */
+    fun recalibrate() {
+        val slug = exerciseSlug
+        viewModelScope.launch {
+            calibrationDao.deleteForExercise(slug)
+            calibration = null
+            restSamples.clear()
+            demoRepAngles.clear()
+            pendingRestAngle = null
+            demoPhaseStartMs = System.currentTimeMillis()
+            _uiState.value = RepCounterUiState.DemoRep(DemoRepPhase.HOLD_STILL)
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -243,22 +269,34 @@ class RepCounterViewModel @Inject constructor(
         previousSmoothed = null
         machineState = RepMachineState()
         completedReps.clear()
+        hasSignaledDepthThisRep = false
         _uiState.value = RepCounterUiState.Counting(repCount = 0)
     }
 
     private fun handleCounting(frame: PoseFrame, config: ExercisePoseConfig) {
         val cal = calibration ?: return
         val raw = computeAngleSample(frame, config)
-        val smoothed = smoothAngleSample(previousSmoothed, raw)
+        val smoothed = adaptiveSmoothAngleSample(previousSmoothed, raw)
         previousSmoothed = smoothed
         val result = stepRepStateMachine(machineState, config, cal, smoothed)
         machineState = result.state
+
+        // Depth cue: tactile/tone click the instant depth is reached on descent
+        if (machineState.peakProgress >= 0.80 && !hasSignaledDepthThisRep) {
+            hasSignaledDepthThisRep = true
+            feedbackNotifier.onDepthReached()
+        }
+
         when (val event = result.event) {
             is RepEvent.Completed -> {
+                hasSignaledDepthThisRep = false
                 completedReps += event.rep
+                feedbackNotifier.onRepCompleted()
                 _uiState.value = RepCounterUiState.Counting(completedReps.size, event.rep.toFeedback(config))
             }
             is RepEvent.Rejected -> {
+                hasSignaledDepthThisRep = false
+                feedbackNotifier.onRepRejected(event.rep.reason)
                 val current = _uiState.value as? RepCounterUiState.Counting ?: return
                 _uiState.value = current.copy(
                     lastFeedback = RepFeedback(
@@ -281,6 +319,7 @@ class RepCounterViewModel @Inject constructor(
         val cal = calibration ?: return
         (finalizeRepStateMachine(machineState, config) as? RepEvent.Completed)?.let { completedReps += it.rep }
         machineState = RepMachineState()
+        hasSignaledDepthThisRep = false
 
         if (completedReps.isEmpty()) {
             _uiState.value = RepCounterUiState.Ready(cal.restAngleDeg, cal.peakAngleDeg)
@@ -316,6 +355,7 @@ class RepCounterViewModel @Inject constructor(
 
     override fun onCleared() {
         landmarkerHelper?.close()
+        feedbackNotifier.release()
     }
 }
 

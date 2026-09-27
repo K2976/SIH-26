@@ -16,6 +16,8 @@ import com.google.mediapipe.tasks.vision.core.ImageProcessingOptions
 import com.google.mediapipe.tasks.vision.core.RunningMode
 import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarker
 
+import android.util.Log
+
 /**
  * The only file in this app allowed to import `com.google.mediapipe.*`.
  * Everything downstream of [onResult] works with the plain [PoseFrame] data
@@ -31,26 +33,41 @@ class PoseLandmarkerHelper(
     private val onResult: (PoseFrame) -> Unit,
     private val onError: (String) -> Unit,
 ) {
-    private val landmarker: PoseLandmarker = PoseLandmarker.createFromOptions(
-        context,
-        PoseLandmarker.PoseLandmarkerOptions.builder()
-            .setBaseOptions(
-                BaseOptions.builder()
-                    .setModelAssetPath(modelVariant.assetPath)
-                    .setDelegate(Delegate.CPU)
-                    .build(),
-            )
-            .setRunningMode(RunningMode.LIVE_STREAM)
-            .setNumPoses(1)
-            .setResultListener { result, _ ->
-                val landmarks = result.landmarks().firstOrNull()
-                if (landmarks != null) {
-                    onResult(PoseFrame(result.timestampMs(), landmarks.toPoseMap()))
+    private val landmarker: PoseLandmarker = createLandmarker(context, modelVariant)
+
+    private fun createLandmarker(context: Context, modelVariant: ModelVariant): PoseLandmarker =
+        try {
+            buildLandmarker(context, modelVariant, Delegate.GPU)
+        } catch (e: Exception) {
+            Log.w("PoseLandmarkerHelper", "GPU delegate initialization failed; falling back to CPU", e)
+            buildLandmarker(context, modelVariant, Delegate.CPU)
+        }
+
+    private fun buildLandmarker(
+        context: Context,
+        modelVariant: ModelVariant,
+        delegate: Delegate,
+    ): PoseLandmarker =
+        PoseLandmarker.createFromOptions(
+            context,
+            PoseLandmarker.PoseLandmarkerOptions.builder()
+                .setBaseOptions(
+                    BaseOptions.builder()
+                        .setModelAssetPath(modelVariant.assetPath)
+                        .setDelegate(delegate)
+                        .build(),
+                )
+                .setRunningMode(RunningMode.LIVE_STREAM)
+                .setNumPoses(1)
+                .setResultListener { result, _ ->
+                    val landmarks = result.landmarks().firstOrNull()
+                    if (landmarks != null) {
+                        onResult(PoseFrame(result.timestampMs(), landmarks.toPoseMap()))
+                    }
                 }
-            }
-            .setErrorListener { error -> onError(error.message ?: "pose detection failed") }
-            .build(),
-    )
+                .setErrorListener { error -> onError(error.message ?: "pose detection failed") }
+                .build(),
+        )
 
     private var lastTimestampMs = 0L
 

@@ -403,3 +403,28 @@ as partial lockout`).
   `symmetryToleranceDeg` per exercise — a real lifter's natural asymmetry may
   need a per-exercise value wider than the `10°` test fixture.
 
+## 2026-09-27 — Live Rep Counter: GPU acceleration fallback, audio/haptic feedback, recalibration & camera lens flip
+
+- **MediaPipe GPU delegate with graceful CPU fallback**: `PoseLandmarkerHelper.kt`
+  attempts `Delegate.GPU` first. If OpenGL ES initialization or driver capability fails,
+  it falls back to `Delegate.CPU` seamlessly with a log warning. This drastically reduces
+  thermal throttling and battery drain on capable chipsets without breaking devices lacking
+  GPU delegate support.
+- **Audio & Haptic Feedback Loop (`RepAudioHapticNotifier.kt`)**:
+  Lifters cannot constantly watch the screen during heavy squats, push-ups, or pull-ups.
+  A zero-dependency feedback manager using Android's native `Vibrator` and `ToneGenerator`
+  provides immediate sub-10ms tactile and auditory confirmation:
+  1. Depth reached ($P \ge 0.80$): light haptic tick + 60ms beep so the lifter knows they can safely reverse.
+  2. Rep completed: celebratory double-pulse + 120ms prompt tone.
+  3. Rep rejected: heavier buzz + 180ms warning tone.
+- **Dynamic Recalibration & Camera Flip**:
+  `RepCounterScreen.kt` and `RepCounterViewModel.kt` now provide an explicit "Recalibrate
+  range of motion" action on the `Ready` screen (calling `calibrationDao.deleteForExercise`)
+  so users can re-learn ROM after moving the phone. A camera lens flip button toggles
+  between `DEFAULT_FRONT_CAMERA` (mirrored overlay) and `DEFAULT_BACK_CAMERA` (unmirrored overlay).
+- **Velocity-Adaptive Smoothing (`adaptiveSmoothAngleSample`)**:
+  In `Smoothing.kt`, $\alpha$ scales dynamically with joint angular velocity ($\text{deg/sec}$)
+  between $0.25$ (when stationary, rejecting micro-jitter) and $0.65$ (during rapid reversals,
+  eliminating phase lag and false rep delays).
+
+
